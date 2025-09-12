@@ -1,0 +1,71 @@
+/* src/styles/startFiling.css */
+
+.start-filing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: radial-gradient(circle at center, #0f0f0f, #050505);
+  color: #fff;
+  font-family: "Inter", sans-serif;
+}
+
+.intro-box {
+  max-width: 600px;
+  padding: 3rem;
+  border-radius: 12px;
+  text-align: center;
+  background-color: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  animation: fadeIn 0.8s ease-out;
+}
+
+.glow-frame {
+  border: 2px solid #ffdf3b;
+  box-shadow: 0 0 15px #ffdf3b80, 0 0 40px #ffdf3b40;
+}
+
+.intro-header {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #ffd700;
+}
+
+.intro-subtext {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #ccc;
+}
+
+.escrow-preview {
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  color: #88ffcc;
+  font-style: italic;
+}
+
+.start-filing-link {
+  text-decoration: none;
+}
+
+.start-filing-btn {
+  background-color: #1b1b1b;
+  color: #fff;
+  border: 2px solid #ffd700;
+  padding: 0.8rem 1.6rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.start-filing-btn:hover {
+  background-color: #ffd700;
+  color: #1b1b1b;
+  box-shadow: 0 0 10px #ffd700;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,15 @@
+.pi-badge.glow-pulse {
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 6px #f5c542;
+  }
+  50% {
+    box-shadow: 0 0 18px #f5c542;
+  }
+  100% {
+    box-shadow: 0 0 6px #f5c542;
+  }
+}

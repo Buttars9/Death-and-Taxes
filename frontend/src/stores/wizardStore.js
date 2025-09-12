@@ -1,0 +1,171 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+
+/**
+ * Centralized store for guided filing flow.
+ * Tracks payment type, answers, state selection, will data, and branching logic.
+ * All setters include validation and audit-safe defaults.
+ */
+
+export const useWizardStore = create(
+  persist(
+    (set, get) => ({
+      // 💳 Payment Type
+      paymentType: 'pi',
+      setPaymentType: (type) => {
+        if (typeof type !== 'string' || !type.trim()) {
+          throw new Error('❌ Invalid payment type');
+        }
+        set({ paymentType: type.trim() });
+      },
+
+      // 🧾 Answers Payload (filingStatus, incomeSources, deductions, credits, AGI, etc.)
+      answers: {
+        incomeSources: [], // ✅ From IncomeSourcesStep
+        deductions: [],     // ✅ From DeductionsClaimStep
+        credits: [],        // ✅ From CreditsClaimStep
+      },
+      setAnswers: (payload) => {
+        if (!payload || typeof payload !== 'object') {
+          throw new Error('❌ Invalid answers payload');
+        }
+        set({ answers: { ...payload } });
+      },
+
+      // 🧭 State Selection
+      state: '',
+      setState: (selectedState) => {
+        if (typeof selectedState !== 'string' || !selectedState.trim()) {
+          throw new Error('❌ Invalid state selection');
+        }
+        set({ state: selectedState.trim() });
+      },
+      isStateSelected: () => !!get().state,
+
+      // 🪦 Will & Testament Payload
+      willData: {},
+      setWillData: (payload) => {
+        if (!payload || typeof payload !== 'object') {
+          throw new Error('❌ Invalid willData payload');
+        }
+        set({ willData: { ...payload } });
+      },
+
+      // 🔀 Branching Logic (e.g. state-specific flows)
+      stateBranch: null,
+      setStateBranch: (branchKey) => {
+        set({ stateBranch: branchKey || null });
+      },
+      getStateBranch: () => get().stateBranch,
+
+      // 🧠 Filing Status Access + Validation
+      getFilingStatus: () => get().answers?.maritalStatus || '',
+      isFilingStatusValid: () => {
+        const validStatuses = ['single', 'married', 'head'];
+        return validStatuses.includes(get().answers?.maritalStatus);
+      },
+
+      // 📥 Deductions & Credits Accessors
+      getDeductions: () => get().answers?.deductions || [],
+      getCredits: () => get().answers?.credits || [],
+      getRefundableCredits: () => {
+        const selected = get().answers?.credits || [];
+        const refundableSet = new Set(['child_tax', 'eitc', 'education', 'healthcare', 'childcare']);
+        return selected.filter((credit) => refundableSet.has(credit));
+      },
+
+      // 🧮 Deduction Type + AGI Estimator
+      getDeductionType: () => {
+        const selected = get().answers?.deductions || [];
+        const aboveTheLineSet = new Set(['student_loan', 'ira', 'hsa']);
+        const itemizedSet = new Set(['mortgage', 'medical', 'charity']);
+
+        const hasAbove = selected.some((d) => aboveTheLineSet.has(d.value));
+        const hasItemized = selected.some((d) => itemizedSet.has(d.value));
+
+        if (hasItemized) return 'itemized';
+        if (hasAbove) return 'above-the-line';
+        return 'standard';
+      },
+      estimateAGI: () => {
+        const baseAGI = parseFloat(get().answers?.agi) || 0;
+        const deductionType = get().getDeductionType();
+
+        let deductionAmount = 0;
+        if (deductionType === 'standard') {
+          deductionAmount = get().answers?.maritalStatus === 'married' ? 31500 : 13850;
+        } else if (deductionType === 'itemized') {
+          deductionAmount = get().answers?.deductions?.reduce((sum, d) => sum + Number(d.amount || 0), 0) || 16000;
+        } else if (deductionType === 'above-the-line') {
+          deductionAmount = get().answers?.deductions?.reduce((sum, d) => sum + Number(d.amount || 0), 0) || 3000;
+        }
+
+        return Math.max(0, baseAGI - deductionAmount);
+      },
+
+      // 👤 Personal Info Fields (from PersonalInfoStep)
+      firstName: '',
+      lastName: '',
+      ssn: '',
+      dob: '',
+      address: '',
+      maritalStatus: '',
+      residentState: '',
+      priorAGI: '',
+      irsPin: '',
+      incomeSources: [],
+      dependents: [],
+      spouseName: '',
+      spouseSSN: '',
+      spouseDob: '',
+      spouseIncomeSources: [],
+
+      // 💼 W-2 Income Fields
+      w2s: [],
+
+      // 🧮 Additional IRS Info
+      foreignIncome: '',
+      agi: '',
+      irsPin: '',
+
+      // 🔧 Generic Field Updater
+      updateField: (field, value) => set({ [field]: value }),
+
+      // ✅ Submission Confirmation Flag
+      submissionConfirmed: false,
+      setSubmissionConfirmed: () => set({ submissionConfirmed: true }),
+
+      // 📜 Audit Trail Ledger
+      auditTrail: [],
+      logSubmission: (entry) =>
+        set((state) => ({
+          auditTrail: [...state.auditTrail, entry],
+        })),
+
+      // 🔁 Polling Logic for Filing Status Updates
+      pollFilingStatus: async () => {
+        const currentTrail = get().auditTrail;
+        const updatedTrail = await Promise.all(currentTrail.map(async (entry) => {
+          try {
+            const res = await fetch(`/api/status/${entry.escrowHash}`);
+            const data = await res.json();
+            return {
+              ...entry,
+              filingStatus: data.filingStatus || entry.filingStatus,
+            };
+          } catch (err) {
+            return entry;
+          }
+        }));
+        set({ auditTrail: updatedTrail });
+      },
+    }),
+    {
+      name: 'wizard-store',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+// ✅ Will data accessor for FinalWillPage
+export const getWillData = () => useWizardStore.getState().willData;

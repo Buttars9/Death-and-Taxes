@@ -1,0 +1,35 @@
+{
+  "user": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "ssn": "123-45-6789",
+    "address": {
+      "street": "123 Main St",
+      "cityStateZip": "Springfield, IL 62704"
+    },
+    "filingStatus": "Single",
+    "dependents": []
+  },
+  "executor": {
+    "fullName": "Jane Smith",
+    "address": "456 Elm St, Springfield, IL 62704"
+  },
+  "decedent": {
+    "fullName": "John Doe",
+    "ssn": "123-45-6789",
+    "dateOfDeath": "2023-11-15"
+  },
+  "income": {
+    "total": 85000
+  },
+  "deductions": {
+    "standard": 13850
+  },
+  "taxLiability": 7200,
+  "estate": {
+    "assetTotal": 450000,
+    "liabilities": 50000,
+    "taxableEstate": 400000,
+    "taxDue": 16000
+  }
+}

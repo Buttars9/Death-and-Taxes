@@ -1,0 +1,12 @@
+.powered-by-pi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.powered-by-pi .powered-text {
+  margin-left: 0.5rem;
+}

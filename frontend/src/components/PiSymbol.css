@@ -1,0 +1,11 @@
+/* frontend/src/components/PiSymbol.css */
+
+.pi-symbol {
+  font-family: "Georgia", serif;
+  color: #00ffc3;
+  transition: text-shadow 0.3s ease;
+}
+
+.pi-symbol.glow {
+  text-shadow: 0 0 8px #00ffc3, 0 0 16px #00ffc3;
+}

@@ -1,0 +1,22 @@
+.refund-estimate {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00ffff;
+}
+
+.refund-details {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.refund-details li {
+  margin: 0.5rem 0;
+}
+
+.refund-total {
+  font-size: 1.2rem;
+  color: #00ffcc;
+}

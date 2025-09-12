@@ -1,0 +1,29 @@
+.refund-estimate-panel {
+  background: #0c111c;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(118, 198, 255, 0.25);
+  color: #e1e8fc;
+  margin-top: 2rem;
+}
+
+.refund-estimate-panel h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #7ec8ff;
+}
+
+.refund-details p {
+  margin: 0.5rem 0;
+}
+
+.refund-total {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.refund-total h3 {
+  font-size: 2rem;
+  color: #00ffe0;
+  margin: 0.5rem 0;
+}
