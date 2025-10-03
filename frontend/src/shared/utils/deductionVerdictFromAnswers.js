@@ -1,6 +1,5 @@
-// death-and-taxes/shared/utils/deductionVerdictFromAnswers.js
-
-import { deductionsByState } from '../../src/utils/deductionsByState.js';
+// frontend/src/shared/utils/deductionVerdictFromAnswers.js
+import { deductionsByState } from './deductionsByState.js';
 
 export default function deductionVerdictFromAnswers(answers) {
   const {
@@ -8,7 +7,7 @@ export default function deductionVerdictFromAnswers(answers) {
     dependents = 0,
     filingStatus = 'single',
     itemizedDeductions = [],
-    state = '',
+    state = 'N/A',
   } = answers;
 
   const stateData = deductionsByState[state] || {};

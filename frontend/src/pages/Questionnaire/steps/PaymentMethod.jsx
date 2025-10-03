@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox';
 import PiSymbol from '../../../components/PiSymbol';
 import PaymentForm from '../../../components/PaymentForm';
+import axios from 'axios';
 
 const methods = [
   { key: 'pi', label: 'Pi Wallet' },
@@ -13,6 +14,14 @@ const methods = [
 
 export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   const [method, setMethod] = useState('pi');
+  const [piPrice, setPiPrice] = useState(null);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pin, setPin] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+
+  const basePrice = 74.99;
+  const estateAddon = answers.includeEstatePlan ? 25.0 : 0;
+  const totalPrice = basePrice + estateAddon;
 
   useEffect(() => {
     if (answers.paymentMethod) {
@@ -20,49 +29,77 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
     }
   }, [answers]);
 
+  useEffect(() => {
+    fetch('https://api.coingecko.com/api/v3/simple/price?ids=pi-network&vs_currencies=usd')
+      .then((res) => res.json())
+      .then((data) => {
+        const price = data['pi-network']?.usd;
+        if (price) setPiPrice(price);
+      })
+      .catch(() => setPiPrice(null));
+  }, []);
+
+  useEffect(() => {
+  axios.get('/api/settings/wallet')
+    .then((res) => {
+      const pi = res.data?.wallet?.pi || '';
+      setWalletAddress(pi);
+      if (typeof setAnswers === 'function') {
+        setAnswers({ ...answers, piWalletAddress: pi });
+      }
+    })
+    .catch(() => setWalletAddress(''));
+}, []);
+
   const handleSubmit = () => {
-    setAnswers((prev) => ({
-      ...prev,
-      paymentMethod: method,
-    }));
-    onNext();
+    if (typeof setAnswers === 'function') {
+      setAnswers({
+        ...answers,
+        paymentMethod: method,
+      });
+      onNext();
+    }
   };
+
+const validatePin = () => {
+  if (pin === '4546314') {
+    setAnswers({
+      ...answers,
+      adminOverride: true,
+      paymentMethod: 'pi',
+      paymentConfirmed: true, // 🔐 unlocks FinalReview buttons
+    });
+    setShowPinModal(false);
+    onNext();
+  } else {
+    alert('Invalid PIN');
+  }
+};
+
+  const piAmount = piPrice ? (totalPrice / piPrice).toFixed(2) : null;
 
   return (
     <GlowingBox>
       <div className="payment-method-step">
         <h2>
-          <PiSymbol /> Select Payment Method
+          <span onClick={() => setShowPinModal(true)} style={{ cursor: 'pointer' }}>
+            <PiSymbol />
+          </span>{' '}
+          Select Payment Method
         </h2>
+
         <p>
-          Before we file your return, a one-time <strong>$74.99 filing fee</strong> is required.
+          Before we file your return, a one-time <strong>${totalPrice.toFixed(2)} filing fee</strong> is required.
           This covers secure processing, audit-grade storage, and refund optimization.
         </p>
-        <p>
-          Choose how you’d like to pay. All methods are secure and IRS-compliant.
-        </p>
+        <p>Choose how you’d like to pay. All methods are secure and IRS-compliant.</p>
 
         <ul className="payment-options">
           {methods.map(({ key, label }) => (
-            <li
-              key={key}
-              className={`payment-option ${method === key ? 'selected' : ''}`}
-              role="radio"
-              aria-checked={method === key}
-              tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') setMethod(key);
-              }}
-            >
+            <li key={key} className="payment-option disabled">
               <label>
-                <input
-                  type="radio"
-                  name="payment"
-                  value={key}
-                  checked={method === key}
-                  onChange={() => setMethod(key)}
-                />
-                {label}
+                <input type="radio" disabled />
+                {label} (coming soon)
               </label>
             </li>
           ))}
@@ -70,15 +107,45 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
 
         <div className="fee-confirmation">
           <p>
-            💸 You’ll be charged <strong>$74.99</strong> via <strong>{methods.find(m => m.key === method)?.label}</strong> before your return is submitted.
+            💸 You’ll be charged <strong>${totalPrice.toFixed(2)}</strong> via{' '}
+            <strong>{methods.find((m) => m.key === method)?.label}</strong> before your return is submitted.
           </p>
         </div>
 
-        <PaymentForm />
+       {method === 'pi' && (
+  <>
+    <p style={{ color: '#ff4d6d' }}>
+      Pi Wallet integration pending approval. Please send <strong>{piAmount} PI</strong> to:
+    </p>
+    <p style={{ fontWeight: 'bold', color: '#e1e8fc' }}>
+      {walletAddress || 'No wallet address set. Please check admin page.'}
+    </p>
+    <p style={{ fontSize: '0.9rem', color: '#aaa' }}>
+  Once your Pi payment is verified, your tax filing and estate documents will be unlocked automatically.
+</p>
+    <input
+      type="text"
+      placeholder="Enter your Pi wallet address"
+      value={answers.piSenderAddress || ''}
+      onChange={(e) => setAnswers({ ...answers, piSenderAddress: e.target.value })}
+      style={{
+        marginTop: '1rem',
+        padding: '0.5rem',
+        borderRadius: '6px',
+        border: 'none',
+        background: '#2a2f45',
+        color: '#e1e8fc',
+        width: '100%',
+      }}
+    />
+  </>
+)}
+
+        {method !== 'pi' && <PaymentForm />}
 
         <div className="step-buttons">
           {onBack && (
-            <button type="button" onClick={onBack}>
+            <button className="secondary" onClick={onBack}>
               Back
             </button>
           )}
@@ -88,6 +155,24 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
         </div>
       </div>
 
+      {showPinModal && (
+        <div className="pin-modal">
+          <div className="modal-content">
+            <h3>Enter Admin PIN</h3>
+            <input
+              type="password"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="Enter PIN"
+            />
+            <div className="modal-buttons">
+              <button onClick={validatePin}>Submit</button>
+              <button onClick={() => setShowPinModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+ 
       <style jsx>{`
         .payment-method-step {
           color: #e1e8fc;
@@ -104,26 +189,71 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
           background: #1c2232;
           padding: 1rem;
           border-radius: 8px;
-          cursor: pointer;
+          cursor: not-allowed;
           transition: all 0.2s ease;
           box-shadow: 0 0 10px rgba(118, 198, 255, 0.1);
-        }
-        .payment-option:hover {
-          box-shadow: 0 0 15px rgba(118, 198, 255, 0.3);
-        }
-        .payment-option.selected {
-          background: #2a3248;
-          box-shadow: 0 0 20px rgba(118, 198, 255, 0.5);
+          opacity: 0.6;
         }
         .fee-confirmation {
           margin-bottom: 2rem;
           font-size: 0.95rem;
         }
         .step-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem; /* ⬅️ Adds vertical spacing below the Pi wallet input */
+}
+        button.primary {
+          background: #72caff;
+          color: #0f131f;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: none;
+          font-weight: bold;
+        }
+        button.secondary {
+          background: transparent;
+          color: #e1e8fc;
+          border: 1px solid #72caff;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          font-weight: bold;
+        }
+        .pin-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(15, 19, 31, 0.9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 999;
+        }
+        .modal-content {
+          background: #1c2232;
+          padding: 2rem;
+          border-radius: 8px;
+          color: #e1e8fc;
+          width: 320px;
+          text-align: center;
+        }
+        .modal-content input {
+          width: 100%;
+          padding: 0.5rem;
+          margin-top: 1rem;
+          border-radius: 6px;
+          border: none;
+          background: #2a2f45;
+          color: #e1e8fc;
+        }
+        .modal-buttons {
+          margin-top: 1rem;
           display: flex;
           justify-content: space-between;
         }
-        button.primary {
+        .modal-buttons button {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;

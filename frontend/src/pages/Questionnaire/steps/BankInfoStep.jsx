@@ -4,27 +4,25 @@ import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol.jsx';
 
 export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
-  const [routingNumber, setRoutingNumber] = useState(answers.routingNumber || '');
-  const [accountNumber, setAccountNumber] = useState(answers.accountNumber || '');
-  const [accountType, setAccountType] = useState(answers.accountType || 'checking');
+  const [routingNumber, setRoutingNumber] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [accountType, setAccountType] = useState('checking');
 
   useEffect(() => {
     setRoutingNumber(answers.routingNumber || '');
     setAccountNumber(answers.accountNumber || '');
     setAccountType(answers.accountType || 'checking');
-  }, [answers]);
+  }, []);
 
-  const handleSubmit = () => {
-    if (!routingNumber || !accountNumber) {
-      alert('Please enter routing and account number for direct deposit.');
-      return;
-    }
-    setAnswers((prev) => ({
-      ...prev,
+  const isRoutingValid = /^\d{9}$/.test(routingNumber);
+
+  const handleNext = () => {
+    setAnswers({
+      ...answers,
       routingNumber,
       accountNumber,
       accountType,
-    }));
+    });
     onNext();
   };
 
@@ -34,9 +32,7 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
         <h2>
           <PiSymbol /> Bank Information for Refund
         </h2>
-        <p>
-          Enter your bank details for direct deposit of your refund.
-        </p>
+        <p>Enter your bank details for direct deposit of your refund.</p>
 
         <div
           style={{
@@ -54,15 +50,12 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
               value={routingNumber}
               onChange={(e) => setRoutingNumber(e.target.value)}
               placeholder="9 digits"
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                background: '#1c2232',
-                color: '#e1e8fc'
-              }}
             />
+            {routingNumber && !isRoutingValid && (
+              <p className="trust-note">
+                ⚠️ This routing number doesn’t appear valid. It should be exactly 9 digits. Please double-check before submitting to the IRS.
+              </p>
+            )}
           </div>
 
           <div className="input-group">
@@ -73,14 +66,6 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
               value={accountNumber}
               onChange={(e) => setAccountNumber(e.target.value)}
               placeholder="Account number"
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                background: '#1c2232',
-                color: '#e1e8fc'
-              }}
             />
           </div>
 
@@ -90,14 +75,6 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
               id="accountType"
               value={accountType}
               onChange={(e) => setAccountType(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                background: '#1c2232',
-                color: '#e1e8fc'
-              }}
             >
               <option value="checking">Checking</option>
               <option value="savings">Savings</option>
@@ -106,15 +83,31 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
         </div>
 
         <div className="step-buttons">
-          {onBack && (
-            <button type="button" onClick={onBack}>
-              Back
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onBack}
+            style={{
+              background: '#1c2232',
+              color: '#e1e8fc',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: '1px solid #3a3f55',
+              fontWeight: 'bold',
+            }}
+          >
+            Back
+          </button>
           <button
             className="primary"
-            onClick={handleSubmit}
-            disabled={!routingNumber || !accountNumber}
+            onClick={handleNext}
+            style={{
+              background: '#72caff',
+              color: '#0f131f',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: 'none',
+              fontWeight: 'bold',
+            }}
           >
             Next
           </button>
@@ -134,7 +127,8 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
           margin-bottom: 0.5rem;
           color: #e1e8fc;
         }
-        input, select {
+        input,
+        select {
           width: 100%;
           padding: 0.5rem;
           border-radius: 6px;
@@ -142,7 +136,8 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
           background: #1c2232;
           color: #e1e8fc;
         }
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
           outline: none;
           border-color: #72caff;
           box-shadow: 0 0 4px #72caff;
@@ -152,18 +147,10 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
           justify-content: space-between;
           margin-top: 2rem;
         }
-        button.primary {
-          background: #72caff;
-          color: #0f131f;
-          padding: 0.5rem 1rem;
-          border-radius: 6px;
-          border: none;
-          font-weight: bold;
-        }
-        button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          background: #3a3f55;
+        .trust-note {
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+          color: #ffcc66;
         }
       `}</style>
     </GlowingBox>
@@ -174,5 +161,5 @@ BankInfoStep.propTypes = {
   answers: PropTypes.object.isRequired,
   setAnswers: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
-  onBack: PropTypes.func,
+  onBack: PropTypes.func.isRequired,
 };

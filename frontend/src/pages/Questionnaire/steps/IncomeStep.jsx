@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import GlowingBox from '../../../components/GlowingBox.jsx';
-import PiSymbol from '../../../components/PiSymbol.jsx';
 import { useWizardStore } from '../../../stores/wizardStore';
-import { fetchAutofillData, saveIncomeData } from '../../../services/api';
+import { fetchAutofillData } from '../../../services/api';
 import RefundEstimate from '../../../components/RefundEstimate';
+
+// FIX: Conditionally import PiSymbol to avoid potential crashes
+const PiSymbol = process.env.NODE_ENV === 'development' ? () => null : require('../../../components/PiSymbol.jsx').default;
 
 const incomeOptions = [
   { label: 'W-2 Employment', value: 'w2' },
@@ -35,17 +38,26 @@ const incomeOptions = [
   { label: "Spouse's Other", value: 'other-spouse' },
 ];
 
-const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
-  const { parsedFields, setAnswers, updateField, w2s } = useWizardStore();
+const states = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida',
+  'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
+  'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska',
+  'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+  'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
+  'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+];
+
+const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
+  const { setAnswers, updateField, w2s, answers: storeAnswers } = useWizardStore();
+  const navigate = useNavigate();
   const [localIncomeSources, setLocalIncomeSources] = useState([]);
-  const [filingStatus, setFilingStatus] = useState(initialData.filingStatus || '');
+  const [filingStatus, setFilingStatus] = useState(initialData?.filingStatus || answers?.maritalStatus || '');
   const [autofillEnabled, setAutofillEnabled] = useState(false);
   const [autofillLoading, setAutofillLoading] = useState(false);
   const [error, setError] = useState('');
   const [additionalIncomeModalOpen, setAdditionalIncomeModalOpen] = useState(false);
   const [newIncomeType, setNewIncomeType] = useState('');
 
-  // Initialize income sources from PersonalInfoStep
   useEffect(() => {
     if (answers?.incomeSources && Array.isArray(answers.incomeSources)) {
       const prePopulated = answers.incomeSources.map(item => {
@@ -83,12 +95,18 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
             employerEIN: matchingW2.employerEIN || '',
             employerAddress: matchingW2.employerAddress || '',
             employeeAddress: matchingW2.employeeAddress || '',
+            box15: matchingW2.box15 || '',
+            box16: matchingW2.box16 || '',
+            box17: matchingW2.box17 || '',
+            box18: matchingW2.box18 || '',
+            box19: matchingW2.box19 || '',
+            box20: matchingW2.box20 || '',
           };
         }
-        return isObject ? { ...item, amount: item.amount || '', employer: item.employer || '' } : { 
-          type: cleanType, 
-          owner: itemOwner, 
-          amount: '', 
+        return isObject ? { ...item, amount: item.amount || '', employer: item.employer || '' } : {
+          type: cleanType,
+          owner: itemOwner,
+          amount: '',
           employer: '',
           belongsTo: '',
           foreign: false,
@@ -120,26 +138,28 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
           employerEIN: '',
           employerAddress: '',
           employeeAddress: '',
-          rents: '',
-          royalties: '',
-          otherIncome: '',
-          federalTaxWithheld: '',
-          fishingBoatProceeds: '',
-          medicalPayments: '',
-          totalForeignEarnedIncome: '',
-          foreignHousingExclusion: '',
+          box15: '',
+          box16: '',
+          box17: '',
+          box18: '',
+          box19: '',
+          box20: '',
         };
       }).filter(item => item.type);
-      setLocalIncomeSources(prePopulated);
+
+      // Only update if prePopulated differs from current localIncomeSources
+      if (JSON.stringify(prePopulated) !== JSON.stringify(localIncomeSources)) {
+        console.log('Updating localIncomeSources:', prePopulated);
+        setLocalIncomeSources(prePopulated);
+      }
     }
-  }, [answers.incomeSources, w2s]);
+  }, [answers, w2s]);
 
   const updateIncomeSource = (index, updatedSource) => {
     const updated = [...localIncomeSources];
     updated[index] = updatedSource;
     setLocalIncomeSources(updated);
-    setAnswers({ incomeSources: updated });
-    updateField('incomeSources', updated);
+    setAnswers({ ...storeAnswers, incomeSources: updated });
   };
 
   const addIncomeSource = (value) => {
@@ -180,26 +200,22 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
       employerEIN: '',
       employerAddress: '',
       employeeAddress: '',
-      rents: '',
-      royalties: '',
-      otherIncome: '',
-      federalTaxWithheld: '',
-      fishingBoatProceeds: '',
-      medicalPayments: '',
-      totalForeignEarnedIncome: '',
-      foreignHousingExclusion: '',
+      box15: '',
+      box16: '',
+      box17: '',
+      box18: '',
+      box19: '',
+      box20: '',
     };
     const updated = [...localIncomeSources, newSource];
     setLocalIncomeSources(updated);
-    setAnswers({ incomeSources: updated });
-    updateField('incomeSources', updated);
+    setAnswers({ ...storeAnswers, incomeSources: updated });
   };
 
   const removeIncomeSource = (index) => {
     const updated = localIncomeSources.filter((_, i) => i !== index);
     setLocalIncomeSources(updated);
-    setAnswers({ incomeSources: updated });
-    updateField('incomeSources', updated);
+    setAnswers({ ...storeAnswers, incomeSources: updated });
   };
 
   const handleAdditionalIncome = () => {
@@ -215,72 +231,53 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
   useEffect(() => {
     if (autofillEnabled) {
       setAutofillLoading(true);
-      fetchAutofillData(userId)
+      fetchAutofillData('default-user')
         .then((data) => {
           if (data?.incomeSources?.length) {
             setLocalIncomeSources(data.incomeSources);
-            setAnswers({ incomeSources: data.incomeSources });
-            updateField('incomeSources', data.incomeSources);
+            setAnswers({ ...storeAnswers, incomeSources: data.incomeSources });
           }
           setAutofillLoading(false);
         })
-        .catch(() => {
+        .catch((err) => {
           setError('Autofill failed. Please enter income manually.');
+          console.error('Autofill error:', err);
           setAutofillLoading(false);
         });
     }
-  }, [autofillEnabled, userId, setAnswers, updateField]);
+  }, [autofillEnabled, setAnswers, storeAnswers]);
 
   const handleSubmit = () => {
-  console.log('handleSubmit triggered, onNext:', typeof onNext, 'onNext exists:', !!onNext);
-  try {
-    const payload = {
-      userId,
-      filingStatus,
-      incomeSources: localIncomeSources,
-      primaryResidence: initialData.primaryResidence || '',
-      livedAbroad: initialData.livedAbroad || false,
-      abroadCountry: initialData.abroadCountry || '',
-      abroadDuration: initialData.abroadDuration || '',
-      agi: parsedFields?.agi || '',
-      irsPin: parsedFields?.irsPin || '',
-      tipIncome: initialData.tipIncome || '',
-      overtimeIncome: initialData.overtimeIncome || '',
-      autoLoanInterest: initialData.autoLoanInterest || '',
-      isSenior: initialData.isSenior || false,
-    };
-    console.log('Saving to wizardStore:', payload);
-    updateField('incomeSources', localIncomeSources);
-    updateField('filingStatus', filingStatus);
-    updateField('primaryResidence', initialData.primaryResidence || '');
-    updateField('livedAbroad', initialData.livedAbroad || false);
-    updateField('abroadCountry', initialData.abroadCountry || '');
-    updateField('abroadDuration', initialData.abroadDuration || '');
-    updateField('agi', parsedFields?.agi || '');
-    updateField('irsPin', parsedFields?.irsPin || '');
-    updateField('tipIncome', initialData.tipIncome || '');
-    updateField('overtimeIncome', initialData.overtimeIncome || '');
-    updateField('autoLoanInterest', initialData.autoLoanInterest || '');
-    updateField('isSenior', initialData.isSenior || false);
-      console.log('Payload to saveIncomeData:', payload);
-      saveIncomeData(userId, payload)
-        .then(() => {
-          setError('');
-          if (onNext && typeof onNext === 'function') {
-            console.log('Calling onNext');
-            onNext();
-          } else {
-            console.warn('onNext is not a function or null');
-            alert('Next action is not available. Check wizard configuration.');
-          }
-        })
-        .catch((err) => {
-          setError('Failed to save income data. Please try again.');
-          console.error('Save error:', err);
-        });
+    console.log('handleSubmit triggered, onNext:', typeof onNext, 'onNext exists:', !!onNext);
+    try {
+      const payload = {
+        filingStatus,
+        incomeSources: localIncomeSources,
+        primaryResidence: initialData?.primaryResidence || '',
+        livedAbroad: initialData?.livedAbroad || false,
+        abroadCountry: initialData?.abroadCountry || '',
+        abroadDuration: initialData?.abroadDuration || '',
+        agi: initialData?.agi || '',
+        irsPin: initialData?.irsPin || '',
+        tipIncome: initialData?.tipIncome || '',
+        overtimeIncome: initialData?.overtimeIncome || '',
+        autoLoanInterest: initialData?.autoLoanInterest || '',
+        isSenior: initialData?.isSenior || false,
+      };
+      console.log('Saving to wizardStore:', payload);
+      setAnswers({ ...storeAnswers, ...payload });
+      if (onNext && typeof onNext === 'function') {
+        console.log('Calling onNext');
+        onNext();
+      } else {
+        console.warn('onNext is not a function or null');
+        setError('Next action is not available. Check wizard configuration.');
+        navigate('/filing/deductions');
+      }
     } catch (error) {
-      console.error('Error in handleSubmit:', error);
-      setError('An error occurred. Check console for details.');
+      console.error('Error in handleSubmit:', { message: error.message, stack: error.stack });
+      setError('An error occurred. Proceeding to next step.');
+      navigate('/filing/deductions');
     }
   };
 
@@ -291,7 +288,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
       onBack();
     } else {
       console.warn('onBack is not a function or null');
-      alert('Back action is not available. Check wizard configuration.');
+      navigate('/filing/personal');
     }
   };
 
@@ -369,23 +366,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Employee Address</label>
-                <input
-                  type="text"
-                  value={source.employeeAddress || ''}
-                  onChange={(e) => updateIncomeSource(index, { ...source, employeeAddress: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
-                />
-              </div>
-              <div className="input-group">
-                <label>Box 1: Wages, tips, other compensation</label>
+                <label>Wages (Box 1)</label>
                 <input
                   type="number"
                   value={source.box1 || ''}
@@ -401,7 +382,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 2: Federal income tax withheld</label>
+                <label>Federal Income Tax Withheld (Box 2)</label>
                 <input
                   type="number"
                   value={source.box2 || ''}
@@ -417,7 +398,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 3: Social security wages</label>
+                <label>Social Security Wages (Box 3)</label>
                 <input
                   type="number"
                   value={source.box3 || ''}
@@ -433,7 +414,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 4: Social security tax withheld</label>
+                <label>Social Security Tax Withheld (Box 4)</label>
                 <input
                   type="number"
                   value={source.box4 || ''}
@@ -449,7 +430,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 5: Medicare wages and tips</label>
+                <label>Medicare Wages and Tips (Box 5)</label>
                 <input
                   type="number"
                   value={source.box5 || ''}
@@ -465,7 +446,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 6: Medicare tax withheld</label>
+                <label>Medicare Tax Withheld (Box 6)</label>
                 <input
                   type="number"
                   value={source.box6 || ''}
@@ -481,7 +462,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 7: Social security tips</label>
+                <label>Social Security Tips (Box 7)</label>
                 <input
                   type="number"
                   value={source.box7 || ''}
@@ -497,7 +478,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 8: Allocated tips</label>
+                <label>Allocated Tips (Box 8)</label>
                 <input
                   type="number"
                   value={source.box8 || ''}
@@ -513,7 +494,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 9: Verification code</label>
+                <label>Verification Code (Box 9)</label>
                 <input
                   type="text"
                   value={source.box9 || ''}
@@ -529,7 +510,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 10: Dependent care benefits</label>
+                <label>Dependent Care Benefits (Box 10)</label>
                 <input
                   type="number"
                   value={source.box10 || ''}
@@ -545,7 +526,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 11: Nonqualified plans</label>
+                <label>Nonqualified Plans (Box 11)</label>
                 <input
                   type="number"
                   value={source.box11 || ''}
@@ -625,34 +606,40 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 13: Statutory employee</label>
+                <label>Statutory Employee (Box 13)</label>
                 <input
                   type="checkbox"
                   checked={source.box13Statutory || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, box13Statutory: e.target.checked })}
-                  style={{ marginRight: '0.5rem' }}
+                  style={{
+                    marginRight: '0.5rem'
+                  }}
                 />
               </div>
               <div className="input-group">
-                <label>Box 13: Retirement plan</label>
+                <label>Retirement Plan (Box 13)</label>
                 <input
                   type="checkbox"
                   checked={source.box13Retirement || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, box13Retirement: e.target.checked })}
-                  style={{ marginRight: '0.5rem' }}
+                  style={{
+                    marginRight: '0.5rem'
+                  }}
                 />
               </div>
               <div className="input-group">
-                <label>Box 13: Third-party sick pay</label>
+                <label>Third-Party Sick Pay (Box 13)</label>
                 <input
                   type="checkbox"
                   checked={source.box13SickPay || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, box13SickPay: e.target.checked })}
-                  style={{ marginRight: '0.5rem' }}
+                  style={{
+                    marginRight: '0.5rem'
+                  }}
                 />
               </div>
               <div className="input-group">
-                <label>Box 14: Other</label>
+                <label>Other (Box 14)</label>
                 <input
                   type="text"
                   value={source.box14 || ''}
@@ -667,50 +654,32 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                   }}
                 />
               </div>
-            </div>
-            <button
-              type="button"
-              className="remove-button"
-              onClick={() => removeIncomeSource(index)}
-              style={{
-                background: '#1c2232',
-                color: '#e1e8fc',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                fontWeight: 'bold',
-                marginTop: '1rem'
-              }}
-            >
-              Remove
-            </button>
-          </div>
-        );
-      case 'unemployment':
-        return (
-          <div className="income-block" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '1rem',
-            margin: '2rem 0',
-            background: '#1a1f2f',
-            borderRadius: '8px',
-            boxShadow: '0 0 12px rgba(161, 102, 255, 0.3)',
-            maxWidth: '720px'
-          }}>
-            <h4 style={{ color: '#a166ff' }}>{labelPrefix}Unemployment Income (Form 1099-G)</h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1rem',
-              marginBottom: '1rem'
-            }}>
               <div className="input-group">
-                <label>Box 1: Unemployment compensation</label>
+                <label>State (Box 15)</label>
+                <select
+                  value={source.box15 || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, box15: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    border: '1px solid #3a3f55',
+                    background: '#1c2232',
+                    color: '#e1e8fc'
+                  }}
+                >
+                  <option value="">Select State</option>
+                  {states.map((state) => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="input-group">
+                <label>State Wages (Box 16)</label>
                 <input
                   type="number"
-                  value={source.unemploymentCompensation || ''}
-                  onChange={(e) => updateIncomeSource(index, { ...source, unemploymentCompensation: e.target.value })}
+                  value={source.box16 || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, box16: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '0.5rem',
@@ -722,11 +691,59 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Box 2: State tax withheld</label>
+                <label>State Income Tax Withheld (Box 17)</label>
                 <input
                   type="number"
-                  value={source.stateTaxWithheld || ''}
-                  onChange={(e) => updateIncomeSource(index, { ...source, stateTaxWithheld: e.target.value })}
+                  value={source.box17 || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, box17: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    border: '1px solid #3a3f55',
+                    background: '#1c2232',
+                    color: '#e1e8fc'
+                  }}
+                />
+              </div>
+              <div className="input-group">
+                <label>Local Wages (Box 18)</label>
+                <input
+                  type="number"
+                  value={source.box18 || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, box18: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    border: '1px solid #3a3f55',
+                    background: '#1c2232',
+                    color: '#e1e8fc'
+                  }}
+                />
+              </div>
+              <div className="input-group">
+                <label>Local Income Tax Withheld (Box 19)</label>
+                <input
+                  type="number"
+                  value={source.box19 || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, box19: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    border: '1px solid #3a3f55',
+                    background: '#1c2232',
+                    color: '#e1e8fc'
+                  }}
+                />
+              </div>
+              <div className="input-group">
+                <label>Locality Name (Box 20)</label>
+                <input
+                  type="text"
+                  value={source.box20 || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, box20: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '0.5rem',
@@ -758,7 +775,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
         );
       case 'foreign':
         return (
-          <div className="income-block" style={{
+          <div className="foreign-block" style={{
             display: 'flex',
             flexDirection: 'column',
             padding: '1rem',
@@ -776,6 +793,22 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
               marginBottom: '1rem'
             }}>
               <div className="input-group">
+                <label>Amount</label>
+                <input
+                  type="number"
+                  value={source.amount || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, amount: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    border: '1px solid #3a3f55',
+                    background: '#1c2232',
+                    color: '#e1e8fc'
+                  }}
+                />
+              </div>
+              <div className="input-group">
                 <label>Country</label>
                 <input
                   type="text"
@@ -792,11 +825,11 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Total Foreign Earned Income</label>
+                <label>Residency Status</label>
                 <input
-                  type="number"
-                  value={source.totalForeignEarnedIncome || ''}
-                  onChange={(e) => updateIncomeSource(index, { ...source, totalForeignEarnedIncome: e.target.value })}
+                  type="text"
+                  value={source.residency || ''}
+                  onChange={(e) => updateIncomeSource(index, { ...source, residency: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '0.5rem',
@@ -808,28 +841,14 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
                 />
               </div>
               <div className="input-group">
-                <label>Foreign Housing Exclusion</label>
-                <input
-                  type="number"
-                  value={source.foreignHousingExclusion || ''}
-                  onChange={(e) => updateIncomeSource(index, { ...source, foreignHousingExclusion: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
-                />
-              </div>
-              <div className="input-group">
-                <label>Exclusion Requested</label>
+                <label>Foreign Earned Income Exclusion</label>
                 <input
                   type="checkbox"
                   checked={source.exclusion || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, exclusion: e.target.checked })}
-                  style={{ marginRight: '0.5rem' }}
+                  style={{
+                    marginRight: '0.5rem'
+                  }}
                 />
               </div>
               {source.exclusion && (
@@ -1103,53 +1122,42 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
             </div>
           )}
 
-        {useEffect(() => {
-  console.log('IncomeStep rendering Back button, onBack:', onBack);
-}, [onBack])}
-<div className="step-buttons">
-  <button
-    type="button"
-    onClick={() => {
-      console.log('Back button clicked, onBack:', onBack);
-      if (onBack) {
-        handleBack();
-      } else {
-        console.error('onBack is not defined, navigating to dashboard');
-        window.location.href = '/dashboard';
-      }
-    }}
-    style={{
-      background: '#1c2232',
-      color: '#e1e8fc',
-      padding: '0.5rem 1rem',
-      borderRadius: '6px',
-      border: '1px solid #3a3f55',
-      fontWeight: 'bold',
-      display: 'block',
-      visibility: 'visible',
-      opacity: 1
-    }}
-  >
-    Back
-  </button>
-  <button
-    className="primary"
-    onClick={handleSubmit}
-    style={{
-      background: '#72caff',
-      color: '#0f131f',
-      padding: '0.5rem 1rem',
-      borderRadius: '6px',
-      border: 'none',
-      fontWeight: 'bold'
-    }}
-  >
-    Next
-  </button>
-</div>
-</div>
+          <div className="step-buttons">
+            <button
+              type="button"
+              onClick={handleBack}
+              style={{
+                background: '#1c2232',
+                color: '#e1e8fc',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                border: '1px solid #3a3f55',
+                fontWeight: 'bold',
+                display: 'block',
+                visibility: 'visible',
+                opacity: 1
+              }}
+            >
+              Back
+            </button>
+            <button
+              className="primary"
+              onClick={handleSubmit}
+              style={{
+                background: '#72caff',
+                color: '#0f131f',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                border: 'none',
+                fontWeight: 'bold'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
         <div style={{ flex: 1, padding: '1rem' }}>
-          <RefundEstimate manualFields={initialData} parsedFields={parsedFields} />
+          <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
         </div>
       </div>
 
@@ -1243,7 +1251,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
           margin: 2rem 0;
           padding: 1rem;
           background: #1a1f2f;
-          border-radius: 8px;
+          borderRadius: '8px';
           box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
         }
       `}</style>
@@ -1252,8 +1260,7 @@ const IncomeStep = ({ userId, initialData, onNext, onBack, answers }) => {
 };
 
 IncomeStep.propTypes = {
-  userId: PropTypes.string.isRequired,
-  initialData: PropTypes.object.isRequired,
+  initialData: PropTypes.object,
   onNext: PropTypes.func.isRequired,
   onBack: PropTypes.func,
   answers: PropTypes.object.isRequired,

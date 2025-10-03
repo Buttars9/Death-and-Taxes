@@ -1,21 +1,61 @@
 import React from 'react';
-import { useWizardStore } from '../../../store/wizardStore';
-import { exportIRSReceiptPDF } from '../../../utils/exportIRSReceipt';
+import { useWizardStore } from "../stores/wizardStore";
+import { calculateRefund } from "../shared/utils/calculateRefund.js";
 
 export default function IRSReceipt() {
   const store = useWizardStore.getState();
   const agi = store.estimateAGI();
-  const refundEstimate = store.getRefundableCredits().length * 1000;
+
+  const refund = calculateRefund({
+    state: store.state,
+    statesPaid: Array.from(
+      new Set(
+        (store.answers.incomeSources || [])
+          .map((src) => src.box15?.trim())
+          .filter(Boolean)
+      )
+    ),
+    filingStatus: store.getFilingStatus(),
+    income: agi,
+    dependents: store.answers.dependents?.length || 0,
+    age: store.answers.age || 0,
+    tipIncome: store.answers.tipIncome || 0,
+    overtimeIncome: store.answers.overtimeIncome || 0,
+    saltPaid: store.answers.saltPaid || 0,
+    assets: store.answers.assets || [],
+    deductionType: store.answers.deductionType || 'standard',
+    deductions: store.answers.deductions || [],
+    credits: store.answers.credits || [],
+    taxWithheld: store.answers.incomeSources?.reduce((sum, src) => sum + Number(src.box2 || src.federalTaxWithheld || 0), 0) || 0,
+    estimatedPayments: Number(store.answers.estimatedPayments) || 0,
+    stateTaxWithheld: store.answers.incomeSources?.reduce((sum, src) => sum + Number(src.box17 || 0), 0) || 0,
+    incomeSources: store.answers.incomeSources || [],
+  });
+
   const timestamp = new Date().toISOString();
-  const escrowHash = btoa(`${store.ssn}-${timestamp}`); // symbolic hash
+  const escrowHash = btoa(`${store.ssn}-${timestamp}`);
+
+  const formatArray = (arr) =>
+    Array.isArray(arr)
+      ? arr.map((item) =>
+          typeof item === 'object' ? JSON.stringify(item) : String(item)
+        ).join(', ')
+      : '—';
+
+  const formatCurrency = (amount) => `$${Number(amount).toLocaleString()}`;
+
+  const stateRefunds = refund.stateRefunds || {};
+  const stateNames = Object.keys(stateRefunds);
+
+  const isFederalRefund = refund.federalRefund > 0;
+  const federalAmount = isFederalRefund ? refund.federalRefund : refund.federalBalanceDue;
 
   const receipt = {
     FilingStatus: store.getFilingStatus(),
     AGI: `$${agi.toLocaleString()}`,
-    EstimatedRefund: `$${refundEstimate.toLocaleString()}`,
-    IncomeSources: store.answers.incomeSources.join(', '),
-    Deductions: store.answers.deductions.join(', '),
-    Credits: store.answers.credits.join(', '),
+    IncomeSources: formatArray(store.answers.incomeSources),
+    Deductions: formatArray(store.answers.deductions),
+    Credits: formatArray(store.answers.credits),
     EscrowEnabled: store.paymentType === 'pi' ? 'Yes' : 'No',
     TrustConfirmed: store.answers.trustConfirmed ? 'Yes' : 'No',
     SSN: store.ssn,
@@ -48,9 +88,34 @@ export default function IRSReceipt() {
         ))}
       </ul>
 
-      <button onClick={exportIRSReceiptPDF}>
-        Download Receipt (PDF)
-      </button>
+      <div className="refund-breakdown">
+        <h3>📊 Refund Breakdown</h3>
+        <ul className="receipt-list">
+          <li className="receipt-item">
+            <strong>Federal:</strong>{' '}
+            <span style={{ color: isFederalRefund ? '#00ff9d' : '#ff4d6d' }}>
+              {isFederalRefund
+                ? `Refund of ${formatCurrency(federalAmount)}`
+                : `Balance Due of ${formatCurrency(federalAmount)}`}
+            </span>
+          </li>
+          {stateNames.map((stateName) => {
+            const data = stateRefunds[stateName];
+            const isRefund = data.stateRefund > 0;
+            const amount = isRefund ? data.stateRefund : data.stateBalanceDue;
+            return (
+              <li key={stateName} className="receipt-item">
+                <strong>{stateName}:</strong>{' '}
+                <span style={{ color: isRefund ? '#00ff9d' : '#ff4d6d' }}>
+                  {isRefund
+                    ? `Refund of ${formatCurrency(amount)}`
+                    : `Balance Due of ${formatCurrency(amount)}`}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
 
       <style jsx>{`
         .irs-receipt {
@@ -93,13 +158,9 @@ export default function IRSReceipt() {
           border-radius: 4px;
           color: #72caff;
         }
-        button {
-          background: #72caff;
-          color: #0f131f;
-          padding: 0.75rem 1.25rem;
-          border-radius: 6px;
-          border: none;
-          font-weight: bold;
+        .refund-breakdown h3 {
+          margin-top: 2rem;
+          color: #a166ff;
         }
       `}</style>
     </div>

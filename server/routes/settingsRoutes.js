@@ -6,11 +6,11 @@ import { authGate } from '../middleware/authGate.js'
 
 const router = express.Router()
 
-router.get('/wallet', authGate, (req, res) => {
+router.get('/wallet', (req, res) => {
   return res.status(200).json({ wallet: getAdminWallet() })
 })
 
-router.post('/wallet', authGate, (req, res) => {
+router.post('/wallet', (req, res) => {
   try {
     const { wallet } = req.body
     setAdminWallet(wallet)

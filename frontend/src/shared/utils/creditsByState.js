@@ -1,24 +1,61 @@
-export const creditsByState = {
-  CA: [
-    { type: 'CA Earned Income Credit', amount: 500 },
-    { type: 'Solar Incentive', amount: 750 },
-  ],
-  NY: [
-    { type: 'Renters Rebate', amount: 300 },
-    { type: 'College Tuition Credit', amount: 1000 },
-  ],
-  TX: [
-    { type: 'Veterans Property Credit', amount: 800 },
-  ],
-  FL: [
-    { type: 'Hurricane Prep Credit', amount: 250 },
-  ],
-  IL: [
-    { type: 'Green Vehicle Credit', amount: 600 },
-  ],
-  // Add more states as needed
-};
-
-export function getStateCredits(state) {
+export function getStateCredits(state, dependents = 0) {
+  const creditsByState = {
+    Alabama: [{ name: 'No major state credits', amount: 0, note: 'Limited credits available.' }],
+    Alaska: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+    Arizona: [{ name: 'Family Tax Credit', amount: 100 * dependents, note: 'Per dependent, income limits apply.' }],
+    Arkansas: [{ name: 'Low-Income Tax Credit', amount: 50, note: 'For low-income filers.' }],
+    California: [
+      { name: 'California Earned Income Tax Credit', amount: 300, note: 'For low-income filers' },
+      { name: 'Child and Dependent Care Credit', amount: 1000 * dependents, note: 'For qualifying expenses' },
+    ],
+    Colorado: [{ name: 'Child Care Credit', amount: 200 * dependents, note: '50% of federal credit.' }],
+    Connecticut: [{ name: 'Child Tax Credit', amount: 200 * dependents, note: 'For qualifying children.' }],
+    Delaware: [{ name: 'Child Care Credit', amount: 150 * dependents, note: 'For qualifying expenses.' }],
+    Florida: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+    Georgia: [{ name: 'Child and Dependent Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    Hawaii: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'Income limits apply.' }],
+    Idaho: [{ name: 'Idaho Child Tax Credit', amount: 205 * dependents, note: 'Per qualifying child.' }],
+    Illinois: [{ name: 'Earned Income Credit', amount: 150, note: '18% of federal EITC.' }],
+    Indiana: [{ name: 'Child and Dependent Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    Iowa: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'For qualifying expenses.' }],
+    Kansas: [{ name: 'Child and Dependent Care Credit', amount: 100 * dependents, note: '25% of federal credit.' }],
+    Kentucky: [{ name: 'Child and Dependent Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    Louisiana: [{ name: 'Child Care Credit', amount: 200 * dependents, note: 'For child care expenses.' }],
+    Maine: [{ name: 'Child Care Credit', amount: 150 * dependents, note: 'For qualifying expenses.' }],
+    Maryland: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'For qualifying expenses.' }],
+    Massachusetts: [{ name: 'Child and Dependent Care Credit', amount: 250 * dependents, note: 'For qualifying expenses.' }],
+    Michigan: [{ name: 'No major child credits', amount: 0, note: 'Limited child-specific credits.' }],
+    Minnesota: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'For qualifying expenses.' }],
+    Mississippi: [{ name: 'No major state credits', amount: 0, note: 'Limited credits available.' }],
+    Missouri: [{ name: 'Child Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    Montana: [{ name: 'Child Care Credit', amount: 150 * dependents, note: 'For qualifying expenses.' }],
+    Nebraska: [{ name: 'Child and Dependent Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    Nevada: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+    NewHampshire: [{ name: 'No income tax on earned income', amount: 0, note: 'No income tax.' }],
+    NewJersey: [{ name: 'Child and Dependent Care Credit', amount: 300 * dependents, note: 'For qualifying expenses.' }],
+    NewMexico: [{ name: 'Child Care Credit', amount: 200 * dependents, note: 'For low-income filers.' }],
+    NewYork: [
+      { name: 'New York Child Tax Credit', amount: 250 * dependents, note: 'For qualifying children.' },
+      { name: 'Child and Dependent Care Credit', amount: 100 * dependents, note: 'For qualifying expenses' },
+    ],
+    NorthCarolina: [{ name: 'Child Deduction', amount: 125 * dependents, note: 'Per qualifying child.' }],
+    NorthDakota: [{ name: 'Child Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    Ohio: [{ name: 'No major child credits', amount: 0, note: 'Limited child-specific credits.' }],
+    Oklahoma: [{ name: 'Child Care Credit', amount: 150 * dependents, note: 'For qualifying expenses.' }],
+    Oregon: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'For qualifying expenses.' }],
+    Pennsylvania: [{ name: 'No major child credits', amount: 0, note: 'Flat tax rate.' }],
+    RhodeIsland: [{ name: 'Child Care Credit', amount: 100 * dependents, note: '25% of federal credit.' }],
+    SouthCarolina: [{ name: 'Child Care Credit', amount: 100 * dependents, note: 'For qualifying expenses.' }],
+    SouthDakota: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+    Tennessee: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+    Texas: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+    Utah: [{ name: 'Child Tax Credit', amount: 100 * dependents, note: 'For qualifying children.' }],
+    Vermont: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'For qualifying expenses.' }],
+    Virginia: [{ name: 'Child and Dependent Care Credit', amount: 150 * dependents, note: 'For qualifying expenses.' }],
+    Washington: [{ name: 'Working Families Tax Credit', amount: 300, note: 'For low-income filers.' }],
+    WestVirginia: [{ name: 'Family Tax Credit', amount: 100 * dependents, note: 'For low-income filers.' }],
+    Wisconsin: [{ name: 'Child and Dependent Care Credit', amount: 200 * dependents, note: 'For qualifying expenses.' }],
+    Wyoming: [{ name: 'No state income tax', amount: 0, note: 'No state income tax.' }],
+  };
   return creditsByState[state] || [];
 }

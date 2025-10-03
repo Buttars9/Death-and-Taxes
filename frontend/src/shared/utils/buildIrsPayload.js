@@ -1,67 +1,63 @@
-/**
- * Converts validated user answers into IRS-aligned payload.
- * Uses formMapping.js to assign form, line, and value.
- * Output is structured for backend dispatch and PDF generation.
- */
-
-import { formMapping } from '../../questions/formMapping.js'; // ✅ FIXED PATH
-import { autoLoanCap, seniorDeductionAmount } from '../../constants.js'; // 🔧 NEW IMPORT
+import { formMapping } from '../../questions/formMapping.js';
 
 export function buildIrsPayload(validatedAnswers) {
-  const payload = {};
+  const payload = {
+    forms: {},
+    metadata: {
+      timestamp: new Date().toISOString(),
+      source: 'Powered by Pi - Death & Taxes',
+    },
+  };
 
-  // Handle atomic fields
-  Object.entries(formMapping).forEach(([key, meta]) => {
-    if (key === 'incomeSources') return;
+  const flatAnswers = { ...validatedAnswers };
 
-    const value = validatedAnswers[key];
-    if (value === undefined) return;
+  // Flatten incomeSources
+  if (Array.isArray(validatedAnswers.incomeSources)) {
+    validatedAnswers.incomeSources.forEach((src, i) => {
+      Object.entries(src).forEach(([subKey, value]) => {
+        const key = `incomeSources.${subKey}`;
+        flatAnswers[key] = value;
+      });
+    });
+  }
 
-    if (!payload[meta.form]) {
-      payload[meta.form] = {};
+  // Flatten deductions
+  if (Array.isArray(validatedAnswers.deductions)) {
+    validatedAnswers.deductions.forEach((d, i) => {
+      flatAnswers[`deduction_${i}_value`] = d.value;
+      flatAnswers[`deduction_${i}_amount`] = d.amount;
+    });
+  }
+
+  // Flatten credits
+  if (Array.isArray(validatedAnswers.credits)) {
+    validatedAnswers.credits.forEach((c, i) => {
+      flatAnswers[`credit_${i}_value`] = c.value;
+      flatAnswers[`credit_${i}_amount`] = c.amount;
+    });
+  }
+
+  // Flatten dependents
+  if (Array.isArray(validatedAnswers.dependents)) {
+    validatedAnswers.dependents.forEach((dep, i) => {
+      flatAnswers[`dependent_${i}_name`] = dep.name;
+      flatAnswers[`dependent_${i}_ssn`] = dep.ssn;
+      flatAnswers[`dependent_${i}_dob`] = dep.dob;
+      flatAnswers[`dependent_${i}_relationship`] = dep.relationship;
+    });
+  }
+
+  Object.entries(flatAnswers).forEach(([key, value]) => {
+    const lookupKey = key.startsWith('incomeSources.') ? key.split('.')[1] : key;
+    const meta = formMapping[lookupKey];
+
+    if (!meta || !meta.form || !meta.line) return;
+
+    if (!payload.forms[meta.form]) {
+      payload.forms[meta.form] = {};
     }
 
-    payload[meta.form][meta.line] = value;
-
-    // 🔧 OBBBA 2025 Deductions — Injected Here
-    if (key === 'tipIncome') {
-      const deduction = Math.min(Number(value), 3000);
-      payload['1040'] = payload['1040'] || {};
-      payload['1040']['12a'] = (payload['1040']['12a'] || 0) + deduction;
-    }
-
-    if (key === 'overtimeIncome') {
-      const deduction = Math.min(Number(value) * 0.15, 5000);
-      payload['1040'] = payload['1040'] || {};
-      payload['1040']['12b'] = (payload['1040']['12b'] || 0) + deduction;
-    }
-
-    if (key === 'autoLoanInterest') {
-      const deduction = Math.min(Number(value), autoLoanCap);
-      payload['1040'] = payload['1040'] || {};
-      payload['1040']['12c'] = (payload['1040']['12c'] || 0) + deduction;
-    }
-
-    if (key === 'isSenior' && value === true) {
-      payload['1040'] = payload['1040'] || {};
-      payload['1040']['12d'] = (payload['1040']['12d'] || 0) + seniorDeductionAmount;
-    }
-  });
-
-  // Handle incomeSources
-  const incomeMeta = formMapping.incomeSources || {};
-  Object.keys(validatedAnswers).forEach((key) => {
-    if (!key.startsWith('incomeSources.')) return;
-
-    const source = key.split('.')[1];
-    const meta = incomeMeta[source];
-    if (!meta) return;
-
-    if (!payload[meta.form]) {
-      payload[meta.form] = {};
-    }
-
-    payload[meta.form][meta.line] = true;
+    payload.forms[meta.form][meta.line] = value;
   });
 
   return payload;

@@ -17,25 +17,26 @@ export default function Dashboard() {
   const [parsedFields, setParsedFields] = useState(null);
 
   useEffect(() => {
-    const loadWizardState = async () => {
-      try {
-        const res = await fetch('/api/loadWizardState', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setAnswers(data.answers || {});
-        }
-      } catch (err) {
-        console.error('Load wizard state error:', err);
+  const loadWizardState = async () => {
+    try {
+      const res = await fetch('/api/loadWizardState', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAnswers(data.answers || {});
       }
-    };
-    if (isAuthenticated) {
-      loadWizardState();
+    } catch (err) {
+      console.error('Load wizard state error:', err);
     }
-  }, [isAuthenticated, setAnswers]);
+  };
+
+  if (isAuthenticated && user) {
+    loadWizardState();
+  }
+}, [isAuthenticated, user, setAnswers]);
 
   useEffect(() => {
     const unsubscribe = useWizardStore.subscribe(
@@ -115,46 +116,32 @@ export default function Dashboard() {
 
       {submissions.length > 0 && <RefundStatusCard />}
 
-      <div style={{ marginBottom: '2rem' }}>
-        <button
-          style={{
-            ...styles.authButton,
-            opacity: canStart ? 1 : 0.5,
-            cursor: canStart ? 'pointer' : 'not-allowed',
-          }}
-          onClick={handleStartFiling}
-          title="Begin filing — even if some fields are blank"
-        >
-          Start Filing
-        </button>
-      </div>
+      <div style={styles.centerBlock}>
+  <button
+    style={{
+      ...styles.authButton,
+      opacity: canStart ? 1 : 0.5,
+      cursor: canStart ? 'pointer' : 'not-allowed',
+    }}
+    onClick={handleStartFiling}
+    title="Begin filing — even if some fields are blank"
+  >
+    Start Filing
+  </button>
+
+    <button
+    style={styles.authButton}
+    onClick={handleLogout}
+    title="Log out and return to home"
+  >
+    Logout
+  </button>
+</div>
 
       <div style={{ marginBottom: '3rem' }}>
         <AuditTrailLedger submissions={submissions} />
       </div>
 
-      <div style={styles.actionsBlock}>
-        <button style={styles.secondaryButton}>View Return Summary</button>
-        <button style={styles.secondaryButton}>Sign & Submit</button>
-        <button
-          style={styles.secondaryButton}
-          onClick={() => {
-            const json = JSON.stringify(parsedFields || {}, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `filing-summary-${Date.now()}.json`;
-            link.click();
-            URL.revokeObjectURL(url);
-          }}
-        >
-          Download Filing Summary
-        </button>
-        <button style={styles.secondaryButton} onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
     </div>
   );
 }
@@ -236,5 +223,11 @@ const styles = {
     cursor: 'pointer',
     padding: '0 14px',
     transition: 'transform 0.2s ease',
+  },
+  centerBlock: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '1.5rem',
+    margin: '3rem 0',
   },
 };

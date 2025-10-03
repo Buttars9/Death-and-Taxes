@@ -27,3 +27,25 @@ export function queuePayout(submissionId, filingPayload) {
 export function getPayout(submissionId) {
   return payoutQueue.get(submissionId) || null;
 }
+
+/**
+ * Update a payout record after payment.
+ * @param {string} submissionId
+ * @param {string} txid
+ * @param {string} method
+ * @returns {boolean}
+ */
+export function updatePayout(submissionId, txid, method) {
+  const existing = payoutQueue.get(submissionId);
+  if (!existing) return false;
+
+  payoutQueue.set(submissionId, {
+    ...existing,
+    txid,
+    method,
+    status: 'Completed',
+    updatedAt: new Date().toISOString(),
+  });
+
+  return true;
+}

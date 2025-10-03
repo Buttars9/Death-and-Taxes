@@ -20,3 +20,32 @@
   font-size: 1.2rem;
   color: #00ffcc;
 }
+
+.refund-explanation {
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #ffffff;
+  padding-right: 8px;
+}
+
+/* Custom scrollbar styling for WebKit browsers */
+.refund-explanation::-webkit-scrollbar {
+  width: 6px;
+}
+
+.refund-explanation::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.refund-explanation::-webkit-scrollbar-thumb {
+  background-color: #00ffff;
+  border-radius: 3px;
+  border: 1px solid #a166ff;
+}
+
+.refund-explanation::-webkit-scrollbar-thumb:hover {
+  background-color: #a166ff;
+}

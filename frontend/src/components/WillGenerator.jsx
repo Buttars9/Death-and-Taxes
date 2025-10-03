@@ -1,16 +1,19 @@
-// death-and-taxes/frontend/src/components/WillGenerator.jsx
-
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useWizardStore } from '../stores/wizardStore';
 
-export default function WillGenerator() {
-  const { willData, setWillData } = useWizardStore();
+export default function WillGenerator({ onNext, onBack }) {
+  const { answers, setAnswers } = useWizardStore();
+const willData = answers.willData || {};
   const [age, setAge] = useState(willData.primaryBeneficiaryAge || '');
 
   const handleChange = (field, value) => {
     const updated = { ...willData, [field]: value };
     if (field === 'primaryBeneficiaryAge') setAge(value);
-    setWillData(updated);
+    setAnswers({
+  ...answers,
+  willData: updated,
+});
   };
 
   const isMinor = Number(age) < 18;
@@ -28,7 +31,6 @@ export default function WillGenerator() {
         <input
           value={willData.fullName || ''}
           onChange={(e) => handleChange('fullName', e.target.value)}
-          required
         />
       </div>
 
@@ -37,7 +39,6 @@ export default function WillGenerator() {
         <input
           value={willData.primaryBeneficiary || ''}
           onChange={(e) => handleChange('primaryBeneficiary', e.target.value)}
-          required
         />
       </div>
 
@@ -47,7 +48,6 @@ export default function WillGenerator() {
           type="number"
           value={age}
           onChange={(e) => handleChange('primaryBeneficiaryAge', e.target.value)}
-          required
         />
       </div>
 
@@ -57,17 +57,23 @@ export default function WillGenerator() {
           <input
             value={willData.guardianName || ''}
             onChange={(e) => handleChange('guardianName', e.target.value)}
-            required
           />
         </div>
       )}
+
+      <div className="glowing-input">
+        <label>Contingent Beneficiary (if primary is deceased)</label>
+        <input
+          value={willData.contingentBeneficiary || ''}
+          onChange={(e) => handleChange('contingentBeneficiary', e.target.value)}
+        />
+      </div>
 
       <div className="glowing-input">
         <label>Executor of Will</label>
         <input
           value={willData.executor || ''}
           onChange={(e) => handleChange('executor', e.target.value)}
-          required
         />
       </div>
 
@@ -103,6 +109,101 @@ export default function WillGenerator() {
         />
       </div>
 
+      <div className="glowing-input">
+        <label>Signature Date</label>
+        <input
+          type="date"
+          value={willData.signatureDate || ''}
+          onChange={(e) => handleChange('signatureDate', e.target.value)}
+        />
+      </div>
+
+      <div className="glowing-input">
+        <label>Jurisdiction (State or Country)</label>
+        <input
+          value={willData.jurisdiction || ''}
+          onChange={(e) => handleChange('jurisdiction', e.target.value)}
+        />
+      </div>
+
+      <div className="glowing-input">
+        <label>Witness Names (comma-separated)</label>
+        <input
+          value={willData.witnesses || ''}
+          onChange={(e) => handleChange('witnesses', e.target.value)}
+        />
+      </div>
+
+      {willData.witnesses && (
+        <p className="trust-note">
+          ⚠️ A valid will must be signed in the presence of two witnesses. After printing, ensure both are present during signing. The printable version will include signature blocks for all parties.
+        </p>
+      )}
+
+      <div className="glowing-input">
+        <label>Revocation Clause</label>
+        <select
+          value={willData.revocationClause ? 'yes' : 'no'}
+          onChange={(e) => handleChange('revocationClause', e.target.value === 'yes')}
+        >
+          <option value="yes">✅ I revoke all prior wills and codicils</option>
+          <option value="no">❌ Do not include</option>
+        </select>
+      </div>
+
+      <div className="glowing-input">
+        <label>Residue Clause</label>
+        <select
+          value={willData.includeResidueClause ? 'yes' : 'no'}
+          onChange={(e) => handleChange('includeResidueClause', e.target.value === 'yes')}
+        >
+          <option value="yes">✅ Include clause for unlisted assets</option>
+          <option value="no">❌ Omit clause</option>
+        </select>
+      </div>
+
+      <div className="glowing-input">
+        <label>Digital Assets Clause</label>
+        <select
+          value={willData.includeDigitalAssetsClause ? 'yes' : 'no'}
+          onChange={(e) => handleChange('includeDigitalAssetsClause', e.target.value === 'yes')}
+        >
+          <option value="yes">✅ Include clause for email, crypto, cloud</option>
+          <option value="no">❌ Omit clause</option>
+        </select>
+      </div>
+
+      <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
+        <button
+          type="button"
+          onClick={onBack}
+          style={{
+            background: '#1c2232',
+            color: '#e1e8fc',
+            padding: '0.5rem 1rem',
+            borderRadius: '6px',
+            border: '1px solid #3a3f55',
+            fontWeight: 'bold'
+          }}
+        >
+          Back
+        </button>
+        <button
+          className="primary"
+          onClick={onNext}
+          style={{
+            background: '#72caff',
+            color: '#0f131f',
+            padding: '0.5rem 1rem',
+            borderRadius: '6px',
+            border: 'none',
+            fontWeight: 'bold'
+          }}
+        >
+          Next
+        </button>
+      </div>
+
       <style jsx>{`
         .will-generator {
           padding: 2rem;
@@ -123,7 +224,8 @@ export default function WillGenerator() {
           margin-bottom: 0.5rem;
         }
         input,
-        textarea {
+        textarea,
+        select {
           width: 100%;
           padding: 0.5rem;
           border-radius: 6px;
@@ -143,3 +245,8 @@ export default function WillGenerator() {
     </div>
   );
 }
+
+WillGenerator.propTypes = {
+  onNext: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
+};

@@ -6,7 +6,6 @@ import { persist, createJSONStorage } from 'zustand/middleware';
  * Tracks payment type, answers, state selection, will data, and branching logic.
  * All setters include validation and audit-safe defaults.
  */
-
 export const useWizardStore = create(
   persist(
     (set, get) => ({
@@ -24,13 +23,15 @@ export const useWizardStore = create(
         incomeSources: [], // ✅ From IncomeSourcesStep
         deductions: [],     // ✅ From DeductionsClaimStep
         credits: [],        // ✅ From CreditsClaimStep
+       trustConfirmed: false, 
       },
-      setAnswers: (payload) => {
-        if (!payload || typeof payload !== 'object') {
-          throw new Error('❌ Invalid answers payload');
-        }
-        set({ answers: { ...payload } });
-      },
+     setAnswers: (payload, callback) => {
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('❌ Invalid answers payload');
+  }
+  set({ answers: { ...payload } });
+  if (typeof callback === 'function') callback();
+},
 
       // 🧭 State Selection
       state: '',
@@ -163,6 +164,31 @@ export const useWizardStore = create(
     {
       name: 'wizard-store',
       storage: createJSONStorage(() => localStorage),
+      // FIX: Persist key fields to prevent reset on refresh
+      partialize: (state) => ({
+        answers: state.answers,
+        w2s: state.w2s,
+        state: state.state,
+        willData: state.willData,
+        firstName: state.firstName,
+        lastName: state.lastName,
+        ssn: state.ssn,
+        dob: state.dob,
+        address: state.address,
+        maritalStatus: state.maritalStatus,
+        residentState: state.residentState,
+        priorAGI: state.priorAGI,
+        irsPin: state.irsPin,
+        dependents: state.dependents,
+        spouseName: state.spouseName,
+        spouseSSN: state.spouseSSN,
+        spouseDob: state.spouseDob,
+        spouseIncomeSources: state.spouseIncomeSources,
+        foreignIncome: state.foreignIncome,
+        agi: state.agi,
+        submissionConfirmed: state.submissionConfirmed,
+        auditTrail: state.auditTrail,
+      }),
     }
   )
 );

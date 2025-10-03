@@ -1,5 +1,3 @@
-// death-and-taxes/src/pages/Questionnaire/steps/PriorYearStep.jsx
-
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox';
@@ -17,13 +15,13 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
   const isValid = priorAGI !== '' && !isNaN(priorAGI);
 
   const handleSubmit = () => {
-    if (!isValid) return;
+    if (!isValid || typeof setAnswers !== 'function') return;
 
-    setAnswers((prev) => ({
-      ...prev,
+    setAnswers({
+      ...answers,
       priorAGI: Number(priorAGI),
       irsPIN: irsPIN || null,
-    }));
+    });
     onNext();
   };
 
@@ -61,7 +59,22 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
         </div>
 
         <div className="step-buttons">
-          {onBack && <button onClick={onBack}>Back</button>}
+          {onBack && (
+          <button
+  type="button"
+  onClick={onBack}
+  style={{
+    background: '#1c2232',
+    color: '#e1e8fc',
+    padding: '0.5rem 1rem',
+    borderRadius: '6px',
+    border: '1px solid #3a3f55',
+    fontWeight: 'bold',
+  }}
+>
+  Back
+</button>
+          )}
           <button className="primary" onClick={handleSubmit} disabled={!isValid}>
             Next
           </button>
@@ -96,6 +109,7 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
           border: none;
           font-weight: bold;
         }
+        
         button:disabled {
           opacity: 0.5;
           cursor: not-allowed;

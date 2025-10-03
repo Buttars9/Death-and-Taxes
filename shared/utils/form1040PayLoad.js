@@ -1,6 +1,6 @@
 // death-and-taxes/src/shared/utils/form1040Payload.js
 
-export function buildForm1040Payload(answers) {
+export default function buildForm1040Payload(answers) {
   if (!answers?.trustConfirmed) {
     throw new Error('❌ Cannot build 1040 payload without trust confirmation.');
   }
@@ -13,6 +13,7 @@ export function buildForm1040Payload(answers) {
     maritalStatus,
     spouseName,
     spouseSSN,
+    spouseDob,
     dependents = [],
     filingStatus,
     income = 0,
@@ -59,9 +60,10 @@ export function buildForm1040Payload(answers) {
       address,
       filingStatus,
       maritalStatus,
-      spouse: maritalStatus === 'married_joint' ? {
+      spouse: ['married_joint', 'marriedJointly'].includes(maritalStatus) ? {
         name: spouseName,
         ssn: spouseSSN,
+        dob: spouseDob,
       } : null,
       dependents: mappedDependents,
       residentState,

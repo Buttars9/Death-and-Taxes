@@ -1,4 +1,6 @@
-module.exports = {
+// death-and-taxes/server/data/taxData2025.js
+
+const taxData2025 = {
   federal: {
     brackets: {
       single: [
@@ -14,13 +16,32 @@ module.exports = {
         [0.32, 250500], [0.35, 626350], [0.37, Infinity]
       ]
     },
-    standardDeduction: { single: 15000, married: 30000, headOfHousehold: 22500 },
+    standardDeduction: {
+      single: 15000,
+      married: 30000,
+      headOfHousehold: 22500
+    },
     childTaxCredit: 2200
   },
   states: {
-    Alabama: { rates: { single: [[2, 500], [4, 3000], [5, Infinity]], married: [[2, 1000], [4, 6000], [5, Infinity]] } },
-    Alaska: { rates: { single: [[0, Infinity]] } },
-    Arizona: { rates: { single: [[2.5, Infinity]] } },
+    Alabama: {
+      rates: {
+        single: [[2, 500], [4, 3000], [5, Infinity]],
+        married: [[2, 1000], [4, 6000], [5, Infinity]]
+      }
+    },
+    Alaska: {
+      rates: {
+        single: [[0, Infinity]]
+      }
+    },
+    Arizona: {
+      rates: {
+        single: [[2.5, Infinity]]
+      }
+    }
     // Add more states from taxfoundation.org
   }
 };
+
+export default taxData2025;

@@ -1,59 +1,83 @@
-/**
- * Generates a printable IRS-aligned PDF from structured payload.
- * Uses formMapping.js for labels and layout.
- * Can be used client-side (preview) or server-side (final export).
- */
-
 import jsPDF from 'jspdf';
-import { formMapping } from '../../questions/formMapping.js'; // ✅ FIXED PATH
 
-export function generateIrsPdf(payload) {
+export default function generateIrsPdf(payload) {
+  console.log('📄 generateIrsPdf invoked');
+  console.log('🧾 Raw payload:', payload);
+  console.log('📦 payload.json:', payload?.json);
+
   const doc = new jsPDF();
-  let y = 20;
 
   doc.setFont('helvetica');
-  doc.setFontSize(16);
-  doc.text('IRS Filing Summary', 20, y);
-  y += 10;
+  doc.setFontSize(14);
+  doc.text('IRS Filing Summary', 20, 20);
 
-  Object.entries(payload).forEach(([form, lines]) => {
-    doc.setFontSize(14);
-    doc.text(`Form ${form}`, 20, y);
+  doc.setFontSize(10);
+  doc.text(`Generated: ${new Date().toISOString()}`, 20, 30);
+  doc.text(`Source: IRS Filing Flow`, 20, 36);
+
+  let y = 50;
+
+  const json = payload?.json;
+  if (!json || typeof json !== 'object') {
+    console.warn('⚠️ No valid json block found in payload.');
+    doc.text('No IRS data available.', 20, y);
+    return doc;
+  }
+
+  Object.entries(json).forEach(([section, content]) => {
+    console.log(`🔍 Section: ${section}`, content);
+
+    doc.setFontSize(12);
+    doc.text(`Form ${section}`, 20, y);
+    y += 6;
+
+    if (content && typeof content === 'object' && !Array.isArray(content)) {
+      Object.entries(content).forEach(([key, value]) => {
+        console.log(`🧩 Line ${key}:`, value);
+
+        const formatted = formatValue(value);
+        const lines = doc.splitTextToSize(`Line ${key}: ${formatted}`, 160);
+        lines.forEach(line => {
+          doc.setFontSize(10);
+          doc.text(line, 30, y);
+          y += 5;
+          if (y > 280) {
+            doc.addPage();
+            y = 20;
+          }
+        });
+      });
+    } else {
+      console.log(`📄 Primitive block for ${section}:`, content);
+
+      const formatted = formatValue(content);
+      const lines = doc.splitTextToSize(`Value: ${formatted}`, 160);
+      lines.forEach(line => {
+        doc.setFontSize(10);
+        doc.text(line, 30, y);
+        y += 5;
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+    }
+
     y += 8;
-
-    Object.entries(lines).forEach(([line, value]) => {
-      const label = findLabel(form, line);
-      const displayValue = formatValue(value);
-
-      doc.setFontSize(12);
-      doc.text(`Line ${line}: ${label} — ${displayValue}`, 25, y);
-      y += 6;
-
-      if (y > 280) {
-        doc.addPage();
-        y = 20;
-      }
-    });
-
-    y += 4;
   });
 
   return doc;
 }
 
-// Helper: Find label from formMapping
-function findLabel(form, line) {
-  for (const [key, meta] of Object.entries(formMapping)) {
-    if (meta.form === form && meta.line === line) {
-      return meta.label || key;
-    }
-  }
-  return 'Unknown field';
-}
-
-// Helper: Format value for display
 function formatValue(val) {
+  if (val === null || val === undefined) return '—';
   if (typeof val === 'boolean') return val ? '✓' : '✗';
   if (typeof val === 'number') return `$${val.toFixed(2)}`;
+  if (Array.isArray(val)) {
+    return val.map(item =>
+      typeof item === 'object' ? JSON.stringify(item, null, 2) : String(item)
+    ).join('\n');
+  }
+  if (typeof val === 'object') return JSON.stringify(val, null, 2);
   return String(val);
 }

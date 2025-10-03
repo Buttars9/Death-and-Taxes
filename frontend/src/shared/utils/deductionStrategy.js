@@ -20,20 +20,10 @@ export function determineDeductionStrategy(answers) {
     childcareExpenses = 0,
     retirementContributions = 0,
     medicalExpenses = 0,
-    tipIncome = 0,              // 🔧 OBBBA 2025
-    overtimeIncome = 0,         // 🔧 OBBBA 2025
-    autoLoanInterest = 0,       // 🔧 OBBBA 2025
-    isSenior = false,           // 🔧 OBBBA 2025
   } = deductions;
 
   const medicalThreshold = 0.075 * agi;
   const eligibleMedical = medicalExpenses > medicalThreshold ? medicalExpenses : 0;
-
-  // 🔧 OBBBA 2025 Deduction Logic
-  const tipDeduction = Math.min(Number(tipIncome), 3000);
-  const overtimeDeduction = Math.min(Number(overtimeIncome) * 0.15, 5000);
-  const autoLoanDeduction = Math.min(Number(autoLoanInterest), 2500);
-  const seniorDeduction = isSenior ? 1800 : 0;
 
   const itemizedTotal =
     mortgageInterest +
@@ -43,11 +33,7 @@ export function determineDeductionStrategy(answers) {
     educationExpenses +
     childcareExpenses +
     retirementContributions +
-    eligibleMedical +
-    tipDeduction +
-    overtimeDeduction +
-    autoLoanDeduction +
-    seniorDeduction;
+    eligibleMedical;
 
   const recommendedStrategy = itemizedTotal > standardAmount ? 'itemized' : 'standard';
 

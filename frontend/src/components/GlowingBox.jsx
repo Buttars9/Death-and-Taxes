@@ -7,7 +7,7 @@ export default function GlowingBox({ children }) {
         padding: '2rem',
         background: '#0f131f',
         borderRadius: '12px',
-        boxShadow: '0 0 25px rgba(161, 102, 255, 0.3)',
+       
       }}
     >
       {children}

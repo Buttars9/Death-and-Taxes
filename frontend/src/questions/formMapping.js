@@ -86,4 +86,106 @@ export const formMapping = {
     line: '8',
     auditTag: 'income_other_selected',
   },
+
+  // ✅ Filing & Identity
+  filingStatus: {
+    label: 'Filing Status',
+    form: 'Form 1040',
+    line: 'Check Box',
+    auditTag: 'filing_status_selected',
+  },
+  priorAGI: {
+    label: 'Prior Year AGI',
+    form: 'Form 1040',
+    line: '13',
+    auditTag: 'identity_verification_agi',
+  },
+  irsPIN: {
+    label: 'IRS PIN',
+    form: 'Form 1040',
+    line: 'Signature PIN',
+    auditTag: 'identity_verification_pin',
+  },
+
+  // ✅ Bank Info
+  routingNumber: {
+    label: 'Bank Routing Number',
+    form: 'Form 1040',
+    line: 'Refund Routing',
+    auditTag: 'bank_routing_number',
+  },
+  accountNumber: {
+    label: 'Bank Account Number',
+    form: 'Form 1040',
+    line: 'Refund Account',
+    auditTag: 'bank_account_number',
+  },
+
+  // ✅ Deductions
+  deductionType: {
+    label: 'Deduction Type',
+    form: 'Form 1040',
+    line: '12',
+    auditTag: 'deduction_type_selected',
+  },
+  mortgageInterest: {
+    label: 'Mortgage Interest Paid',
+    form: 'Schedule A',
+    line: '8a',
+    auditTag: 'mortgage_interest_entered',
+  },
+  propertyTaxes: {
+    label: 'Property Taxes Paid',
+    form: 'Schedule A',
+    line: '5b',
+    auditTag: 'property_taxes_entered',
+  },
+  stateIncomeTax: {
+    label: 'State Income Tax Paid',
+    form: 'Schedule A',
+    line: '5a',
+    auditTag: 'state_income_tax_entered',
+  },
+  charitableDonations: {
+    label: 'Charitable Donations',
+    form: 'Schedule A',
+    line: '11',
+    auditTag: 'charitable_donations_entered',
+  },
+  medicalExpenses: {
+    label: 'Medical Expenses',
+    form: 'Schedule A',
+    line: '1',
+    auditTag: 'medical_expenses_entered',
+  },
+
+  // ✅ Credits
+  educationExpenses: {
+    label: 'Education Expenses',
+    form: 'Form 8863',
+    line: 'Line 1',
+    auditTag: 'education_expenses_entered',
+  },
+  childcareExpenses: {
+    label: 'Childcare Expenses',
+    form: 'Form 2441',
+    line: 'Line 1',
+    auditTag: 'childcare_expenses_entered',
+  },
+
+  // ✅ Adjustments
+  retirementContributions: {
+    label: 'Retirement Contributions',
+    form: 'Schedule 1',
+    line: 'Line 20',
+    auditTag: 'retirement_contributions_entered',
+  },
+
+  // ✅ Other
+  agi: {
+    label: 'Adjusted Gross Income',
+    form: 'Form 1040',
+    line: '11',
+    auditTag: 'agi_entered',
+  },
 };

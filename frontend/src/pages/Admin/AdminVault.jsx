@@ -1,20 +1,31 @@
-// src/pages/AdminVault.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export default function AdminVault() {
   const [filings, setFilings] = useState([]);
   const [filter, setFilter] = useState('All');
-  const [wallets, setWallets] = useState({ pi: '', eth: '' });
+  const [wallets, setWallets] = useState({ pi: '', eth: '', btc: '' });
   const [feeLogs, setFeeLogs] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
+  const [userCount, setUserCount] = useState(0);
+  const [drakeCount, setDrakeCount] = useState(0);
+  const [paymentSummary, setPaymentSummary] = useState({
+    pi: 0,
+    eth: 0,
+    btc: 0,
+    stripe: 0,
+    paypal: 0,
+    venmo: 0,
+  });
 
   useEffect(() => {
     fetchVault();
     fetchWallets();
     fetchFeeLogs();
     fetchAuditLogs();
+    fetchUserCount();
+    fetchDrakeCount();
+    fetchPaymentSummary();
   }, []);
 
   async function fetchVault() {
@@ -35,32 +46,44 @@ export default function AdminVault() {
     }
   }
 
-  async function fetchWallets() {
+  async function confirmPiPayment(id) {
     try {
-      const res = await axios.get('/api/admin/wallets');
-      setWallets(res.data);
+      await axios.post(`/api/vault/confirm/${id}`, {
+        adminCode: '4546314',
+        paymentConfirmed: true,
+      });
+      fetchVault();
     } catch (err) {
-      console.error('Wallet fetch error:', err);
+      console.error('Pi payment confirm error:', err);
     }
   }
 
   async function saveWallets() {
     try {
-      await axios.post('/api/admin/wallets', wallets);
+      await axios.post('/api/settings/wallet', { wallet: wallets });
       alert('Wallets saved.');
     } catch (err) {
       console.error('Wallet save error:', err);
     }
   }
 
-  async function fetchFeeLogs() {
-    try {
-      const res = await axios.get('/api/admin/feeLogs');
-      setFeeLogs(res.data);
-    } catch (err) {
-      console.error('Fee log fetch error:', err);
-    }
+  async function fetchWallets() {
+  try {
+    const res = await axios.get('/api/settings/wallet');
+    setWallets(res.data);
+  } catch (err) {
+    console.error('Wallet fetch error:', err);
   }
+}
+
+async function fetchFeeLogs() {
+  try {
+    const res = await axios.get('/api/admin/feeLogs');
+    setFeeLogs(res.data);
+  } catch (err) {
+    console.error('Fee log fetch error:', err);
+  }
+}
 
   async function fetchAuditLogs() {
     try {
@@ -68,6 +91,33 @@ export default function AdminVault() {
       setAuditLogs(res.data);
     } catch (err) {
       console.error('Audit log fetch error:', err);
+    }
+  }
+
+  async function fetchUserCount() {
+    try {
+      const res = await axios.get('/api/admin/userCount');
+      setUserCount(res.data.count);
+    } catch (err) {
+      console.error('User count fetch error:', err);
+    }
+  }
+
+  async function fetchDrakeCount() {
+    try {
+      const res = await axios.get('/api/admin/drakeSubmissions');
+      setDrakeCount(res.data.count);
+    } catch (err) {
+      console.error('Drake submission count error:', err);
+    }
+  }
+
+  async function fetchPaymentSummary() {
+    try {
+      const res = await axios.get('/api/admin/paymentSummary');
+      setPaymentSummary(res.data);
+    } catch (err) {
+      console.error('Payment summary fetch error:', err);
     }
   }
 
@@ -79,6 +129,11 @@ export default function AdminVault() {
   return (
     <div className="admin-vault">
       <h2>🗝️ Admin Vault: Signed Filings & Payouts</h2>
+
+      <section className="stats">
+        <p>👥 Total Users: <strong>{userCount.toLocaleString()}</strong></p>
+        <p>📤 Submitted to Drake: <strong>{drakeCount.toLocaleString()}</strong></p>
+      </section>
 
       <label>
         Filter by Payout Status:{' '}
@@ -101,6 +156,7 @@ export default function AdminVault() {
               <th>Signed At</th>
               <th>Payout Status</th>
               <th>Payout Queued At</th>
+              <th>Claimed Pi Sender</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -113,15 +169,25 @@ export default function AdminVault() {
                 <td>{f.payoutStatus || '—'}</td>
                 <td>{f.payoutQueuedAt ? new Date(f.payoutQueuedAt).toLocaleString() : '—'}</td>
                 <td>
+                  {f.piSenderAddress ? (
+                    <span style={{ color: '#78c1ff' }}>
+                      🔔 {f.piSenderAddress}
+                    </span>
+                  ) : '—'}
+                </td>
+                <td>
                   <button onClick={() => updateStatus(f.id, 'Completed')}>✔️ Mark Completed</button>
                   <button onClick={() => updateStatus(f.id, 'Failed')}>❌ Mark Failed</button>
+                  {f?.piSenderAddress && !f?.paymentConfirmed && (
+  <button onClick={() => confirmPiPayment(f.id)}>✅ Confirm Pi Payment</button>
+)}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-
+    
       <section className="wallet-manager">
         <h3>💰 Wallet Manager</h3>
         <label>
@@ -132,7 +198,23 @@ export default function AdminVault() {
           ETH Wallet:
           <input value={wallets.eth} onChange={(e) => setWallets({ ...wallets, eth: e.target.value })} />
         </label>
+        <label>
+          BTC Wallet:
+          <input value={wallets.btc} onChange={(e) => setWallets({ ...wallets, btc: e.target.value })} />
+        </label>
         <button onClick={saveWallets}>💾 Save Wallets</button>
+      </section>
+
+      <section className="payment-summary">
+        <h3>💳 Payment Breakdown</h3>
+        <ul>
+          <li>Pi Wallet: ${paymentSummary.pi.toLocaleString()}</li>
+          <li>ETH Wallet: ${paymentSummary.eth.toLocaleString()}</li>
+          <li>BTC Wallet: ${paymentSummary.btc.toLocaleString()}</li>
+          <li>Stripe (Credit Card): ${paymentSummary.stripe.toLocaleString()}</li>
+          <li>PayPal: ${paymentSummary.paypal.toLocaleString()}</li>
+          <li>Venmo: ${paymentSummary.venmo.toLocaleString()}</li>
+        </ul>
       </section>
 
       <section className="fee-log">
@@ -140,7 +222,7 @@ export default function AdminVault() {
         <ul>
           {feeLogs.map((log, i) => (
             <li key={i}>
-              {log.userId} paid {log.amount} {log.currency} on {new Date(log.timestamp).toLocaleString()}
+              {log.userId} paid ${log.amount} via {log.method} on {new Date(log.timestamp).toLocaleString()}
             </li>
           ))}
         </ul>
@@ -205,4 +287,4 @@ export default function AdminVault() {
       `}</style>
     </div>
   );
-}
+}     

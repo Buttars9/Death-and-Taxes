@@ -1,88 +1,64 @@
-// death-and-taxes/src/components/TaxAssistant.jsx
-
 import React, { useState } from 'react';
-import { calculateRefund } from '../server/utils/refundEngine.js';
-import { generateFinalWill } from '../server/utils/generateFinalWill.js';
+import { calculateRefund } from '../shared/utils/refundEngine.js';
+import { form1040Payload } from '../shared/utils/form1040Payload.js';
 
 export default function TaxAssistant() {
-  const [filing, setFiling] = useState({
-    name: '',
-    state: '',
-    filingStatus: 'single',
-    income: 0,
-    dependents: [],
-    assets: [],
-    employmentType: '',
-    estate: {},
-  });
+  const [query, setQuery] = useState('');
+  const [response, setResponse] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const [refund, setRefund] = useState(null);
-  const [will, setWill] = useState(null);
+  const explainTaxConcept = ({ query, payload }) => {
+    const lower = query.toLowerCase();
 
-  const handleInputChange = (field, value) => {
-    setFiling(prev => ({ ...prev, [field]: value }));
+    if (lower.includes('standard deduction')) {
+      return {
+        answer: `Your standard deduction is $${payload?.deductions?.amount?.toLocaleString() || '0'}.`
+      };
+    }
+
+    if (lower.includes('refund')) {
+      const refund = calculateRefund({
+        state: payload.taxpayer.state,
+        filingStatus: payload.taxpayer.filingStatus,
+        income: payload.incomeDetails.totalIncome,
+        dependents: payload.taxpayer.dependents.length,
+      });
+      return {
+        answer: `Your refund estimate is $${refund.amount.toLocaleString()}.`
+      };
+    }
+
+    return { answer: 'Sorry, I couldn’t interpret that yet.' };
   };
 
-  const handleGenerate = () => {
-    const refundResult = calculateRefund({
-      state: filing.state,
-      filingStatus: filing.filingStatus,
-      income: filing.income,
-      dependents: filing.dependents.length,
-    });
-
-    const willResult = generateFinalWill({
-      ...filing,
-      estate: {
-        fullName: filing.name,
-        primaryBeneficiary: filing.dependents[0] || '—',
-        primaryBeneficiaryAge: '—',
-        guardianName: '—',
-        executor: filing.name,
-        assetSummary: filing.assets.join(', '),
-        finalWishes: '—',
-      },
-    });
-
-    setRefund(refundResult);
-    setWill(willResult);
+  const handleAsk = async () => {
+    setLoading(true);
+    try {
+      const result = explainTaxConcept({ query, payload: form1040Payload });
+      setResponse(result.answer || 'No answer available.');
+    } catch (err) {
+      setResponse('⚠️ Error processing your question.');
+    }
+    setLoading(false);
   };
 
   return (
     <div className="tax-assistant">
-      <h2>🧠 AI Tax Assistant</h2>
+      <h2>🧠 Ask the Tax Assistant</h2>
+      <input
+        type="text"
+        placeholder="e.g. What’s my refund with 3 kids?"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+      />
+      <button onClick={handleAsk} disabled={loading}>
+        {loading ? 'Thinking…' : 'Ask'}
+      </button>
 
-      <div className="input-group">
-        <label>Name:</label>
-        <input type="text" onChange={e => handleInputChange('name', e.target.value)} />
-        <label>State:</label>
-        <input type="text" onChange={e => handleInputChange('state', e.target.value)} />
-        <label>Filing Status:</label>
-        <select onChange={e => handleInputChange('filingStatus', e.target.value)}>
-          <option value="single">Single</option>
-          <option value="married">Married</option>
-        </select>
-        <label>Income:</label>
-        <input type="number" onChange={e => handleInputChange('income', Number(e.target.value))} />
-        <label>Assets (comma-separated):</label>
-        <input type="text" onChange={e => handleInputChange('assets', e.target.value.split(','))} />
-        <label>Dependents (comma-separated):</label>
-        <input type="text" onChange={e => handleInputChange('dependents', e.target.value.split(','))} />
-      </div>
-
-      <button onClick={handleGenerate}>Generate Refund & Will</button>
-
-      {refund && (
-        <div className="refund-preview">
-          <h3>💸 Refund Estimate</h3>
-          <pre>{JSON.stringify(refund, null, 2)}</pre>
-        </div>
-      )}
-
-      {will && (
-        <div className="will-preview">
-          <h3>📜 Will Preview</h3>
-          <pre>{will.willText}</pre>
+      {response && (
+        <div className="response-block">
+          <h3>🧾 Response</h3>
+          <pre>{response}</pre>
         </div>
       )}
 
@@ -94,21 +70,17 @@ export default function TaxAssistant() {
           box-shadow: 0 0 25px rgba(118, 198, 255, 0.3);
           color: #e1e8fc;
         }
-        .input-group label {
-          display: block;
-          margin-top: 1rem;
-        }
-        input, select {
+        input {
           width: 100%;
-          padding: 0.5rem;
-          margin-top: 0.25rem;
+          padding: 0.75rem;
+          margin-top: 1rem;
           background: #1c2230;
           border: none;
           border-radius: 6px;
           color: #e1e8fc;
         }
         button {
-          margin-top: 2rem;
+          margin-top: 1rem;
           padding: 0.75rem 1.5rem;
           background: #00ffe0;
           color: #0f131f;
@@ -117,11 +89,14 @@ export default function TaxAssistant() {
           font-weight: bold;
           cursor: pointer;
         }
-        pre {
+        .response-block {
+          margin-top: 2rem;
           background: #1c2230;
           padding: 1rem;
           border-radius: 8px;
-          overflow-x: auto;
+        }
+        pre {
+          white-space: pre-wrap;
         }
       `}</style>
     </div>

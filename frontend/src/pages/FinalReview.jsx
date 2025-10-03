@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import RefundEstimatePanel from '../components/RefundEstimatePanel.jsx';
+import RefundEstimate from '../components/RefundEstimate.jsx';
 import GlowingBox from '../components/GlowingBox.jsx';
 import PiSymbol from '../components/PiSymbol.jsx';
 import { useWizardStore } from '../stores/wizardStore.js';
 import { formatCurrency } from '../utils/formatters.js';
-import { generateReceipt } from '../utils/generateReceipt.js';
 import { generateWillText } from '../shared/utils/generateWillText.js';
+import { generateTrustText } from '../shared/utils/generateTrustText.js';
+import { generatePoaText } from '../shared/utils/generatePoaText.js';
+import { generateTodText } from '../shared/utils/generateTodText.js';
+import { generateExecutorText } from '../shared/utils/generateExecutorText.js';
+import { generateHipaaText } from '../shared/utils/generateHipaaText.js';
+import { generateFinalDirective } from '../shared/utils/generateFinalDirective.js';
 
-export default function FinalReview() {
-  const [submitted, setSubmitted] = useState(false);
-  const [result, setResult] = useState(null);
-  const [submittedAt, setSubmittedAt] = useState(null);
-
-  const { answers, willData } = useWizardStore();
-
+export default function FinalReview({ onBack, onNext }) {
+  const { answers } = useWizardStore();
   const {
     filingStatus = 'single',
     income = 0,
@@ -22,13 +22,14 @@ export default function FinalReview() {
     deductions = [],
     credits = [],
     residentState,
-    trustConfirmed,
     contactEmail,
+    paymentConfirmed,
+    willData = {},
   } = answers;
 
   const standardDeductions = {
     single: 13850,
-    married_joint: 27700,
+    married: 27700,
     head: 20800,
   };
 
@@ -38,7 +39,7 @@ export default function FinalReview() {
       { upTo: 44725, rate: 0.12 },
       { upTo: 95375, rate: 0.22 },
     ],
-    married_joint: [
+    married: [
       { upTo: 22000, rate: 0.10 },
       { upTo: 89450, rate: 0.12 },
       { upTo: 190750, rate: 0.22 },
@@ -50,9 +51,9 @@ export default function FinalReview() {
     ],
   };
 
-  let deductionAmount = deductionType === 'standard'
+  const deductionAmount = deductionType === 'standard'
     ? standardDeductions[filingStatus] || 0
-    : deductions.length * 1000;
+    : deductions.reduce((sum, d) => sum + Number(d.amount || 0), 0);
 
   const taxableIncome = Math.max(income - deductionAmount, 0);
   const brackets = taxBrackets[filingStatus] || [];
@@ -69,71 +70,25 @@ export default function FinalReview() {
     }
   }
 
-  const creditAmount = credits.length * 1000;
+  const creditAmount = credits.reduce((sum, c) => sum + (c.amount || 1000), 0);
   const estimatedRefund = Math.max(creditAmount - tax, 0);
-
-  const handleSubmit = async () => {
-    if (!trustConfirmed) {
-      alert('Please confirm your trust declaration before submitting.');
-      return;
-    }
-
-    const timestamp = new Date().toISOString();
-    setSubmitted(true);
-    setSubmittedAt(timestamp);
-
-    const userId = contactEmail || 'anonymous';
-    const taxYear = new Date().getFullYear();
-    const refundUSD = estimatedRefund;
-    const refundPi = (estimatedRefund / 7).toFixed(3);
-    const escrowHash = btoa(`${userId}-${taxYear}-${timestamp}`);
-
-    const logSubmission = useWizardStore.getState().logSubmission;
-
-    logSubmission({
-      timestamp,
-      refundUSD,
-      refundPi,
-      escrowHash,
-      status: 'Confirmed',
-      receiptUrl: `/receipts/${userId}_${taxYear}.pdf`,
-    });
-
-    generateReceipt({
-      userId,
-      taxYear,
-      refundUSD,
-      refundPi,
-      escrowHash,
-    });
-
-    const payload = {
-      event: 'submitted_tax_return',
-      timestamp,
-      refundAmount: estimatedRefund,
-      filingStatus,
-      income,
-      residentState,
-      contactEmail: contactEmail || null,
-      trustConfirmed: true,
-    };
-
-    try {
-      const res = await fetch('/api/logEvent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      console.error('📤 Submission logging failed:', err);
-    }
-  };
-
-  const formattedTime = submittedAt ? new Date(submittedAt).toLocaleString() : null;
   const willText = generateWillText(willData);
+const directiveText = generateFinalDirective(answers).directiveText;
+ const poaText = generatePoaText(answers.poaData || {});
+const todText = generateTodText(answers.todData || {});
+const executorText = generateExecutorText(answers.executorData || {});
+const trustText = generateTrustText(answers.trustData || {});
+const hipaaText = generateHipaaText(answers.hipaaData || {}); 
+const handlePrint = (label, content) => {
+    import('jspdf').then(({ default: jsPDF }) => {
+      const doc = new jsPDF();
+      doc.setFont('Courier', 'normal');
+      doc.setFontSize(12);
+      const lines = doc.splitTextToSize(content || `No ${label} available.`, 180);
+      doc.text(lines, 10, 10);
+      doc.save(`${label}-${contactEmail || 'anonymous'}_${new Date().getFullYear()}.pdf`);
+    }).catch(err => console.error(`Print failed: ${err.message}`));
+  };
 
   return (
     <GlowingBox>
@@ -149,82 +104,168 @@ export default function FinalReview() {
         </h2>
         <p style={{ marginBottom: '1rem' }}>Review your filing details before submission.</p>
 
-        {submitted ? (
-          <div style={{
-            background: '#1c2232',
-            padding: '1rem',
-            borderRadius: '10px',
-            boxShadow: '0 0 15px rgba(72, 178, 255, 0.2)',
+        <RefundEstimate manualFields={answers} isSticky={false} />
+
+        <div style={{
+          marginTop: '2rem',
+          background: '#1c2232',
+          padding: '1rem',
+          borderRadius: '10px',
+          boxShadow: '0 0 15px rgba(255, 255, 255, 0.1)',
+        }}>
+          <h3 style={{ color: '#a166ff' }}><PiSymbol /> Will Preview</h3>
+          <pre style={{
+            whiteSpace: 'pre-wrap',
+            fontFamily: 'Courier New, monospace',
+            fontSize: '0.95rem',
+            color: '#e1e8fc',
           }}>
-            <h3 style={{ color: '#72caff' }}>✅ Submission Complete</h3>
-            {result?.id ? (
-              <>
-                <p>Your return ID: <strong>{result.id}</strong></p>
-                {formattedTime && (
-                  <p>Submitted at: <strong>{formattedTime}</strong></p>
-                )}
-                <p>Estimated Refund: <strong>{formatCurrency(estimatedRefund)}</strong></p>
-              </>
-            ) : (
-              <p>Submission confirmed, but no return ID was generated.</p>
-            )}
-          </div>
-        ) : (
-          <>
-            <RefundEstimatePanel refund={{ total: estimatedRefund, state: residentState, filingStatus, income, deduction: deductionAmount, dependents: answers.dependents?.length || 0 }} />
-            <div style={{
-              marginTop: '2rem',
+            {willText}
+          </pre>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginTop: '2rem',
+        }}>
+          <button
+            style={{
               background: '#1c2232',
-              padding: '1rem',
-              borderRadius: '10px',
-              boxShadow: '0 0 15px rgba(255, 255, 255, 0.1)',
-            }}>
-              <h3 style={{ color: '#a166ff' }}><PiSymbol /> Will Preview</h3>
-              <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'Courier New, monospace', fontSize: '0.95rem', color: '#e1e8fc' }}>
-                {willText}
-              </pre>
-            </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginTop: '2rem',
-            }}>
-              <button
-                style={{
-                  background: '#1c2232',
-                  color: '#e0e0ff',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '6px',
-                  border: '1px solid #3a3f55',
-                  fontWeight: 'bold',
-                }}
-                onClick={() => useWizardStore.getState().goToStep('will')}
-              >
-                Back
-              </button>
-              <button
-                style={{
-                  background: '#72caff',
-                  color: '#0f131f',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontWeight: 'bold',
-                }}
-                onClick={handleSubmit}
-              >
-                Submit
-              </button>
-            </div>
-          </>
-        )}
+              color: '#e0e0ff',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: '1px solid #3a3f55',
+              fontWeight: 'bold',
+            }}
+            onClick={onBack}
+          >
+            Back
+          </button>
+          <div>
+            {paymentConfirmed && (
+              <>
+                <button
+                  style={{
+                    background: '#72caff',
+                    color: '#0f131f',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    marginRight: '1rem',
+                  }}
+                  onClick={() => handlePrint('Will', willText)}
+                >
+                  Print Will
+                </button>
+                <button
+                  style={{
+                    background: '#72caff',
+                    color: '#0f131f',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    marginRight: '1rem',
+                  }}
+                  onClick={() => handlePrint('Trust', trustText)}
+                >
+                  Print Trust
+                </button>
+                <button
+                  style={{
+                    background: '#72caff',
+                    color: '#0f131f',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    marginRight: '1rem',
+                  }}
+                  onClick={() => handlePrint('POA', poaText)}
+                >
+                  Print POA
+                </button>
+                <button
+  style={{
+    background: '#72caff',
+    color: '#0f131f',
+    padding: '0.5rem 1rem',
+    borderRadius: '6px',
+    border: 'none',
+    fontWeight: 'bold',
+    marginRight: '1rem',
+  }}
+  onClick={() => handlePrint('Advance Directive', directiveText)}
+>
+  Print Advance Directive
+</button>
+                <button
+                  style={{
+                    background: '#72caff',
+                    color: '#0f131f',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    marginRight: '1rem',
+                  }}
+                  onClick={() => handlePrint('TOD', todText)}
+                >
+                  Print TOD     
+                </button>
+                <button
+                  style={{
+                    background: '#72caff',
+                    color: '#0f131f',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    marginRight: '1rem',
+                  }}
+                  onClick={() => handlePrint('ExecutorLetter', executorText)}
+                >
+                  Print Executor Letter
+                </button>
+                <button
+  style={{
+    background: '#72caff',
+    color: '#0f131f',
+    padding: '0.5rem 1rem',
+    borderRadius: '6px',
+    border: 'none',
+    fontWeight: 'bold',
+    marginRight: '1rem',
+  }}
+  onClick={() => handlePrint('HIPAA Release', hipaaText)}
+>
+  Print HIPAA Release
+</button>
+              </>
+            )}
+            <button
+              style={{
+                background: '#72caff',
+                color: '#0f131f',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                border: 'none',
+                fontWeight: 'bold',
+              }}
+              onClick={onNext}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </GlowingBox>
   );
 }
 
 FinalReview.propTypes = {
-  filing: PropTypes.object,
   onBack: PropTypes.func,
-  onSubmit: PropTypes.func,
+  onNext: PropTypes.func.isRequired,
 };

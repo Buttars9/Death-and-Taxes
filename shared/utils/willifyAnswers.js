@@ -1,6 +1,8 @@
+// death-and-taxes/shared/utils/willifyAnswers.js
+
 import { determineDeductionStrategy } from './deductionStrategy.js';
 import { calculateRefund } from './calculateRefund.js';
-import willTemplates from '../../server/data/willTemplates.js';
+import { willTemplates } from '../../server/data/willTemplates.js'; // ✅ Fixed named import
 
 export function willifyAnswers(answers) {
   const {
@@ -25,7 +27,9 @@ export function willifyAnswers(answers) {
 
   // Select state-specific will template
   const template = willTemplates[state]?.template || willTemplates.Unknown.template;
-  const guardianClause = hasMinorChildren && guardianName ? `Appoint ${guardianName} as guardian.` : 'No guardianship.';
+  const guardianClause = hasMinorChildren && guardianName
+    ? `Appoint ${guardianName} as guardian.`
+    : 'No guardianship.';
   const assetSummary = hasAssets ? bequests : 'No specific bequests.';
 
   const willText = template
