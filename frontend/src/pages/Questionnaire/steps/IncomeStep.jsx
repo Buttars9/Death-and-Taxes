@@ -5,10 +5,9 @@ import GlowingBox from '../../../components/GlowingBox.jsx';
 import { useWizardStore } from '../../../stores/wizardStore';
 import { fetchAutofillData } from '../../../services/api';
 import RefundEstimate from '../../../components/RefundEstimate';
+import PiSymbol from '../../../components/PiSymbol.jsx';
 
-// FIX: Conditionally import PiSymbol to avoid potential crashes
-const PiSymbol = process.env.NODE_ENV === 'development' ? () => null : require('../../../components/PiSymbol.jsx').default;
-
+const PiSymbolComponent = process.env.NODE_ENV === 'development' ? () => null : PiSymbol;
 const incomeOptions = [
   { label: 'W-2 Employment', value: 'w2' },
   { label: "Spouse's W-2 Employment", value: 'w2-spouse' },
