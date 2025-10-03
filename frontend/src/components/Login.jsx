@@ -9,6 +9,8 @@ export default function Login({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const setUser = useAuthStore((s) => s.setUser);
 
+  const baseURL = import.meta.env.VITE_API_BASE;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
@@ -20,7 +22,7 @@ export default function Login({ onSuccess }) {
     setLoading(true);
     try {
       const res = await axios.post(
-        'http://localhost:3001/api/login', // ✅ Fixed: direct to backend
+        `${baseURL}/api/login`, // ✅ Environment-aware backend call
         { email, password },
         { withCredentials: true } // ✅ Send cookie
       );
