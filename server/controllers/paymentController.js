@@ -1,14 +1,24 @@
-import stripe from 'stripe';
 import axios from 'axios';
 import { updatePayout } from '../store/payoutStore.js';
 
-const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
+let stripeInstance = null;
+
+if (process.env.STRIPE_SECRET_KEY) {
+  const stripeImport = await import('stripe');
+  stripeInstance = stripeImport.default(process.env.STRIPE_SECRET_KEY);
+}
+
 const piApiKey = process.env.PI_API_KEY;
 
 export async function payFiat(req, res) {
+  if (!stripeInstance) {
+    return res.status(503).json({ error: 'Stripe not initialized' });
+  }
+
   const { token } = req.body;
   const userId = req.user.id;
   const amount = 7499; // $74.99
+
   try {
     const charge = await stripeInstance.charges.create({
       amount,
