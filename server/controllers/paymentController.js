@@ -3,10 +3,12 @@ import { updatePayout } from '../store/payoutStore.js';
 
 let stripeInstance = null;
 
-if (process.env.STRIPE_SECRET_KEY) {
-  const stripeImport = await import('stripe');
-  stripeInstance = stripeImport.default(process.env.STRIPE_SECRET_KEY);
-}
+(async () => {
+  if (process.env.STRIPE_SECRET_KEY) {
+    const stripeImport = await import('stripe');
+    stripeInstance = stripeImport.default(process.env.STRIPE_SECRET_KEY);
+  }
+})();
 
 const piApiKey = process.env.PI_API_KEY;
 
