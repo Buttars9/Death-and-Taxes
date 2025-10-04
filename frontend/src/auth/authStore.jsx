@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
+// ✅ Explicit backend base URL
+const api = axios.create({
+  baseURL: 'https://death-and-taxes-xzkb.onrender.com',
+  withCredentials: true, // ✅ Send cookies for session auth
+});
+
 export const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
@@ -9,7 +15,7 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await axios.post('/api/logout'); // Optional: backend logout route
+      await api.post('/api/logout'); // ✅ Backend logout route
     } catch (err) {
       console.warn('Logout error:', err);
     } finally {
@@ -19,7 +25,7 @@ export const useAuthStore = create((set) => ({
 
   rehydrate: async () => {
     try {
-      const { data } = await axios.get('/api/me', { withCredentials: true });
+      const { data } = await api.get('/api/me'); // ✅ Session rehydration
       if (data?.user) {
         set({ user: data.user, isAuthenticated: true });
       } else {

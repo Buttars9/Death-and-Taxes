@@ -30,10 +30,24 @@ const PORT = process.env.PORT || 3001;
 
 await dbConnect(); // ✅ MongoDB connection
 
+// ✅ Explicit CORS setup with preflight support
+const allowedOrigins = ['https://www.deathntaxes.app'];
+
 app.use(cors({
-  origin: true,
-  credentials: true, // ✅ Allow cookies to be sent
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.options('*', cors()); // ✅ Handle preflight requests
+
 app.use(cookieParser()); // ✅ Parse incoming cookies
 app.use(bodyParser.json());
 
