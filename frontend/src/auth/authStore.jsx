@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-// ✅ Explicit backend base URL
+// ✅ Environment-aware backend base URL
 const api = axios.create({
-  baseURL: 'https://death-and-taxes-xzkb.onrender.com',
+  baseURL: import.meta.env.VITE_API_BASE,
   withCredentials: true, // ✅ Send cookies for session auth
 });
 
@@ -17,7 +17,7 @@ export const useAuthStore = create((set) => ({
     try {
       await api.post('/api/logout'); // ✅ Backend logout route
     } catch (err) {
-      console.warn('Logout error:', err);
+      console.warn('Logout error:', err.message || err);
     } finally {
       set({ user: null, isAuthenticated: false });
     }
@@ -32,7 +32,7 @@ export const useAuthStore = create((set) => ({
         set({ user: null, isAuthenticated: false });
       }
     } catch (err) {
-      console.warn('Session rehydration failed:', err);
+      console.warn('Session rehydration failed:', err.message || err);
       set({ user: null, isAuthenticated: false });
     }
   },

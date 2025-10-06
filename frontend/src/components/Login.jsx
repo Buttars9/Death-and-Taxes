@@ -24,7 +24,12 @@ export default function Login({ onSuccess }) {
       const res = await axios.post(
         `${baseURL}/api/login`, // ✅ Environment-aware backend call
         { email, password },
-        { withCredentials: true } // ✅ Send cookie
+        {
+          withCredentials: true, // ✅ Send cookie
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       );
 
       if (res.data.success && res.data.user) {
@@ -34,7 +39,8 @@ export default function Login({ onSuccess }) {
         setError('Unexpected response.');
       }
     } catch (err) {
-      const msg = err.response?.data?.error || 'Login failed.';
+      const msg = err.response?.data?.error || err.message || 'Login failed.';
+      console.error('[LOGIN ERROR]', msg);
       setError(msg);
     } finally {
       setLoading(false);

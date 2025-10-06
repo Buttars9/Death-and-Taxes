@@ -38,7 +38,7 @@ await dbConnect(); // ✅ MongoDB connection
 // ✅ CORS setup for local + live domains
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? ['https://www.deathntaxes.app']
-  : ['https://www.deathntaxes.app', 'http://localhost:3000'];
+  : ['https://www.deathntaxes.app', 'http://localhost:5173'];
 
 app.use(cors({
   origin: function (origin, callback) {
