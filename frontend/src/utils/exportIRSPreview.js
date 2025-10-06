@@ -1,9 +1,11 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
 export async function exportIRSPreviewPDF() {
   const previewElement = document.querySelector('.irs-preview');
   if (!previewElement) return;
+
+  const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+    import('jspdf'),
+    import('html2canvas'),
+  ]);
 
   const canvas = await html2canvas(previewElement, {
     scale: 2,
@@ -28,6 +30,11 @@ export async function exportIRSPreviewPDF() {
 export async function exportIRSReceiptPDF() {
   const receiptElement = document.querySelector('.irs-receipt');
   if (!receiptElement) return;
+
+  const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+    import('jspdf'),
+    import('html2canvas'),
+  ]);
 
   const canvas = await html2canvas(receiptElement, {
     scale: 2,
