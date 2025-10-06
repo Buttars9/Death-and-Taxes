@@ -40,7 +40,18 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // 🔄 Rehydrate session
     rehydrate().then(() => setReady(true));
+
+    // 🟢 Warm-up backend immediately
+    fetch('https://death-and-taxes-xzkb.onrender.com/api/ping').catch(() => {});
+
+    // 🔁 Keep backend warm every 5 minutes
+    const interval = setInterval(() => {
+      fetch('https://death-and-taxes-xzkb.onrender.com/api/ping').catch(() => {});
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearInterval(interval);
   }, []);
 
   if (!ready) {
