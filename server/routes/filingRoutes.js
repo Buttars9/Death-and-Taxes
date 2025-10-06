@@ -7,7 +7,7 @@ import { generateIrsPdf } from '../../shared/utils/generateIrsPdf.js';
 const router = express.Router();
 
 // GET all filings for a user
-router.get('/api/filings/:userId', async (req, res) => {
+router.get('/:userId', async (req, res) => {
   try {
     const filings = await getUserFilings(req.params.userId);
     res.status(200).json(filings);
@@ -18,7 +18,7 @@ router.get('/api/filings/:userId', async (req, res) => {
 });
 
 // POST new filing for a user
-router.post('/api/filings/:userId', async (req, res) => {
+router.post('/:userId', async (req, res) => {
   try {
     const { answers } = req.body;
     const userId = req.params.userId;
@@ -36,7 +36,7 @@ router.post('/api/filings/:userId', async (req, res) => {
 });
 
 // POST IRS-aligned filing submission
-router.post('/api/submit-filing', async (req, res) => {
+router.post('/submit', async (req, res) => {
   try {
     const answers = req.body.answers;
     if (!answers || typeof answers !== 'object') {

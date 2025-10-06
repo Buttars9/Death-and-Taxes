@@ -1,6 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' }); // ✅ Load .env from root
 
+// 🔥 Catch uncaught exceptions for forensic tracing
+process.on('uncaughtException', (err) => {
+  console.error('🔥 Uncaught Exception:', err.stack);
+});
+
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -30,14 +35,18 @@ const PORT = process.env.PORT || 3001;
 
 await dbConnect(); // ✅ MongoDB connection
 
-// ✅ Explicit CORS setup with preflight support
-const allowedOrigins = ['https://www.deathntaxes.app'];
+// ✅ CORS setup for local + live domains
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ['https://www.deathntaxes.app']
+  : ['https://www.deathntaxes.app', 'http://localhost:3000'];
 
 app.use(cors({
   origin: function (origin, callback) {
+    console.log(`[CORS] Incoming origin: ${origin}`);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`[CORS] Blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -46,7 +55,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.options('*', cors()); // ✅ Handle preflight requests
+app.options('/*', cors()); // ✅ Preflight catch-all
 
 app.use(cookieParser()); // ✅ Parse incoming cookies
 app.use(bodyParser.json());
@@ -92,6 +101,11 @@ app.use('/api/upload-document', documentUploadRoute);
 
 // 🧮 Final refund submission
 app.post('/api/finalize', finalizeReturn); // ✅ Threads refund payload to controller
+
+// 🚨 Catch-all fallback to prevent wildcard crash
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
 
 app.listen(PORT, () => {
   console.log(`✅ Server listening on port ${PORT}`);

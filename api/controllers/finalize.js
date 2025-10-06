@@ -4,7 +4,7 @@
 console.log('Running finalize.js from:', import.meta.url);
 console.log('Expecting refundEngine.js at:', new URL('../../shared/utils/refundEngine.js', import.meta.url).href);
 
-import { calculateRefund } from '../../shared/utils/refundEngine.js';
+import { calculateRefund } from '../../shared/utils/calculateRefund.js';
 import { persistHash } from '../../server/utils/vaultHasher.js';
 
 export async function finalizeReturn(req, res) {
