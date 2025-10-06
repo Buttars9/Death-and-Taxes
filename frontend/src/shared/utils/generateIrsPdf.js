@@ -1,10 +1,9 @@
-import jsPDF from 'jspdf';
-
-export default function generateIrsPdf(payload) {
+export default async function generateIrsPdf(payload) {
   console.log('📄 generateIrsPdf invoked');
   console.log('🧾 Raw payload:', payload);
   console.log('📦 payload.json:', payload?.json);
 
+  const { default: jsPDF } = await import('jspdf');
   const doc = new jsPDF();
 
   doc.setFont('helvetica');
