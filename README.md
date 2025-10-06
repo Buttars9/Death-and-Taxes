@@ -32,4 +32,4 @@ Death & Taxes is a trust-first platform that lets users:
 - Designed for Pi Browser compatibility
 
 ## 📜 License
-MIT
+Proprietary — all rights reserved. No reuse without written permission.
