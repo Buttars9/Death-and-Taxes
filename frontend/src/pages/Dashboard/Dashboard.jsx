@@ -17,26 +17,30 @@ export default function Dashboard() {
   const [parsedFields, setParsedFields] = useState(null);
 
   useEffect(() => {
-  const loadWizardState = async () => {
-    try {
-      const res = await fetch('/api/loadWizardState', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAnswers(data.answers || {});
+    const loadWizardState = async () => {
+      try {
+        const res = await fetch('/api/loadWizardState', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        if (res.status === 404) {
+          console.warn('Wizard state route not found — skipping.');
+          return;
+        }
+        if (res.ok) {
+          const data = await res.json();
+          setAnswers(data.answers || {});
+        }
+      } catch (err) {
+        console.error('Load wizard state error:', err);
       }
-    } catch (err) {
-      console.error('Load wizard state error:', err);
-    }
-  };
+    };
 
-  if (isAuthenticated && user) {
-    loadWizardState();
-  }
-}, [isAuthenticated, user, setAnswers]);
+    if (isAuthenticated && user) {
+      loadWizardState();
+    }
+  }, [isAuthenticated, user, setAnswers]);
 
   useEffect(() => {
     const unsubscribe = useWizardStore.subscribe(
@@ -117,31 +121,30 @@ export default function Dashboard() {
       {submissions.length > 0 && <RefundStatusCard />}
 
       <div style={styles.centerBlock}>
-  <button
-    style={{
-      ...styles.authButton,
-      opacity: canStart ? 1 : 0.5,
-      cursor: canStart ? 'pointer' : 'not-allowed',
-    }}
-    onClick={handleStartFiling}
-    title="Begin filing — even if some fields are blank"
-  >
-    Start Filing
-  </button>
+        <button
+          style={{
+            ...styles.authButton,
+            opacity: canStart ? 1 : 0.5,
+            cursor: canStart ? 'pointer' : 'not-allowed',
+          }}
+          onClick={handleStartFiling}
+          title="Begin filing — even if some fields are blank"
+        >
+          Start Filing
+        </button>
 
-    <button
-    style={styles.authButton}
-    onClick={handleLogout}
-    title="Log out and return to home"
-  >
-    Logout
-  </button>
-</div>
+        <button
+          style={styles.authButton}
+          onClick={handleLogout}
+          title="Log out and return to home"
+        >
+          Logout
+        </button>
+      </div>
 
       <div style={{ marginBottom: '3rem' }}>
         <AuditTrailLedger submissions={submissions} />
       </div>
-
     </div>
   );
 }
