@@ -12,6 +12,7 @@ import WizardRunner from './wizard/WizardRunner';
 import TermsGate from './pages/TermsGate'; // ✅ Added import
 import AdminGate from './components/AdminGate.jsx';       // ✅ Added import
 import AdminVault from './pages/Admin/AdminVault.jsx';    // ✅ Corrected path
+import ResetPassword from './pages/ResetPassword.jsx';    // 🔐 Password reset page
 import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
@@ -28,6 +29,7 @@ function AppRoutes() {
         <Route path="/terms" element={<TermsGate />} /> {/* ✅ Added route */}
         <Route path="/admin" element={<AdminGate />} />         {/* ✅ Admin PIN gate */}
         <Route path="/admin/vault" element={<AdminVault />} />  {/* ✅ Admin dashboard */}
+        <Route path="/reset-password" element={<ResetPassword />} /> {/* 🔐 Password reset route */}
       </Routes>
     </AppLayout>
   );

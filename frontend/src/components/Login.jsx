@@ -5,6 +5,7 @@ import { useAuthStore } from '../auth/authStore';
 export default function Login({ onSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 🔒 Toggle state
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const setUser = useAuthStore((s) => s.setUser);
@@ -57,20 +58,36 @@ export default function Login({ onSuccess }) {
         required
         style={styles.input}
       />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        style={styles.input}
-      />
+      <div style={styles.passwordWrapper}>
+        <input
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={styles.input}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          style={styles.eyeButton}
+          aria-label="Toggle password visibility"
+        >
+          {showPassword ? '🔓' : '🔒'}
+        </button>
+      </div>
 
       {error && <p style={styles.error}>{error}</p>}
 
       <button type="submit" disabled={loading} style={styles.button}>
         {loading ? 'Logging in...' : 'Login'}
       </button>
+
+      <p style={styles.forgot}>
+        <a href="/reset-password" style={styles.link}>
+          Forgot your password?
+        </a>
+      </p>
     </form>
   );
 }
@@ -89,6 +106,21 @@ const styles = {
     color: '#ffffff',
     fontSize: '1rem',
     boxShadow: '0 0 12px #a166ff',
+    width: '100%',
+  },
+  passwordWrapper: {
+    position: 'relative',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none',
+    border: 'none',
+    color: '#a166ff',
+    fontSize: '1.2rem',
+    cursor: 'pointer',
   },
   button: {
     padding: '0.75rem',
@@ -104,5 +136,16 @@ const styles = {
   error: {
     color: '#ff6666',
     marginTop: '1rem',
+  },
+  forgot: {
+    marginTop: '0.5rem',
+    textAlign: 'center',
+    fontSize: '0.9rem',
+  },
+  link: {
+    color: '#a166ff',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    fontWeight: 'bold',
   },
 };

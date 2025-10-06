@@ -26,6 +26,8 @@ import registerRoute from './routes/register.js'; // 🧑‍💼 IRS-grade user 
 import loginRoute from './routes/login.js'; // 🔐 IRS-grade login
 import sessionRoute from './routes/session.js'; // 🧠 Session rehydration
 import logoutRoute from './routes/logout.js'; // 🚪 Logout route
+import requestResetRoute from './routes/requestReset.js'; // 🔐 Password reset request
+import resetPasswordRoute from './routes/resetPassword.js'; // 🔐 Password reset confirm
 
 import { documentUploadRoute } from './routes/documentRoutes.js'; // 📄 Document upload + parsing
 import { finalizeReturn } from '../api/controllers/finalize.js'; // 🧮 Refund finalization logic
@@ -95,6 +97,12 @@ app.use('/api/me', sessionRoute);
 
 // 🚪 Logout route
 app.use('/api/logout', logoutRoute);
+
+// 🔐 Password reset request
+app.use('/api/request-reset', requestResetRoute);
+
+// 🔐 Password reset confirm
+app.use('/api/reset-password', resetPasswordRoute);
 
 // 📄 Document upload + parsing
 app.use('/api/upload-document', documentUploadRoute);

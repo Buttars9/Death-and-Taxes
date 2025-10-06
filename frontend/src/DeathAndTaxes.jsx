@@ -163,13 +163,19 @@ export default function DeathAndTaxes() {
         />
       </div>
 
-      <div className="promo-banner">
-        <strong>
-          $74.99 includes federal/state filing + full estate plan — cheaper than TurboTax.
-        </strong><br />
-        <span style={{ fontSize: '0.95rem', color: '#ffffff' }}>
-          Pay with Pi, crypto, PayPal, and other forms — get your refund and your legacy sorted.
-        </span>
+  <div className="promo-banner">
+  <strong>
+    $74.99 includes federal/state filing + a will.<br />
+    $99.99 includes federal/state filing + full estate plan.<br />
+    Cheaper than other tax apps and estate lawyers.
+  </strong><br />
+  <span style={{ fontSize: '0.95rem', color: '#ffffff' }}>
+    Pay with Pi, crypto, PayPal, and other forms — get your refund and your legacy sorted.
+  </span>
+</div>
+
+      <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.95rem', color: '#ffffff' }}>
+        Need help? Call <strong>Customer Service: 1.888.555.0199</strong>
       </div>
     </div>
   </>

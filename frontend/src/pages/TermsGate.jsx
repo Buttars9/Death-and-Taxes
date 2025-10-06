@@ -25,7 +25,8 @@ export default function TermsGate() {
         <ul>
           <li>You confirm that all information provided is accurate to the best of your knowledge. False or misleading entries may result in delayed or rejected filings.</li>
           <li>You authorize this platform to prepare your federal and state tax returns using the data you've entered, including income, deductions, credits, and refund preferences.</li>
-          <li>You acknowledge that a one-time filing fee of <strong>$74.99</strong> will be charged prior to submission. This fee covers secure processing, audit-grade storage, refund optimization, and transmission.</li>
+          <li>You acknowledge that a one-time filing fee of <strong>$74.99</strong> will be charged prior to submission. This fee covers federal and state filing, secure processing, audit-grade storage, refund optimization, and generation of a legally binding will.</li>
+          <li>You may optionally upgrade to the <strong>$99.99</strong> tier, which includes a full estate plan with transfer-on-death affidavits, power of attorney documents, and trust drafting tools.</li>
           <li>You understand that your refund estimate is based on current inputs and may change after IRS review. Final refund amounts are determined solely by the IRS.</li>
           <li>You consent to receive digital receipts and updates at the email address provided. Your data will never be sold or shared.</li>
           <li>You accept that this platform is not liable for IRS or state delays, rejections, or changes to refund amounts once submitted.</li>
@@ -37,6 +38,7 @@ export default function TermsGate() {
           <li>You are solely responsible for the accuracy of the information you provide. This platform does not verify or audit your entries, and is not liable for errors, omissions, or penalties resulting from inaccurate data.</li>
           <li>This platform supports most individual federal returns, including Form 1040 and common schedules. Complex filings (e.g. Schedule C, foreign assets, multi-state income) may not be supported. You are responsible for determining whether this platform meets your filing needs.</li>
           <li>By clicking “Agree & Continue,” you consent to the electronic preparation and submission of your tax return. This action constitutes a digital signature under IRS guidelines and applicable law.</li>
+          <li>By agreeing to these terms, you also consent to the digital generation of estate documents, including wills, affidavits, and powers of attorney, where applicable. These documents are generated based on your inputs and jurisdictional defaults, and you are responsible for reviewing them prior to execution.</li>
           <li>Refund delivery timelines are controlled solely by the IRS, state agencies, and your financial institution. This platform does not guarantee refund speed, and is not responsible for delays caused by IRS review, identity verification, or banking issues.</li>
           <li>Drake Software acts solely as a transmission provider. This platform is responsible for generating your return and ensuring its accuracy prior to submission.</li>
           <li>This platform operates under U.S. jurisdiction and complies with IRS and state reporting standards.</li>
@@ -46,6 +48,7 @@ export default function TermsGate() {
         <h3>🧾 Retention & Compatibility</h3>
         <ul>
           <li>Your filing data and receipts will be retained for up to 7 years for audit, compliance, and user access purposes.</li>
+          <li>Estate documents generated through this platform may be retained for up to 7 years for audit, compliance, and user access purposes.</li>
           <li>This platform does not guarantee compatibility with all browsers, operating systems, or devices. For best results, use a modern desktop browser with JavaScript enabled.</li>
           <li>Payments are securely processed via third-party providers such as Stripe. This platform does not store your payment credentials and is not liable for third-party processing delays or errors.</li>
         </ul>
