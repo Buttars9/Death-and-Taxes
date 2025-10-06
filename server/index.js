@@ -39,8 +39,15 @@ await dbConnect(); // ✅ MongoDB connection
 
 // ✅ CORS setup for local + live domains
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://www.deathntaxes.app']
-  : ['https://www.deathntaxes.app', 'http://localhost:5173'];
+  ? [
+      'https://www.deathntaxes.app',
+      'https://death-and-taxes-mj94386wx-austin-buttars-projects.vercel.app'
+    ]
+  : [
+      'https://www.deathntaxes.app',
+      'https://death-and-taxes-mj94386wx-austin-buttars-projects.vercel.app',
+      'http://localhost:5173'
+    ];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -109,6 +116,11 @@ app.use('/api/upload-document', documentUploadRoute);
 
 // 🧮 Final refund submission
 app.post('/api/finalize', finalizeReturn); // ✅ Threads refund payload to controller
+
+// 🟢 Warm-up ping route for frontend and uptime monitors
+app.get('/api/ping', (req, res) => {
+  res.status(200).send('pong');
+});
 
 // 🚨 Catch-all fallback to prevent wildcard crash
 app.use((req, res) => {
