@@ -163,6 +163,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                 fontWeight: 'bold',
               }}
               onClick={() => {
+                console.log('Pi SDK:', window?.Pi);
                 window.Pi.createPayment({
                   amount: piAmount,
                   memo: 'Death & Taxes filing fee',
