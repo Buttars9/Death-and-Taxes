@@ -28,11 +28,13 @@ router.post('/', async (req, res) => {
     });
 
     res.cookie('token', token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None', // ✅ allow cross-origin
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-});
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',           // ✅ allow cross-origin
+      domain: '.deathntaxes.app', // ✅ match frontend domain
+      path: '/',                  // ✅ ensure full path match
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       success: true,
