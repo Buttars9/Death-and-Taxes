@@ -15,7 +15,9 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await api.post('/api/logout'); // ✅ Backend logout route
+      await api.post('/api/logout', null, {
+        withCredentials: true, // 🔒 Explicitly send cookie for logout
+      });
     } catch (err) {
       console.warn('Logout error:', err.message || err);
     } finally {
