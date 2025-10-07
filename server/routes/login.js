@@ -31,7 +31,6 @@ router.post('/', async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: 'None',           // ✅ allow cross-origin
-      domain: '.deathntaxes.app', // ✅ match frontend domain
       path: '/',                  // ✅ ensure full path match
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });

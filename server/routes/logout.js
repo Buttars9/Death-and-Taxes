@@ -8,9 +8,9 @@ const router = express.Router();
 router.post('/', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: true, // Always true for HTTPS live deploy
-    sameSite: 'None', // Required for cross-origin cookie clearing
-    domain: '.deathntaxes.app', // Explicit domain match for live frontend
+    secure: true,               // Required for HTTPS
+    sameSite: 'None',           // Required for cross-origin cookie clearing
+    path: '/',                  // Ensure full path match
   });
 
   return res.status(200).json({ success: true, message: 'Logged out successfully.' });
