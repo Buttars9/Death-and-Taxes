@@ -2,6 +2,6 @@
   "rewrites": [
     { "source": "/terms", "destination": "/" },
     { "source": "/dashboard", "destination": "/" },
-    { "source": "/filing/**", "destination": "/" }
+    { "source": "/filing/:path*", "destination": "/" }
   ]
 }
