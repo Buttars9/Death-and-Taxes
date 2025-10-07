@@ -40,16 +40,16 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   }, []);
 
   useEffect(() => {
-  axios.get('/api/settings/wallet')
-    .then((res) => {
-      const pi = res.data?.wallet?.pi || '';
-      setWalletAddress(pi);
-      if (typeof setAnswers === 'function') {
-        setAnswers({ ...answers, piWalletAddress: pi });
-      }
-    })
-    .catch(() => setWalletAddress(''));
-}, []);
+    axios.get('/api/settings/wallet')
+      .then((res) => {
+        const pi = res.data?.wallet?.pi || '';
+        setWalletAddress(pi);
+        if (typeof setAnswers === 'function') {
+          setAnswers({ ...answers, piWalletAddress: pi });
+        }
+      })
+      .catch(() => setWalletAddress(''));
+  }, []);
 
   const handleSubmit = () => {
     if (typeof setAnswers === 'function') {
@@ -61,20 +61,20 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
     }
   };
 
-const validatePin = () => {
-  if (pin === '4546314') {
-    setAnswers({
-      ...answers,
-      adminOverride: true,
-      paymentMethod: 'pi',
-      paymentConfirmed: true, // 🔐 unlocks FinalReview buttons
-    });
-    setShowPinModal(false);
-    onNext();
-  } else {
-    alert('Invalid PIN');
-  }
-};
+  const validatePin = () => {
+    if (pin === '4546314') {
+      setAnswers({
+        ...answers,
+        adminOverride: true,
+        paymentMethod: 'pi',
+        paymentConfirmed: true,
+      });
+      setShowPinModal(false);
+      onNext();
+    } else {
+      alert('Invalid PIN');
+    }
+  };
 
   const piAmount = piPrice ? (totalPrice / piPrice).toFixed(2) : null;
 
@@ -95,15 +95,28 @@ const validatePin = () => {
         <p>Choose how you’d like to pay. All methods are secure and IRS-compliant.</p>
 
         <ul className="payment-options">
-          {methods.map(({ key, label }) => (
-            <li key={key} className="payment-option disabled">
-              <label>
-                <input type="radio" disabled />
-                {label} (coming soon)
-              </label>
-            </li>
-          ))}
-        </ul>
+  {methods.map(({ key, label }) => {
+    const isPi = key === 'pi';
+    return (
+      <li
+        key={key}
+        className={`payment-option ${isPi ? '' : 'disabled'} ${method === key ? 'selected' : ''}`}
+        onClick={() => isPi && setMethod(key)}
+        style={{ cursor: isPi ? 'pointer' : 'not-allowed' }}
+      >
+        <label>
+          <input
+            type="radio"
+            checked={method === key}
+            disabled={!isPi}
+            onChange={() => isPi && setMethod(key)}
+          />
+          {label} {isPi ? '' : '(coming soon)'}
+        </label>
+      </li>
+    );
+  })}
+</ul>
 
         <div className="fee-confirmation">
           <p>
@@ -111,35 +124,78 @@ const validatePin = () => {
             <strong>{methods.find((m) => m.key === method)?.label}</strong> before your return is submitted.
           </p>
         </div>
+        {method === 'pi' && (
+          <>
+            <p style={{ color: '#ff4d6d' }}>
+              Please send <strong>{piAmount} PI</strong> to:
+            </p>
+            <p style={{ fontWeight: 'bold', color: '#e1e8fc' }}>
+              {walletAddress || 'No wallet address set. Please check admin page.'}
+            </p>
+            <p style={{ fontSize: '0.9rem', color: '#aaa' }}>
+              Once your Pi payment is verified, your tax filing and estate documents will be unlocked automatically.
+            </p>
 
-       {method === 'pi' && (
-  <>
-    <p style={{ color: '#ff4d6d' }}>
-      Pi Wallet integration pending approval. Please send <strong>{piAmount} PI</strong> to:
-    </p>
-    <p style={{ fontWeight: 'bold', color: '#e1e8fc' }}>
-      {walletAddress || 'No wallet address set. Please check admin page.'}
-    </p>
-    <p style={{ fontSize: '0.9rem', color: '#aaa' }}>
-  Once your Pi payment is verified, your tax filing and estate documents will be unlocked automatically.
-</p>
-    <input
-      type="text"
-      placeholder="Enter your Pi wallet address"
-      value={answers.piSenderAddress || ''}
-      onChange={(e) => setAnswers({ ...answers, piSenderAddress: e.target.value })}
-      style={{
-        marginTop: '1rem',
-        padding: '0.5rem',
-        borderRadius: '6px',
-        border: 'none',
-        background: '#2a2f45',
-        color: '#e1e8fc',
-        width: '100%',
-      }}
-    />
-  </>
-)}
+            <input
+              type="text"
+              placeholder="Enter your Pi wallet address"
+              value={answers.piSenderAddress || ''}
+              onChange={(e) => setAnswers({ ...answers, piSenderAddress: e.target.value })}
+              style={{
+                marginTop: '1rem',
+                padding: '0.5rem',
+                borderRadius: '6px',
+                border: 'none',
+                background: '#2a2f45',
+                color: '#e1e8fc',
+                width: '100%',
+              }}
+            />
+
+            <button
+              style={{
+                marginTop: '1rem',
+                background: '#72caff',
+                color: '#0f131f',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                border: 'none',
+                fontWeight: 'bold',
+              }}
+              onClick={() => {
+                window.Pi.createPayment({
+                  amount: piAmount,
+                  memo: 'Death & Taxes filing fee',
+                  metadata: {
+                    sender: answers.piSenderAddress || 'unknown',
+                    filingFee: totalPrice.toFixed(2),
+                    estatePlan: answers.includeEstatePlan || false,
+                  },
+                  onReadyForServerApproval: (paymentId) => {
+                    console.log('Ready for server approval:', paymentId);
+                  },
+                  onReadyForServerCompletion: (paymentId, txid) => {
+                    console.log('Ready for server completion:', paymentId, txid);
+                    setAnswers({
+                      ...answers,
+                      paymentConfirmed: true,
+                      paymentMethod: 'pi',
+                    });
+                    onNext();
+                  },
+                  onCancel: (paymentId) => {
+                    console.log('Payment cancelled:', paymentId);
+                  },
+                  onError: (error, payment) => {
+                    console.error('Payment error:', error);
+                  },
+                });
+              }}
+            >
+              Pay with Pi Wallet
+            </button>
+          </>
+        )}
 
         {method !== 'pi' && <PaymentForm />}
 
@@ -172,7 +228,7 @@ const validatePin = () => {
           </div>
         </div>
       )}
- 
+
       <style jsx>{`
         .payment-method-step {
           color: #e1e8fc;
@@ -189,20 +245,22 @@ const validatePin = () => {
           background: #1c2232;
           padding: 1rem;
           border-radius: 8px;
-          cursor: not-allowed;
           transition: all 0.2s ease;
           box-shadow: 0 0 10px rgba(118, 198, 255, 0.1);
-          opacity: 0.6;
+          opacity: 1;
+        }
+        .payment-option.selected {
+          border: 2px solid #72caff;
         }
         .fee-confirmation {
           margin-bottom: 2rem;
           font-size: 0.95rem;
         }
         .step-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2rem; /* ⬅️ Adds vertical spacing below the Pi wallet input */
-}
+          display: flex;
+          justify-content: space-between;
+          margin-top: 2rem;
+        }
         button.primary {
           background: #72caff;
           color: #0f131f;
@@ -271,4 +329,4 @@ PaymentMethod.propTypes = {
   setAnswers: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
   onBack: PropTypes.func,
-};
+};        
