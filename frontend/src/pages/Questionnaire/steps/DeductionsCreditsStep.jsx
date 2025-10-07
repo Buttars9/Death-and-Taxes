@@ -169,7 +169,13 @@ export default function DeductionStep({ onNext, onBack }) {
 
   return (
     <GlowingBox>
-      <div className="deductions-step" style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
+      <div className="deductions-step" style={{
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2rem',
+  padding: '1rem',
+  boxSizing: 'border-box',
+}}>
         <div style={{ flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h2>
             <PiSymbol /> Any deductions to claim?
@@ -314,9 +320,9 @@ export default function DeductionStep({ onNext, onBack }) {
             </button>
           </div>
         </div>
-        <div style={{ flex: 1, padding: '1rem' }}>
-          <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
-        </div>
+        <div style={{ width: '100%', padding: '1rem 0' }}>
+  <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
+</div>
       </div>
 
       <style jsx>{`
@@ -377,6 +383,27 @@ export default function DeductionStep({ onNext, onBack }) {
           color: #ff6666;
           margin-top: 0.5rem;
         }
+       @media (max-width: 600px) {
+  .deductions-step {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .step-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .step-buttons button {
+    width: 100%;
+  }
+}   
       `}</style>
     </GlowingBox>
   );
