@@ -38,4 +38,39 @@ export const useAuthStore = create((set) => ({
       set({ user: null, isAuthenticated: false });
     }
   },
+
+  authenticateWithPi: async () => {
+    return new Promise((resolve, reject) => {
+      if (!window?.Pi) {
+        console.error("❌ Pi SDK not available");
+        return reject("Pi SDK not available");
+      }
+
+      window.Pi.authenticate(
+        ["payments", "username"], // ✅ Declare scopes here
+        async function onSuccess(auth) {
+          console.log("✅ Pi Auth success:", auth);
+          const { accessToken, user: piUser } = auth;
+
+          // Optional: send to backend for verification
+          try {
+            const { data } = await api.post('/api/pi-auth', {
+              accessToken,
+              username: piUser?.username,
+            });
+
+            set({ user: data.user, isAuthenticated: true });
+            resolve(data.user);
+          } catch (err) {
+            console.error("❌ Backend Pi auth failed:", err.message || err);
+            reject(err);
+          }
+        },
+        function onFailure(error) {
+          console.error("❌ Pi Auth failed:", error);
+          reject(error);
+        }
+      );
+    });
+  },
 }));
