@@ -175,7 +175,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     return; // Exit if auth fails
                   }
                 }
-                window.Pi.createPayment({
+                const paymentData = {
                   amount: piAmount,
                   memo: 'Death & Taxes filing fee',
                   metadata: {
@@ -183,6 +183,8 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     filingFee: totalPrice.toFixed(2),
                     estatePlan: answers.includeEstatePlan || false,
                   },
+                };
+                const paymentCallbacks = {
                   onReadyForServerApproval: (paymentId) => {
                     console.log('Ready for server approval:', paymentId);
                   },
@@ -201,7 +203,8 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                   onError: (error, payment) => {
                     console.error('Payment error:', error);
                   },
-                });
+                };
+                window.Pi.createPayment(paymentData, paymentCallbacks);
               }}
             >
               Pay with Pi Wallet
@@ -286,7 +289,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
           color: #e1e8fc;
           border: 1px solid #72caff;
           padding: 0.5rem 1rem;
-          border-radius: 6px;
+          borderRadius: 6px;
           font-weight: bold;
         }
         .pin-modal {
@@ -327,9 +330,9 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
-          border-radius: 6px;
+          borderRadius: 6px;
           border: none;
-          font-weight: bold;
+          fontWeight: 'bold',
         }
       `}</style>
     </GlowingBox>
