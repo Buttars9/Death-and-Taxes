@@ -7,9 +7,10 @@ const api = axios.create({
   withCredentials: true, // ✅ Send cookies for session auth
 });
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   user: null,
   isAuthenticated: false,
+  termsAccepted: false, // New: Track terms acceptance
 
   setUser: (user) => set({ user, isAuthenticated: !!user }),
 
@@ -36,8 +37,17 @@ export const useAuthStore = create((set) => ({
     } catch (err) {
       console.warn('Session rehydration failed:', err.message || err);
       set({ user: null, isAuthenticated: false });
+    } finally {
+      // New: Migrate legacy localStorage value if it exists (for backward compatibility)
+      const legacyTerms = localStorage.getItem('termsAccepted');
+      if (legacyTerms === 'true' && !get().termsAccepted) {
+        set({ termsAccepted: true });
+        localStorage.removeItem('termsAccepted'); // Clean up old key
+      }
     }
   },
+
+  acceptTerms: () => set({ termsAccepted: true }), // New: Action to accept terms
 
   authenticateWithPi: async () => {
     return new Promise((resolve, reject) => {

@@ -18,8 +18,8 @@ import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted); // Updated: Read from store
   const hasWizardData = !!localStorage.getItem('wizard-store');
-  const hasAgreedToTerms = localStorage.getItem('termsAccepted') === 'true';
 
   return (
     <AppLayout>

@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import GlowingBox from "../components/GlowingBox";
+import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
 
 export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
-  const navigate = useNavigate();
+  const acceptTerms = useAuthStore((s) => s.acceptTerms);
 
-const handleContinue = () => {
-  if (agreed) {
-    localStorage.setItem('termsAccepted', 'true');
-    window.location.reload(); // ✅ triggers full re-evaluation of AppRoutes
-  }
-};
+  const handleContinue = () => {
+    if (agreed) {
+      acceptTerms(); // Updates store, triggers re-render in parent routes
+    }
+  };
 
   return (
     <GlowingBox>
