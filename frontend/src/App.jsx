@@ -71,11 +71,11 @@ export default function App() {
     rehydrate().then(() => setReady(true));
 
     // 🟢 Warm-up backend immediately
-    fetch('https://death-and-taxes-xzkb.onrender.com/api/ping').catch(() => {});
+    fetch('https://deathntaxes-backend.onrender.com/api/ping').catch(() => {});
 
     // 🔁 Keep backend warm every 5 minutes
     const interval = setInterval(() => {
-      fetch('https://death-and-taxes-xzkb.onrender.com/api/ping').catch(() => {});
+      fetch('https://deathntaxes-backend.onrender.com/api/ping').catch(() => {});
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
