@@ -4,15 +4,10 @@ import GlowingBox from '../../../components/GlowingBox';
 import PiSymbol from '../../../components/PiSymbol';
 import PaymentForm from '../../../components/PaymentForm';
 import axios from 'axios';
-
-const methods = [
-  { key: 'pi', label: 'Pi Wallet' },
-  { key: 'paypal', label: 'PayPal' },
-  { key: 'venmo', label: 'Venmo' },
-  { key: 'credit-card', label: 'Credit Card' },
-];
+import { useAuthStore } from '../../../auth/authStore.jsx'; // Add this import (adjust path if needed)
 
 export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
+  const authenticateWithPi = useAuthStore((s) => s.authenticateWithPi); // Add this to access auth action
   const [method, setMethod] = useState('pi');
   const [piPrice, setPiPrice] = useState(null);
   const [showPinModal, setShowPinModal] = useState(false);
@@ -42,7 +37,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   useEffect(() => {
     axios.get('/api/settings/wallet')
       .then((res) => {
-        const pi = res.data?.wallet?.pi || '';
+        const pi = res.data?.data?.wallet?.pi || '';
         setWalletAddress(pi);
         if (typeof setAnswers === 'function') {
           setAnswers({ ...answers, piWalletAddress: pi });
@@ -162,8 +157,17 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                 border: 'none',
                 fontWeight: 'bold',
               }}
-              onClick={() => {
+              onClick={async () => { // Make async to await auth if needed
                 console.log('Pi SDK:', window?.Pi);
+                if (!window?.Pi?.authenticated || !window.Pi.consentedScopes?.includes('payments')) { // Check state
+                  try {
+                    await authenticateWithPi(); // Auth if not ready (requests 'payments' scope)
+                  } catch (err) {
+                    console.error('Auth failed:', err);
+                    alert('Authentication failed. Please try logging in again.');
+                    return; // Exit if auth fails
+                  }
+                }
                 window.Pi.createPayment({
                   amount: piAmount,
                   memo: 'Death & Taxes filing fee',
@@ -301,7 +305,6 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
         .modal-content input {
           width: 100%;
           padding: 0.5rem;
-          margin-top: 1rem;
           border-radius: 6px;
           border: none;
           background: #2a2f45;
