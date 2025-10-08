@@ -6,6 +6,13 @@ import PaymentForm from '../../../components/PaymentForm';
 import axios from 'axios';
 import { useAuthStore } from '../../../auth/authStore.jsx'; // Add this import (adjust path if needed)
 
+const methods = [
+  { key: 'pi', label: 'Pi Wallet' },
+  { key: 'paypal', label: 'PayPal' },
+  { key: 'venmo', label: 'Venmo' },
+  { key: 'credit-card', label: 'Credit Card' },
+];
+
 export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   const authenticateWithPi = useAuthStore((s) => s.authenticateWithPi); // Add this to access auth action
   const [method, setMethod] = useState('pi');
@@ -37,7 +44,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   useEffect(() => {
     axios.get('/api/settings/wallet')
       .then((res) => {
-        const pi = res.data?.data?.wallet?.pi || '';
+        const pi = res.data?.wallet?.pi || '';
         setWalletAddress(pi);
         if (typeof setAnswers === 'function') {
           setAnswers({ ...answers, piWalletAddress: pi });
@@ -305,6 +312,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
         .modal-content input {
           width: 100%;
           padding: 0.5rem;
+          margin-top: 1rem;
           border-radius: 6px;
           border: none;
           background: #2a2f45;
@@ -333,4 +341,4 @@ PaymentMethod.propTypes = {
   setAnswers: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
   onBack: PropTypes.func,
-};        
+};
