@@ -56,9 +56,16 @@ export const useAuthStore = create((set, get) => ({
         return reject("Pi SDK not available");
       }
 
-      window.Pi.authenticate(
-        ["payments", "username"], // ✅ Declare scopes here
-        async function onSuccess(auth) {
+      const scopes = ["payments", "username"]; // ✅ Declare scopes here
+
+      // Required callback for handling incomplete payments (expand as needed for backend integration)
+      const onIncompletePaymentFound = (payment) => {
+        console.log("Incomplete payment found:", payment);
+        // TODO: Optionally send payment details to backend to complete or cancel
+      };
+
+      window.Pi.authenticate(scopes, onIncompletePaymentFound)
+        .then(async (auth) => {
           console.log("✅ Pi Auth success:", auth);
           const { accessToken, user: piUser } = auth;
 
@@ -75,12 +82,11 @@ export const useAuthStore = create((set, get) => ({
             console.error("❌ Backend Pi auth failed:", err.message || err);
             reject(err);
           }
-        },
-        function onFailure(error) {
+        })
+        .catch((error) => {
           console.error("❌ Pi Auth failed:", error);
           reject(error);
-        }
-      );
+        });
     });
   },
 }));
