@@ -11,6 +11,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'; // ✅ Needed for JWT cookie parsing
 import { dbConnect } from './lib/dbConnect.js';
+import axios from 'axios';
 
 import filingRoutes from './routes/filingRoutes.js';
 import signatureRoutes from './routes/signatureRoutes.js';
@@ -116,6 +117,49 @@ app.use('/api/upload-document', documentUploadRoute);
 
 // 🧮 Final refund submission
 app.post('/api/finalize', finalizeReturn); // ✅ Threads refund payload to controller
+
+app.post('/api/pi-auth', async (req, res) => {
+  const { accessToken, username } = req.body;
+
+  if (!accessToken || !username) {
+    return res.status(400).json({ error: 'Missing accessToken or username' });
+  }
+
+  try {
+    // Verify token with Pi's /me endpoint
+    const piResponse = await axios.get('https://api.minepi.com/v2/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const piUser = piResponse.data;
+
+    // Check if the username matches (for security)
+    if (piUser.username !== username) {
+      return res.status(401).json({ error: 'Username mismatch' });
+    }
+
+    // Token is valid: Create or log in the user in your system
+    // (Replace with your actual user logic, e.g., findOrCreate in your DB)
+    const user = {
+      id: piUser.uid, // Use Pi's uid as unique identifier
+      username: piUser.username,
+      // ... add any other fields
+    };
+
+    // Example: Set session or JWT (adapt to your auth system)
+    // req.session.user = user; // If using sessions
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Pi token verification failed:', error);
+    if (error.response?.status === 401) {
+      return res.status(401).json({ error: 'Invalid access token' });
+    }
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // 🟢 Warm-up ping route for frontend and uptime monitors
 app.get('/api/ping', (req, res) => {
