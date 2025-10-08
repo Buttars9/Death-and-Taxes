@@ -9,7 +9,7 @@ export default function TermsGate() {
 const handleContinue = () => {
   if (agreed) {
     localStorage.setItem('termsAccepted', 'true');
-    navigate(0); // ✅ triggers full re-render and route re-evaluation
+    window.location.reload(); // ✅ triggers full re-evaluation of AppRoutes
   }
 };
 
