@@ -9,7 +9,7 @@ export default function TermsGate() {
 const handleContinue = () => {
   if (agreed) {
     localStorage.setItem('termsAccepted', 'true');
-    window.location.href = '/dashboard'; // ✅ guaranteed re-evaluation
+    navigate(0); // ✅ triggers full re-render and route re-evaluation
   }
 };
 
