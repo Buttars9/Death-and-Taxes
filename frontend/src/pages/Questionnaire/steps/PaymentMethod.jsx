@@ -20,7 +20,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState('');
   const [walletAddress, setWalletAddress] = useState('');
-
+const API_BASE = import.meta.env.VITE_API_BASE;
   const basePrice = 74.99;
   const estateAddon = answers.includeEstatePlan ? 25.0 : 0;
   const totalPrice = basePrice + estateAddon;
@@ -185,29 +185,34 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                   },
                 };
                 const paymentCallbacks = {
-                  onReadyForServerApproval: (paymentId) => {
-                    console.log('Ready for server approval:', paymentId);
-                    axios.post('/api/pi-approve', { paymentId }).catch(err => console.error('Approval failed:', err)); // Send to backend for approval
-                  },
-                  onReadyForServerCompletion: (paymentId, txid) => {
-                    console.log('Ready for server completion:', paymentId, txid);
-                    axios.post('/api/pi-complete', { paymentId, txid }).then(() => {
-                      setAnswers({
-                        ...answers,
-                        paymentConfirmed: true,
-                        paymentMethod: 'pi',
-                      });
-                      onNext();
-                    }).catch(err => console.error('Completion failed:', err));
-                  },
-                  onCancel: (paymentId) => {
-                    console.log('Payment cancelled:', paymentId);
-                  },
-                  onError: (error, payment) => {
-                    console.error('Payment error:', error);
-                  },
-                };
-                window.Pi.createPayment(paymentData, paymentCallbacks);
+  onReadyForServerApproval: (paymentId) => {
+    console.log('Ready for server approval:', paymentId);
+    axios
+      .post(`${API_BASE}/api/pi-approve`, { paymentId })
+      .catch(err => console.error('Approval failed:', err)); // Send to backend for approval
+  },
+  onReadyForServerCompletion: (paymentId, txid) => {
+    console.log('Ready for server completion:', paymentId, txid);
+    axios
+      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid })
+      .then(() => {
+        setAnswers({
+          ...answers,
+          paymentConfirmed: true,
+          paymentMethod: 'pi',
+        });
+        onNext();
+      })
+      .catch(err => console.error('Completion failed:', err));
+  },
+  onCancel: (paymentId) => {
+    console.log('Payment cancelled:', paymentId);
+  },
+  onError: (error, payment) => {
+    console.error('Payment error:', error);
+  },
+};
+window.Pi.createPayment(paymentData, paymentCallbacks);
               }}
             >
               Pay with Pi Wallet
