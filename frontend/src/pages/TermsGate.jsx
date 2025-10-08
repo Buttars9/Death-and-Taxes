@@ -6,12 +6,12 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const navigate = useNavigate();
 
-  const handleContinue = () => {
-    if (agreed) {
-      localStorage.setItem('termsAccepted', 'true');
-      navigate('/dashboard');
-    }
-  };
+ const handleContinue = () => {
+  if (agreed) {
+    localStorage.setItem('termsAccepted', 'true');
+    window.location.href = '/dashboard'; // ✅ hard reload to re-trigger AppRoutes
+  }
+};
 
   return (
     <GlowingBox>
