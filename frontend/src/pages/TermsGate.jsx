@@ -6,10 +6,10 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const navigate = useNavigate();
 
- const handleContinue = () => {
+const handleContinue = () => {
   if (agreed) {
     localStorage.setItem('termsAccepted', 'true');
-    window.location.href = '/dashboard'; // ✅ hard reload to re-trigger AppRoutes
+    window.location.href = '/dashboard'; // ✅ guaranteed re-evaluation
   }
 };
 
