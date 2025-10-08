@@ -187,15 +187,18 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                 const paymentCallbacks = {
                   onReadyForServerApproval: (paymentId) => {
                     console.log('Ready for server approval:', paymentId);
+                    axios.post('/api/pi-approve', { paymentId }).catch(err => console.error('Approval failed:', err)); // Send to backend for approval
                   },
                   onReadyForServerCompletion: (paymentId, txid) => {
                     console.log('Ready for server completion:', paymentId, txid);
-                    setAnswers({
-                      ...answers,
-                      paymentConfirmed: true,
-                      paymentMethod: 'pi',
-                    });
-                    onNext();
+                    axios.post('/api/pi-complete', { paymentId, txid }).then(() => {
+                      setAnswers({
+                        ...answers,
+                        paymentConfirmed: true,
+                        paymentMethod: 'pi',
+                      });
+                      onNext();
+                    }).catch(err => console.error('Completion failed:', err));
                   },
                   onCancel: (paymentId) => {
                     console.log('Payment cancelled:', paymentId);
@@ -248,6 +251,13 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
         .payment-method-step {
           color: #e1e8fc;
         }
+        ul {
+          margin: 1rem 0;
+          padding-left: 1.5rem;
+        }
+        li {
+          margin-bottom: 0.75rem;
+        }
         .payment-options {
           list-style: none;
           padding: 0;
@@ -289,7 +299,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
           color: #e1e8fc;
           border: 1px solid #72caff;
           padding: 0.5rem 1rem;
-          borderRadius: 6px;
+          border-radius: 6px;
           font-weight: bold;
         }
         .pin-modal {
@@ -330,7 +340,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
-          borderRadius: 6px;
+          borderRadius: '6px';
           border: none;
           fontWeight: 'bold',
         }

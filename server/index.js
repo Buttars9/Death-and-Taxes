@@ -161,6 +161,46 @@ app.post('/api/pi-auth', async (req, res) => {
   }
 });
 
+// New: Approve Pi payment (use PI_API_KEY from .env)
+app.post('/api/pi-approve', async (req, res) => {
+  const { paymentId } = req.body;
+  const apiKey = process.env.PI_API_KEY;
+  const isSandbox = true; // Set to false for production
+  const baseUrl = isSandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
+
+  try {
+    await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
+      headers: {
+        Authorization: `Key ${apiKey}`,
+      },
+    });
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Pi approve failed:', error);
+    res.status(500).json({ error: 'Approval failed' });
+  }
+});
+
+// New: Complete Pi payment
+app.post('/api/pi-complete', async (req, res) => {
+  const { paymentId, txid } = req.body;
+  const apiKey = process.env.PI_API_KEY;
+  const isSandbox = true; // Set to false for production
+  const baseUrl = isSandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
+
+  try {
+    const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/complete`, { txid }, {
+      headers: {
+        Authorization: `Key ${apiKey}`,
+      },
+    });
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Pi complete failed:', error);
+    res.status(500).json({ error: 'Completion failed' });
+  }
+});
+
 // 🟢 Warm-up ping route for frontend and uptime monitors
 app.get('/api/ping', (req, res) => {
   res.status(200).send('pong');
