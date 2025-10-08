@@ -12,6 +12,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'; // ✅ Needed for JWT cookie parsing
 import { dbConnect } from './lib/dbConnect.js';
 import axios from 'axios';
+import mongoose from 'mongoose'; // ✅ Needed for health check
 
 import filingRoutes from './routes/filingRoutes.js';
 import signatureRoutes from './routes/signatureRoutes.js';
@@ -126,7 +127,6 @@ app.post('/api/pi-auth', async (req, res) => {
   }
 
   try {
-    // Verify token with Pi's /me endpoint
     const piResponse = await axios.get('https://api.minepi.com/v2/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -135,21 +135,14 @@ app.post('/api/pi-auth', async (req, res) => {
 
     const piUser = piResponse.data;
 
-    // Check if the username matches (for security)
     if (piUser.username !== username) {
       return res.status(401).json({ error: 'Username mismatch' });
     }
 
-    // Token is valid: Create or log in the user in your system
-    // (Replace with your actual user logic, e.g., findOrCreate in your DB)
     const user = {
-      id: piUser.uid, // Use Pi's uid as unique identifier
+      id: piUser.uid,
       username: piUser.username,
-      // ... add any other fields
     };
-
-    // Example: Set session or JWT (adapt to your auth system)
-    // req.session.user = user; // If using sessions
 
     res.json({ user });
   } catch (error) {
@@ -165,7 +158,7 @@ app.post('/api/pi-auth', async (req, res) => {
 app.post('/api/pi-approve', async (req, res) => {
   const { paymentId } = req.body;
   const apiKey = process.env.NODE_ENV === 'development' ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
-  const isSandbox = process.env.NODE_ENV === 'development'; // Use testnet in dev
+  const isSandbox = process.env.NODE_ENV === 'development';
   const baseUrl = isSandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
   try {
@@ -185,7 +178,7 @@ app.post('/api/pi-approve', async (req, res) => {
 app.post('/api/pi-complete', async (req, res) => {
   const { paymentId, txid } = req.body;
   const apiKey = process.env.NODE_ENV === 'development' ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
-  const isSandbox = process.env.NODE_ENV === 'development'; // Use testnet in dev
+  const isSandbox = process.env.NODE_ENV === 'development';
   const baseUrl = isSandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
   try {
@@ -204,6 +197,22 @@ app.post('/api/pi-complete', async (req, res) => {
 // 🟢 Warm-up ping route for frontend and uptime monitors
 app.get('/api/ping', (req, res) => {
   res.status(200).send('pong');
+});
+
+// ✅ Health check route for MongoDB connection
+app.get('/api/health', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const statusMap = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+  };
+
+  res.json({
+    status: 'ok',
+    db: statusMap[dbState],
+  });
 });
 
 // 🚨 Catch-all fallback to prevent wildcard crash
