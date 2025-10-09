@@ -1,7 +1,7 @@
 .help-symbol {
   font-family: "Georgia", serif;
   font-weight: normal;
-  font-size: 1.75rem;
+  font-size: 1.9rem; /* Slightly increased from 1.75rem */
   color: transparent;
   letter-spacing: 0.25px;
   -webkit-text-stroke: 0.8px #00ffc3;
