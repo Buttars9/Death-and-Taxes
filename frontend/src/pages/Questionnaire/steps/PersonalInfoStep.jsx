@@ -165,11 +165,13 @@ const removeDependent = (index) => {
     <GlowingBox>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
-         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
   <h2 style={{ color: '#a166ff' }}>
     <PiSymbol /> Personal Information
   </h2>
-  <HelpIcon onClick={() => setShowHelp(true)} />
+  <div style={{ cursor: 'pointer' }} onClick={() => setShowHelp(true)}>
+    <HelpIcon />
+  </div>
 </div>
           <p>
             Fill in your details to start your filing. This information is required for accurate IRS filing.
