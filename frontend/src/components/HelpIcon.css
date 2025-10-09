@@ -1,4 +1,4 @@
-.pi-symbol {
+.help-symbol {
   font-family: "Georgia", serif;
   font-weight: normal;
   font-size: 1.75rem;
@@ -10,7 +10,7 @@
   user-select: none;
 }
 
-.pi-symbol.glow {
+.help-symbol.glow {
   text-shadow: 0 0 4px #00ffc3, 0 0 8px #00ffc3;
 }
 
