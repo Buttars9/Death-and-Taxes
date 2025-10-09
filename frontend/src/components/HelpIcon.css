@@ -1,16 +1,17 @@
 .pi-symbol {
-  font-family: "Cambria", serif;
+  font-family: "Georgia", serif;
   font-weight: normal;
   font-size: 1.75rem;
-  color: #00ffc3;
-  letter-spacing: 0.5px;
-  opacity: 0.85;
+  color: transparent;
+  letter-spacing: 0.25px;
+  -webkit-text-stroke: 0.8px #00ffc3;
+  opacity: 0.9;
   transition: text-shadow 0.3s ease;
   user-select: none;
 }
 
 .pi-symbol.glow {
-  text-shadow: 0 0 4px #00ffc3, 0 0 10px #00ffc3;
+  text-shadow: 0 0 4px #00ffc3, 0 0 8px #00ffc3;
 }
 
 .help-icon {
