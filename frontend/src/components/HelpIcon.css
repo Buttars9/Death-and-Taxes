@@ -1,13 +1,15 @@
 .pi-symbol {
   font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 1.75rem;
   color: #00ffc3;
-  font-size: 1.5rem;
+  letter-spacing: 0.5px;
   transition: text-shadow 0.3s ease;
   user-select: none;
 }
 
 .pi-symbol.glow {
-  text-shadow: 0 0 8px #00ffc3, 0 0 16px #00ffc3;
+  text-shadow: 0 0 6px #00ffc3, 0 0 12px #00ffc3;
 }
 
 .help-icon {
