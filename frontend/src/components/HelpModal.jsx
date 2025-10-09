@@ -29,7 +29,18 @@ console.log('Modal content:', content);
     alignItems: 'center',
   }}
 >
-      <div className="help-modal">
+      <div
+  className="help-modal"
+  style={{
+    background: '#1c2232',
+    color: '#e1e8fc',
+    padding: '2rem',
+    borderRadius: '12px',
+    maxWidth: '600px',
+    width: '90%',
+    boxShadow: '0 0 30px rgba(114, 202, 255, 0.6)',
+  }}
+>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <button
             onClick={onClose}
