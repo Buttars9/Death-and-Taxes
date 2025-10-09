@@ -4,9 +4,13 @@ import { helpContent } from './helpContent';
 import './HelpIcon.css';
 
 export default function HelpModal({ topic, onClose }) {
+  let content;
+if (topic.includes('.')) {
   const [section, key] = topic.split('.');
-  const content = helpContent?.[section]?.[key];
-
+  content = helpContent?.[section]?.[key];
+} else {
+  content = helpContent?.[topic];
+}
   if (!content) return null;
 
   return (
