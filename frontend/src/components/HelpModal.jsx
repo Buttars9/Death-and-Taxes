@@ -15,7 +15,7 @@ export default function HelpModal({ topic, onClose }) {
         <button
           onClick={onClose}
           style={{
-            fontSize: '1.25rem', // reduced from 1.75rem
+            fontSize: '1.25rem', // smaller size
             color: '#00ffc3',
             background: 'transparent',
             border: 'none',
