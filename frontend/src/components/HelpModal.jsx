@@ -12,7 +12,7 @@ if (topic.includes('.')) {
   content = helpContent?.[topic];
 }
   if (!content) return null;
-
+console.log('Modal content:', content);
   return (
     <div className="help-modal-overlay">
       <div className="help-modal">
