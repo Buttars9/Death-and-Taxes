@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol.jsx';
 import { useWizardStore } from '../../../stores/wizardStore';
-
+import HelpIcon from '../../../components/HelpIcon.jsx';
+import HelpModal from '../../../components/HelpModal.jsx';
 const filingOptions = [
   { value: '', label: 'Select' },
   { value: 'single', label: 'Single' },
@@ -78,7 +79,7 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
   const [localSpouseName, setLocalSpouseName] = useState(answers.spouseName || spouseName || '');
   const [localSpouseSSN, setLocalSpouseSSN] = useState(answers.spouseSSN || spouseSSN || '');
   const [localSpouseDob, setLocalSpouseDob] = useState(answers.spouseDob || spouseDob || '');
-
+const [showHelp, setShowHelp] = useState(false);
   useEffect(() => {
     setLocalFirstName(answers.firstName || firstName || '');
     setLocalLastName(answers.lastName || lastName || '');
@@ -164,9 +165,14 @@ const removeDependent = (index) => {
     <GlowingBox>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
-          <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-            <PiSymbol /> Personal Information
-          </h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+  <h2 style={{ color: '#a166ff' }}>
+    <PiSymbol /> Personal Information
+  </h2>
+  <div style={{ cursor: 'pointer' }} onClick={() => setShowHelp(true)}>
+    <HelpIcon />
+  </div>
+</div>
           <p>
             Fill in your details to start your filing. This information is required for accurate IRS filing.
           </p>
@@ -705,6 +711,9 @@ const removeDependent = (index) => {
           </div>
         </div>
       </div>
+ {showHelp && (
+  <HelpModal topic="personalInfoStep" onClose={() => setShowHelp(false)} />
+)}     
     </GlowingBox>
   );
 }
