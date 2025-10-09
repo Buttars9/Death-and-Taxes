@@ -4,6 +4,7 @@
     { "source": "/dashboard", "destination": "/" },
     { "source": "/filing/:path*", "destination": "/" },
     { "source": "/admin", "destination": "/" },
-    { "source": "/admin/vault", "destination": "/" }
+    { "source": "/admin/vault", "destination": "/" },
+    { "source": "/reset-password", "destination": "/" }
   ]
 }
