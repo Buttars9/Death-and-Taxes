@@ -1,20 +1,18 @@
-.help-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 24px;
-  color: #9cf;
-  text-shadow: 0 0 6px #6cf, 0 0 12px #39f;
-  padding: 4px;
-  margin-left: 8px;
-  transition: transform 0.2s ease;
-}
-
-.help-icon:hover {
-  transform: scale(1.1);
-}
-
 .pi-symbol {
-  font-family: 'Georgia', serif;
-  font-weight: bold;
+  font-family: "Georgia", serif;
+  color: #00ffc3;
+  font-size: 1.5rem;
+  transition: text-shadow 0.3s ease;
+  user-select: none;
+}
+
+.pi-symbol.glow {
+  text-shadow: 0 0 8px #00ffc3, 0 0 16px #00ffc3;
+}
+
+.help-icon {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
