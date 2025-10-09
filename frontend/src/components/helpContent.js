@@ -219,4 +219,8 @@ export const helpContent = {
 Direct deposit is the fastest and most secure way to receive your refund. Your bank details are encrypted and used only for IRS submission. If you prefer to receive a paper check, you can skip this step.`,
   },
 },
+personalDetails: {
+  title: 'Your IRS Filing Profile',
+  body: `This section builds your full IRS filing profile. We collect your legal name, SSN, date of birth, and address to match IRS records and prevent rejection. Prior year AGI and IRS PIN help verify your identity and protect against fraud. Your filing status and resident state determine your tax bracket, credit eligibility, and refund routing. If you're married, we also collect your spouse's name, SSN, and date of birth for joint filing. Income sources guide which IRS forms you'll need (W-2, 1099, etc.), and dependents help calculate credits like the Child Tax Credit. Every field here affects your refund path, compliance status, and IRS acceptance. Accuracy matters.`,
+},
 };
