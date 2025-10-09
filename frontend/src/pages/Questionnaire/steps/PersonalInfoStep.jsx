@@ -162,7 +162,9 @@ const removeDependent = (index) => {
   };
 
   return (
+  <>
     <GlowingBox>
+
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -725,11 +727,13 @@ const removeDependent = (index) => {
           </div>
         </div>
       </div>
- {showHelp && (
-  <HelpModal topic="personalInfoStep" onClose={() => setShowHelp(false)} />
-)}     
-    </GlowingBox>
-  );
+ </GlowingBox>
+    {showHelp && (
+      <HelpModal topic="personalInfoStep" onClose={() => setShowHelp(false)} />
+    )}
+  </>
+);
+
 }
 
 PersonalInfoStep.propTypes = {
