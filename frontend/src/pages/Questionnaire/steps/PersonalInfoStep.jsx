@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol.jsx';
 import { useWizardStore } from '../../../stores/wizardStore';
-import HelpIcon from '../../../components/HelpIcon.jsx';
 import HelpModal from '../../../components/HelpModal.jsx';
+import HelpIcon from '../../../components/HelpIcon.jsx';
 const filingOptions = [
   { value: '', label: 'Select' },
   { value: 'single', label: 'Single' },
@@ -165,13 +165,11 @@ const removeDependent = (index) => {
     <GlowingBox>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
-       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+  <HelpIcon onClick={() => setShowHelp(true)} />
   <h2 style={{ color: '#a166ff' }}>
     <PiSymbol /> Personal Information
   </h2>
-  <div style={{ cursor: 'pointer' }} onClick={() => setShowHelp(true)}>
-    <HelpIcon />
-  </div>
 </div>
           <p>
             Fill in your details to start your filing. This information is required for accurate IRS filing.
