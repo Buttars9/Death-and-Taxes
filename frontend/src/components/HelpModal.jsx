@@ -12,21 +12,21 @@ export default function HelpModal({ topic, onClose }) {
   return (
     <div className="help-modal-overlay">
       <div className="help-modal">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 className="help-title">{content.title}</h2>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <button
             onClick={onClose}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '1.25rem', // smaller size
               color: '#00ffc3',
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              marginLeft: '1rem',
+              marginRight: '0.75rem',
             }}
           >
             ✖
           </button>
+          <h2 className="help-title">{content.title}</h2>
         </div>
         <p className="help-body">{content.body}</p>
       </div>
