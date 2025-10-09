@@ -179,7 +179,10 @@ const removeDependent = (index) => {
       display: 'flex',
       alignItems: 'center',
     }}
-    onClick={() => setShowHelp(true)}
+    onClick={() => {
+  console.log('Help icon clicked');
+  setShowHelp(true);
+}}
   >
     <HelpIcon />
   </div>
