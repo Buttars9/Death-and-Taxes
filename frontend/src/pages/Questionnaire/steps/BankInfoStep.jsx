@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol.jsx';
-
+import HelpModal from '../../../components/HelpModal.jsx';
+import HelpIcon from '../../../components/HelpIcon.jsx';
 export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
   const [routingNumber, setRoutingNumber] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [accountType, setAccountType] = useState('checking');
-
+const [showHelp, setShowHelp] = useState(false);
   useEffect(() => {
     setRoutingNumber(answers.routingNumber || '');
     setAccountNumber(answers.accountNumber || '');
@@ -32,6 +33,9 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
         <h2>
           <PiSymbol /> Bank Information for Refund
         </h2>
+        <div style={{ float: 'right' }}>
+  <HelpIcon onClick={() => setShowHelp(true)} />
+</div>
         <p>Enter your bank details for direct deposit of your refund.</p>
 
         <div
@@ -153,6 +157,9 @@ export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
           color: #ffcc66;
         }
       `}</style>
+      {showHelp && (
+  <HelpModal topic="bankInfo.overview" onClose={() => setShowHelp(false)} />
+)}
     </GlowingBox>
   );
 }
