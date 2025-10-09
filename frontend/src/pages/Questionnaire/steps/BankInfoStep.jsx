@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol.jsx';
-import HelpModal from '../../../../components/HelpModal.jsx';
-import HelpIcon from '../../../../components/HelpIcon.jsx';
+import HelpModal from '../../../components/HelpModal.jsx';
+import HelpIcon from '../../../components/HelpIcon.jsx';
 export default function BankInfoStep({ answers, setAnswers, onNext, onBack }) {
   const [routingNumber, setRoutingNumber] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
