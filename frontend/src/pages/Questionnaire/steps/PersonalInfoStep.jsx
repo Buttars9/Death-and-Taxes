@@ -165,11 +165,11 @@ const removeDependent = (index) => {
     <GlowingBox>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-  <HelpIcon onClick={() => setShowHelp(true)} />
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
   <h2 style={{ color: '#a166ff' }}>
     <PiSymbol /> Personal Information
   </h2>
+  <HelpIcon onClick={() => setShowHelp(true)} />
 </div>
           <p>
             Fill in your details to start your filing. This information is required for accurate IRS filing.
@@ -709,8 +709,8 @@ const removeDependent = (index) => {
           </div>
         </div>
       </div>
-      {showHelp && (
-  <HelpModal topic="filingStatus.overview" onClose={() => setShowHelp(false)} />
+    {showHelp && (
+  <HelpModal topic="filingStatus.personalDetails" onClose={() => setShowHelp(false)} />
 )}
     </GlowingBox>
   );
