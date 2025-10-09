@@ -165,11 +165,22 @@ const removeDependent = (index) => {
     <GlowingBox>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
   <h2 style={{ color: '#a166ff' }}>
     <PiSymbol /> Personal Information
   </h2>
-  <div style={{ cursor: 'pointer' }} onClick={() => setShowHelp(true)}>
+  <div
+    style={{
+      cursor: 'pointer',
+      padding: '0.5rem',
+      borderRadius: '6px',
+      background: '#1c2232',
+      boxShadow: '0 0 10px rgba(114, 202, 255, 0.3)',
+      display: 'flex',
+      alignItems: 'center',
+    }}
+    onClick={() => setShowHelp(true)}
+  >
     <HelpIcon />
   </div>
 </div>
