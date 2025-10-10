@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useWizardStore } from '../stores/wizardStore';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 export default function WillGenerator({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
 const willData = answers.willData || {};
   const [age, setAge] = useState(willData.primaryBeneficiaryAge || '');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChange = (field, value) => {
     const updated = { ...willData, [field]: value };
@@ -24,7 +29,7 @@ const willData = answers.willData || {};
 
   return (
     <div className="will-generator">
-      <h2 className="section-title">🪦 Final Will & Testament</h2>
+      <h2 className="section-title">🪦 Final Will & Testament <HelpIcon onClick={() => { setSelectedTopic('willGeneratorStep'); setShowHelpModal(true); }} /></h2>
 
       <div className="glowing-input">
         <label>Full Legal Name</label>
@@ -242,6 +247,9 @@ const willData = answers.willData || {};
           color: #ffcc66;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </div>
   );
 }

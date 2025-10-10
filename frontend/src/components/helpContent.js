@@ -100,6 +100,11 @@ export const helpContent = {
   body: 'This step shows your estimated refund based on inputs. Confirm accuracy, add an email for updates, and check the box to proceed. The filing fee covers processing—your refund will be direct-deposited if bank info was provided.',
 },
 
+  willGeneratorStep: {
+  title: 'Will Generator Overview',
+  body: 'This step creates a basic last will and testament. Enter beneficiary details, guardians for minors, and asset summaries. For complex estates, consider professional legal advice. The generated document will include revocation, residue, and digital asset clauses if selected.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',
