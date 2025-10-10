@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useWizardStore } from '../stores/wizardStore';
-import HelpIcon from '../../../components/HelpIcon';
-import HelpModal from '../../../components/HelpModal';
-import '../../../components/HelpIcon.css';
+import HelpIcon from './HelpIcon';
+import HelpModal from './HelpModal';
+import './HelpIcon.css';
 
 export default function WillGenerator({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
