@@ -31,11 +31,8 @@ const [showHelp, setShowHelp] = useState(false);
     <GlowingBox>
       <div className="bank-info-step">
         <h2>
-          <PiSymbol /> Bank Information for Refund
+          <PiSymbol /> Bank Information for Refund <HelpIcon onClick={() => setShowHelp(true)} />
         </h2>
-        <div style={{ float: 'right' }}>
-  <HelpIcon onClick={() => setShowHelp(true)} />
-</div>
         <p>Enter your bank details for direct deposit of your refund.</p>
 
         <div
