@@ -90,6 +90,11 @@ export const helpContent = {
   body: 'This step allows you to claim tax credits that reduce your tax liability dollar-for-dollar. Automatic credits like Child Tax Credit and EITC are applied based on your details. Select additional credits and enter qualified amounts where prompted. Eligibility is calculated using your income, dependents, and other info.',
 },
 
+  priorYearStep: {
+  title: 'Prior Year Info Overview',
+  body: 'Provide your prior year Adjusted Gross Income (AGI) or IRS PIN for identity verification during e-filing. AGI is on line 11 of your 2024 Form 1040. If unavailable, leave blank—we’ll use other methods.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',

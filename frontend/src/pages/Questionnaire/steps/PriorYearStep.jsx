@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox';
 import PiSymbol from '../../../components/PiSymbol';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
   const [priorAGI, setPriorAGI] = useState('');
   const [irsPIN, setIrsPIN] = useState('');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   useEffect(() => {
     setPriorAGI(answers.priorAGI || '');
@@ -29,7 +34,7 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
     <GlowingBox>
       <div className="prior-year-step">
         <h2>
-          <PiSymbol /> Prior Year Info
+          <PiSymbol /> Prior Year Info <HelpIcon onClick={() => { setSelectedTopic('priorYearStep'); setShowHelpModal(true); }} />
         </h2>
         <p>
           The IRS uses your prior year AGI or PIN to verify your identity for e-file.
@@ -115,6 +120,9 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
           cursor: not-allowed;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }
