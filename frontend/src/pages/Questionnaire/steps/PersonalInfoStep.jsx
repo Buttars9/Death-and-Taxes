@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol.jsx';
 import { useWizardStore } from '../../../stores/wizardStore';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import './HelpIcon.css';
 
 const filingOptions = [
   { value: '', label: 'Select' },
@@ -78,6 +81,8 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
   const [localSpouseName, setLocalSpouseName] = useState(answers.spouseName || spouseName || '');
   const [localSpouseSSN, setLocalSpouseSSN] = useState(answers.spouseSSN || spouseSSN || '');
   const [localSpouseDob, setLocalSpouseDob] = useState(answers.spouseDob || spouseDob || '');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   useEffect(() => {
     setLocalFirstName(answers.firstName || firstName || '');
@@ -165,7 +170,7 @@ const removeDependent = (index) => {
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
           <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-            <PiSymbol /> Personal Information
+            <PiSymbol /> Personal Information <HelpIcon onClick={() => { setSelectedTopic('personalInfoStep'); setShowHelpModal(true); }} />
           </h2>
           <p>
             Fill in your details to start your filing. This information is required for accurate IRS filing.
@@ -705,6 +710,9 @@ const removeDependent = (index) => {
           </div>
         </div>
       </div>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }
