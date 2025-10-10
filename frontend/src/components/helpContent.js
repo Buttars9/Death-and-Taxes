@@ -75,6 +75,11 @@ export const helpContent = {
   body: `This section builds your full IRS filing profile. We collect your legal name, SSN, date of birth, and address to match IRS records and prevent rejection. Prior year AGI and IRS PIN help verify your identity and protect against fraud. Your filing status and resident state determine your tax bracket, credit eligibility, and refund routing. If you're married, we also collect your spouse's name, SSN, and date of birth for joint filing. Income sources guide which IRS forms you'll need (W-2, 1099, etc.), and dependents help calculate credits like the Child Tax Credit. Every field here affects your refund path, compliance status, and IRS acceptance. Accuracy matters.`,
 },
 
+  incomeStep: {
+  title: 'Income Step Overview',
+  body: `This step collects detailed income from all sources, including W-2 wages, 1099 self-employment, foreign earnings, and more. Enter amounts, employers, and relevant details to ensure accurate tax calculations. Autofill pulls from linked accounts for convenience. Foreign income may qualify for exclusions or credits—review treaties if applicable. Your entries here directly impact deductions, credits, and refund estimates.`,
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',
