@@ -85,6 +85,11 @@ export const helpContent = {
   body: `This step lets you choose between the standard deduction (a fixed amount based on filing status) or itemizing specific expenses like mortgage interest, medical costs, and charitable donations to potentially reduce taxable income more. Itemizing requires documentation and may increase your refund if expenses exceed the standard amount. Select options and enter amounts accurately—review IRS limits for each category.`,
 },
 
+  creditsStep: {
+  title: 'Credits Claim Step Overview',
+  body: 'This step allows you to claim tax credits that reduce your tax liability dollar-for-dollar. Automatic credits like Child Tax Credit and EITC are applied based on your details. Select additional credits and enter qualified amounts where prompted. Eligibility is calculated using your income, dependents, and other info.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',

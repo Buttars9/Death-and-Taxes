@@ -5,8 +5,12 @@ import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol';
 import RefundEstimate from '../../../components/RefundEstimate';
 import { useWizardStore } from '../../../stores/wizardStore';
-import { getEligibleCredits } from '../../../shared/utils/creditEngine.js';
+import { getEligibleCredits } from '../../../services/api';
 import { calculateRefund } from '../../../shared/utils/calculateRefund.js';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
+
 const creditOptions = [
   { label: 'Education Credits (American Opportunity, Lifetime Learning)', value: 'education' },
   { label: 'Retirement Savings Contributions Credit (Saver’s Credit)', value: 'retirement' },
@@ -29,6 +33,8 @@ export default function CreditsClaimStep({ onNext, onBack, stepIndex }) {
   const [selected, setSelected] = useState([]);
   const [creditExpenses, setCreditExpenses] = useState({});
   const [error, setError] = useState('');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const totalIncome = incomeSources?.reduce((sum, src) => sum + (parseFloat(src.box1 || src.amount) || 0), 0) || 0;
   const numDependents = dependents?.length || 0;
@@ -68,7 +74,7 @@ export default function CreditsClaimStep({ onNext, onBack, stepIndex }) {
     setSelected(initialSelected);
     setCreditExpenses(initialExpenses);
     console.log('CreditsClaimStep initial state:', { initialCredits, stepIndex });
-  }, []); // Empty dependency array for mount-only initialization
+  }, []); // Run only on mount
 
   // Handle Child Tax Credit auto-selection
   useEffect(() => {
@@ -203,7 +209,7 @@ useEffect(() => {
       <div className="credits-step">
         <div className="section">
           <h2 style={{ color: '#a166ff' }}>
-            <PiSymbol /> Claim Credits
+            <PiSymbol /> Claim Credits <HelpIcon onClick={() => { setSelectedTopic('creditsStep'); setShowHelpModal(true); }} />
           </h2>
           <p>
             Select all tax credits you may qualify for. We’ll calculate the amount based on your details. Enter qualified expenses where prompted.
@@ -331,6 +337,9 @@ useEffect(() => {
           <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
         </div>
       </div>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
 
       <style jsx>{`
         .credits-step {
