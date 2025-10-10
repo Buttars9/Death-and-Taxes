@@ -5,7 +5,7 @@ import PiSymbol from '../../../components/PiSymbol.jsx';
 import { useWizardStore } from '../../../stores/wizardStore';
 import HelpIcon from '../../../components/HelpIcon';
 import HelpModal from '../../../components/HelpModal';
-import './HelpIcon.css';
+import '../../../components/HelpIcon.css';
 
 const filingOptions = [
   { value: '', label: 'Select' },
