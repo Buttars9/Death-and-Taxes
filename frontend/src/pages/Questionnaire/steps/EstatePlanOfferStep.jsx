@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox';
 import steps from '../../../wizard/wizardStep'; // Import wizardStep.js
