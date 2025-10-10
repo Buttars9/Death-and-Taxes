@@ -5,6 +5,9 @@ import PiSymbol from '../../../components/PiSymbol';
 import PaymentForm from '../../../components/PaymentForm';
 import axios from 'axios';
 import { useAuthStore } from '../../../auth/authStore.jsx'; // Add this import (adjust path if needed)
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 const methods = [
   { key: 'pi', label: 'Pi Wallet' },
@@ -24,6 +27,8 @@ const API_BASE = import.meta.env.VITE_API_BASE;
   const basePrice = 74.99;
   const estateAddon = answers.includeEstatePlan ? 25.0 : 0;
   const totalPrice = basePrice + estateAddon;
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   useEffect(() => {
     if (answers.paymentMethod) {
@@ -87,7 +92,7 @@ const API_BASE = import.meta.env.VITE_API_BASE;
           <span onClick={() => setShowPinModal(true)} style={{ cursor: 'pointer' }}>
             <PiSymbol />
           </span>{' '}
-          Select Payment Method
+          Select Payment Method <HelpIcon onClick={() => { setSelectedTopic('piPaymentStep'); setShowHelpModal(true); }} />
         </h2>
 
         <p>
@@ -250,6 +255,9 @@ window.Pi.createPayment(paymentData, paymentCallbacks);
             </div>
           </div>
         </div>
+      )}
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
       )}
 
       <style jsx>{`
