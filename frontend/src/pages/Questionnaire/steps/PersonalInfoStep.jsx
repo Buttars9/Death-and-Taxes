@@ -170,7 +170,7 @@ const removeDependent = (index) => {
       <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2 }}>
           <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-            <PiSymbol /> Personal Information <HelpIcon onClick={() => { setSelectedTopic('personalInfoStep'); setShowHelpModal(true); }} />
+            <PiSymbol /> Personal Information <HelpIcon onClick={() => { console.log('HelpIcon clicked!'); setSelectedTopic('personalInfoStep'); setShowHelpModal(true); }} />
           </h2>
           <p>
             Fill in your details to start your filing. This information is required for accurate IRS filing.
