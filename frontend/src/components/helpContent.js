@@ -110,6 +110,11 @@ export const helpContent = {
   body: 'This optional step adds a full estate plan for $25, including trust, POA, and more. Select yes to include or no to proceed with just the will.',
 },
 
+  estatePlanWizardStep: {
+  title: 'Estate Plan Wizard Overview',
+  body: 'Select which estate documents to generate (e.g., trust, POA). Unselect any you don\'t want. Proceed through each to enter details—back/next buttons navigate steps.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',

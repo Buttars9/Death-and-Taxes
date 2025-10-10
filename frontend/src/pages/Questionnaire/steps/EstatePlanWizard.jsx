@@ -8,6 +8,9 @@ import TODAffidavitStep from "../../../components/estate/TODAffidavitStep";
 import HipaaReleaseStep from "../../../components/estate/HipaaReleaseStep";
 import ExecutorLetterStep from "../../../components/estate/ExecutorLetterStep";
 import { useWizardStore } from "../../../stores/wizardStore";
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 const estateOptions = [
   { key: 'trust', label: 'Revocable Living Trust', component: TrustGenerator },
@@ -26,6 +29,8 @@ function EstatePlanWizard({ onNext, onBack }) {
     allKeys.filter(k => initialKeys.includes(k))
   );
   const [index, setIndex] = useState(-1); // -1 means selection screen
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleToggle = (key) => {
     setSelectedKeys(prev =>
@@ -116,7 +121,7 @@ function EstatePlanWizard({ onNext, onBack }) {
       <GlowingBox>
         <div className="credits-step">
           <div className="section">
-            <h2>📁 Unselect Any Estate Documents You Don’t Want</h2>
+            <h2>📁 Unselect Any Estate Documents You Don’t Want <HelpIcon onClick={() => { setSelectedTopic('estatePlanWizardStep'); setShowHelpModal(true); }} /></h2>
             <ul className="credit-options">
               {estateOptions.map(opt => (
                 <li
@@ -193,6 +198,9 @@ function EstatePlanWizard({ onNext, onBack }) {
             font-weight: bold;
           }
         `}</style>
+        {showHelpModal && (
+          <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+        )}
       </GlowingBox>
     );
   }
