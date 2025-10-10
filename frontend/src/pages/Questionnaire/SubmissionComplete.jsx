@@ -8,6 +8,9 @@ import PiSymbol from '../../components/PiSymbol.jsx';
 import IRSReceipt from '../../components/IRSReceipt.jsx';
 import { IrsPayloadPreview } from '../../components/IrsPayloadPreview.jsx';
 import Modal from '../../components/Modal.jsx';
+import HelpIcon from '../../components/HelpIcon';
+import HelpModal from '../../components/HelpModal';
+import '../../components/HelpIcon.css';
 
 import { formatCurrency } from '../../utils/formatters.js';
 
@@ -25,6 +28,8 @@ import { generateEfileXml } from '../../shared/utils/generateEfileXml.js';
 export default function SubmissionComplete({ confirmationId, submittedAt }) {
   const navigate = useNavigate();
   const { answers, w2s, willData, setAnswers } = useWizardStore();
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const taxYear = new Date().getFullYear();
   const formattedTime = submittedAt ? new Date(submittedAt).toLocaleString() : null;
@@ -102,7 +107,7 @@ const pdfD = await fillOutScheduleD(payload);
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `irs-return-${contactEmail}_${taxYear}.pdf`;
+    link.download = `irs-return-${contactEmail || 'anonymous'}_${new Date().getFullYear()}.pdf`;
     link.click();
   } catch (err) {
     console.error('IRS PDF generation failed:', err);
@@ -205,8 +210,8 @@ const handleViewPayload = () => {
         boxShadow: '0 0 12px #8c4dcc',
         color: '#e0e0ff',
       }}>
-        <h2 style={{ color: '#72caff', marginBottom: '1rem' }}>
-          <PiSymbol /> You Did It!
+        <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
+          <PiSymbol /> You Did It! <HelpIcon onClick={() => { setSelectedTopic('submissionCompleteStep'); setShowHelpModal(true); }} />
         </h2>
         <p>Your filing is complete and securely queued. We’ll notify you as it moves through review and disbursement.</p>
 
@@ -301,6 +306,9 @@ const handleViewPayload = () => {
           </Modal>
         )}
       </div>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

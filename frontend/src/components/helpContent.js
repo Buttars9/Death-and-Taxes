@@ -150,6 +150,16 @@ export const helpContent = {
   body: 'Select your payment method, with Pi Wallet recommended for seamless crypto integration. Enter wallet details and confirm the transaction. The filing fee covers all processing.',
 },
 
+  finalReviewStep: {
+  title: 'Final Review Overview',
+  body: 'Review your tax estimate and will preview. Use buttons to print documents or submit. Confirm all details before proceeding.',
+},
+
+  submissionCompleteStep: {
+  title: 'Submission Complete Overview',
+  body: 'Your filing is queued. Download receipts, previews, or submit to Drake. Use dashboard for status updates.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',

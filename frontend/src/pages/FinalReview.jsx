@@ -12,6 +12,9 @@ import { generateTodText } from '../shared/utils/generateTodText.js';
 import { generateExecutorText } from '../shared/utils/generateExecutorText.js';
 import { generateHipaaText } from '../shared/utils/generateHipaaText.js';
 import { generateFinalDirective } from '../shared/utils/generateFinalDirective.js';
+import HelpIcon from '../components/HelpIcon';
+import HelpModal from '../components/HelpModal';
+import '../components/HelpIcon.css';
 
 export default function FinalReview({ onBack, onNext }) {
   const { answers } = useWizardStore();
@@ -26,6 +29,8 @@ export default function FinalReview({ onBack, onNext }) {
     paymentConfirmed,
     willData = {},
   } = answers;
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const standardDeductions = {
     single: 13850,
@@ -100,7 +105,7 @@ const handlePrint = (label, content) => {
         color: '#e0e0ff',
       }}>
         <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-          <PiSymbol /> Review & Confirm
+          <PiSymbol /> Review & Confirm <HelpIcon onClick={() => { setSelectedTopic('finalReviewStep'); setShowHelpModal(true); }} />
         </h2>
         <p style={{ marginBottom: '1rem' }}>Review your filing details before submission.</p>
 
@@ -261,11 +266,14 @@ const handlePrint = (label, content) => {
           </div>
         </div>
       </div>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }
 
 FinalReview.propTypes = {
   onBack: PropTypes.func,
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func.isRequired, 
 };
