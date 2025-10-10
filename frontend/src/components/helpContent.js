@@ -145,6 +145,11 @@ export const helpContent = {
   body: 'Outline medical preferences and end-of-life wishes. This ensures your healthcare decisions are honored.',
 },
 
+  piPaymentStep: {
+  title: 'Pi Payment Step Overview',
+  body: 'Select your payment method, with Pi Wallet recommended for seamless crypto integration. Enter wallet details and confirm the transaction. The filing fee covers all processing.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',
