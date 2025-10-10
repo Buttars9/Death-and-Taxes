@@ -119,6 +119,36 @@ export default function DeathAndTaxes() {
         color: #ffffff;
         opacity: 1;
       }
+
+      /* Mobile responsiveness fixes */
+      @media (max-width: 480px) {
+        .powered-header {
+          top: 10px;
+          left: 10px;
+          font-size: 0.9rem;
+        }
+
+        .glowing-card {
+          width: 100%; /* Flexible width for mobile */
+          max-width: 100%;
+          padding: 1.5rem; /* Reduce padding */
+        }
+
+        .button-row {
+          flex-direction: column; /* Stack buttons vertically */
+          gap: 0.75rem;
+        }
+
+        .auth-button {
+          width: 100%; /* Full-width buttons */
+          font-size: 0.85rem;
+        }
+
+        .promo-banner {
+          padding: 0.75rem 1rem;
+          font-size: 1rem;
+        }
+      }
     `}</style>
 
     <div style={styles.container}>
