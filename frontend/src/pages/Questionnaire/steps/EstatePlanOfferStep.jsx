@@ -2,9 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../../../components/GlowingBox';
 import steps from '../../../wizard/wizardStep'; // Import wizardStep.js
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 function EstatePlanOfferStep({ answers, setAnswers, onNext, onBack }) {
   const currentStep = steps.find((step) => step.key === 'estate-offer');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChoice = (include) => {
     setAnswers({ ...answers, includeEstatePlan: include }, () => {
@@ -19,7 +24,7 @@ function EstatePlanOfferStep({ answers, setAnswers, onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>🧾 Add Full Estate Plan?</h2>
+          <h2>🧾 Add Full Estate Plan? <HelpIcon onClick={() => { setSelectedTopic('estatePlanOfferStep'); setShowHelpModal(true); }} /></h2>
           <p>
             You’ve completed your will. For an additional <strong>$25.00</strong>, you can generate a full estate plan including:
           </p>
@@ -42,6 +47,22 @@ function EstatePlanOfferStep({ answers, setAnswers, onNext, onBack }) {
           <p>Would you like to add this to your filing?</p>
 
           <div className="step-buttons">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                style={{
+                  background: '#1c2232',
+                  color: '#e1e8fc',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '6px',
+                  border: '1px solid #3a3f55',
+                  fontWeight: 'bold',
+                }}
+              >
+                Back
+              </button>
+            )}
             <button
               className="primary"
               onClick={() => handleChoice(true)}
@@ -113,6 +134,9 @@ function EstatePlanOfferStep({ answers, setAnswers, onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

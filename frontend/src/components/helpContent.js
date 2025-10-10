@@ -105,6 +105,11 @@ export const helpContent = {
   body: 'This step creates a basic last will and testament. Enter beneficiary details, guardians for minors, and asset summaries. For complex estates, consider professional legal advice. The generated document will include revocation, residue, and digital asset clauses if selected.',
 },
 
+  estatePlanOfferStep: {
+  title: 'Estate Plan Offer Overview',
+  body: 'This optional step adds a full estate plan for $25, including trust, POA, and more. Select yes to include or no to proceed with just the will.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',
