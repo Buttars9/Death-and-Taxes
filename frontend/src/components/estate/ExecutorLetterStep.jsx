@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../GlowingBox';
 import { useWizardStore } from '../../stores/wizardStore';
+import HelpIcon from '../HelpIcon';
+import HelpModal from '../HelpModal';
+import '../HelpIcon.css';
 
 function ExecutorLetterStep({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
   const executorData = answers.executorData || {};
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChange = (field, value) => {
     const updated = { ...executorData, [field]: value };
@@ -16,7 +21,7 @@ function ExecutorLetterStep({ onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>📩 Executor Instruction Letter</h2>
+          <h2>📩 Executor Instruction Letter <HelpIcon onClick={() => { setSelectedTopic('executorLetterStep'); setShowHelpModal(true); }} /></h2>
 
           <div className="glowing-input">
             <label>Your Full Name</label>
@@ -100,6 +105,9 @@ function ExecutorLetterStep({ onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

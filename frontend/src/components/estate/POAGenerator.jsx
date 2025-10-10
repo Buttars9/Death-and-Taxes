@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../GlowingBox';
 import { useWizardStore } from '../../stores/wizardStore';
+import HelpIcon from '../HelpIcon';
+import HelpModal from '../HelpModal';
+import '../HelpIcon.css';
 
 function POAGenerator({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
   const poaData = answers.poaData || {};
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChange = (field, value) => {
     const updated = { ...poaData, [field]: value };
@@ -16,7 +21,7 @@ function POAGenerator({ onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>🖋️ Power of Attorney</h2>
+          <h2>🖋️ Power of Attorney <HelpIcon onClick={() => { setSelectedTopic('poaGeneratorStep'); setShowHelpModal(true); }} /></h2>
 
           <div className="glowing-input">
             <label>Principal Full Name</label>
@@ -100,6 +105,9 @@ function POAGenerator({ onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

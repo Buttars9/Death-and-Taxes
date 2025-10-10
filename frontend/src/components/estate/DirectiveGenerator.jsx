@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../GlowingBox';
 import { useWizardStore } from '../../stores/wizardStore';
+import HelpIcon from '../HelpIcon';
+import HelpModal from '../HelpModal';
+import '../HelpIcon.css';
 
 function DirectiveGenerator({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
   const directiveData = answers.directiveData || {};
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChange = (field, value) => {
     const updated = { ...directiveData, [field]: value };
@@ -16,7 +21,7 @@ function DirectiveGenerator({ onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>🩺 Advance Directive</h2>
+          <h2>🩺 Advance Directive <HelpIcon onClick={() => { setSelectedTopic('directiveGeneratorStep'); setShowHelpModal(true); }} /></h2>
 
           <div className="glowing-input">
             <label>Full Name</label>
@@ -95,6 +100,9 @@ function DirectiveGenerator({ onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

@@ -115,6 +115,36 @@ export const helpContent = {
   body: 'Select which estate documents to generate (e.g., trust, POA). Unselect any you don\'t want. Proceed through each to enter details—back/next buttons navigate steps.',
 },
 
+  trustGeneratorStep: {
+  title: 'Trust Generator Overview',
+  body: 'Enter details for a revocable living trust, including grantor, trustee, and beneficiaries. This helps avoid probate. For complex needs, consult an attorney.',
+},
+
+  todAffidavitStep: {
+  title: 'TOD Affidavit Step Overview',
+  body: 'Specify assets and beneficiaries for direct transfer upon death (available in select states). Skip if not supported in your jurisdiction.',
+},
+
+  poaGeneratorStep: {
+  title: 'POA Generator Overview',
+  body: 'Designate an agent to handle financial/legal matters if incapacitated. Define scope and effective date.',
+},
+
+  hipaaReleaseStep: {
+  title: 'HIPAA Release Step Overview',
+  body: 'Authorize release of medical records to specified persons. Include relationship, scope, and expiration.',
+},
+
+  executorLetterStep: {
+  title: 'Executor Letter Step Overview',
+  body: 'Provide instructions for your executor, including special requests and jurisdiction.',
+},
+
+  directiveGeneratorStep: {
+  title: 'Directive Generator Overview',
+  body: 'Outline medical preferences and end-of-life wishes. This ensures your healthcare decisions are honored.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',

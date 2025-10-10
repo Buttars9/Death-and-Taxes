@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../GlowingBox';
 import { useWizardStore } from '../../stores/wizardStore';
+import HelpIcon from '../HelpIcon';
+import HelpModal from '../HelpModal';
+import '../HelpIcon.css';
 
 const todSupportedStates = ['AZ', 'CA', 'CO', 'IN', 'MO', 'NV', 'OH', 'TX', 'WI'];
 
@@ -9,6 +12,8 @@ function TODAffidavitStep({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
   const todData = answers.todAffidavitData || {};
   const jurisdiction = answers.willData?.jurisdiction || '';
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const isSupported = todSupportedStates.includes(jurisdiction.toUpperCase());
 
@@ -21,7 +26,7 @@ function TODAffidavitStep({ onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>🏛️ Transfer-on-Death Affidavit</h2>
+          <h2>🏛️ Transfer-on-Death Affidavit <HelpIcon onClick={() => { setSelectedTopic('todAffidavitStep'); setShowHelpModal(true); }} /></h2>
 
           {!isSupported ? (
             <p style={{ color: '#ffcc66' }}>
@@ -104,6 +109,9 @@ function TODAffidavitStep({ onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

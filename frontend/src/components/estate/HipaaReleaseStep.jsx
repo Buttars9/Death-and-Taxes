@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../GlowingBox';
 import { useWizardStore } from '../../stores/wizardStore';
+import HelpIcon from '../HelpIcon';
+import HelpModal from '../HelpModal';
+import '../HelpIcon.css';
 
 function HipaaReleaseStep({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
   const hipaaData = answers.hipaaData || {};
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChange = (field, value) => {
     const updated = { ...hipaaData, [field]: value };
@@ -16,7 +21,7 @@ function HipaaReleaseStep({ onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>🩺 HIPAA Release Authorization</h2>
+          <h2>🩺 HIPAA Release Authorization <HelpIcon onClick={() => { setSelectedTopic('hipaaReleaseStep'); setShowHelpModal(true); }} /></h2>
 
           <div className="glowing-input">
             <label>Authorized Person's Full Name</label>
@@ -100,6 +105,9 @@ function HipaaReleaseStep({ onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }

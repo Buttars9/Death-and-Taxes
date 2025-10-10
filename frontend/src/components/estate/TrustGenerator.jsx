@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GlowingBox from '../GlowingBox';
 import { useWizardStore } from '../../stores/wizardStore';
+import HelpIcon from '../HelpIcon';
+import HelpModal from '../HelpModal';
+import '../HelpIcon.css';
 
 function TrustGenerator({ onNext, onBack }) {
   const { answers, setAnswers } = useWizardStore();
   const trustData = answers.trustData || {};
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const handleChange = (field, value) => {
     const updated = { ...trustData, [field]: value };
@@ -16,7 +21,7 @@ function TrustGenerator({ onNext, onBack }) {
     <GlowingBox>
       <div className="credits-step">
         <div className="section">
-          <h2>📜 Revocable Living Trust</h2>
+          <h2>📜 Revocable Living Trust <HelpIcon onClick={() => { setSelectedTopic('trustGeneratorStep'); setShowHelpModal(true); }} /></h2>
 
           <div className="glowing-input">
             <label>Grantor Full Name</label>
@@ -105,6 +110,9 @@ function TrustGenerator({ onNext, onBack }) {
           font-weight: bold;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }
