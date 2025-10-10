@@ -5,7 +5,7 @@ import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol';
 import RefundEstimate from '../../../components/RefundEstimate';
 import { useWizardStore } from '../../../stores/wizardStore';
-import { getEligibleCredits } from '../../../services/api';
+import { getEligibleCredits } from '../../../shared/utils/creditEngine.js';
 import { calculateRefund } from '../../../shared/utils/calculateRefund.js';
 import HelpIcon from '../../../components/HelpIcon';
 import HelpModal from '../../../components/HelpModal';
