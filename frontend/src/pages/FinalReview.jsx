@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import RefundEstimate from '../components/RefundEstimate.jsx';
 import GlowingBox from '../components/GlowingBox.jsx';
@@ -29,8 +29,6 @@ export default function FinalReview({ onBack, onNext }) {
     paymentConfirmed,
     willData = {},
   } = answers;
-  const [showHelpModal, setShowHelpModal] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState('');
 
   const standardDeductions = {
     single: 13850,
@@ -105,7 +103,7 @@ const handlePrint = (label, content) => {
         color: '#e0e0ff',
       }}>
         <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-          <PiSymbol /> Review & Confirm <HelpIcon onClick={() => { setSelectedTopic('finalReviewStep'); setShowHelpModal(true); }} />
+          <PiSymbol /> Review & Confirm
         </h2>
         <p style={{ marginBottom: '1rem' }}>Review your filing details before submission.</p>
 
@@ -266,9 +264,6 @@ const handlePrint = (label, content) => {
           </div>
         </div>
       </div>
-      {showHelpModal && (
-        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
-      )}
     </GlowingBox>
   );
 }
