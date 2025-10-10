@@ -95,6 +95,11 @@ export const helpContent = {
   body: 'Provide your prior year Adjusted Gross Income (AGI) or IRS PIN for identity verification during e-filing. AGI is on line 11 of your 2024 Form 1040. If unavailable, leave blank—we’ll use other methods.',
 },
 
+  refundSummaryStep: {
+  title: 'Refund Summary Overview',
+  body: 'This step shows your estimated refund based on inputs. Confirm accuracy, add an email for updates, and check the box to proceed. The filing fee covers processing—your refund will be direct-deposited if bank info was provided.',
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',

@@ -4,10 +4,15 @@ import GlowingBox from '../../../components/GlowingBox';
 import PiSymbol from '../../../components/PiSymbol';
 import RefundEstimate from '../../../components/RefundEstimate';
 import { useWizardStore } from '../../../stores/wizardStore';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 export default function RefundSummaryStep({ livePrices, onNext, onBack }) {
   const answers = useWizardStore((state) => state.answers);
   const setAnswers = useWizardStore((state) => state.setAnswers);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   const [confirmationChecked, setConfirmationChecked] = useState(false);
   const [contactEmail, setContactEmail] = useState('');
@@ -31,7 +36,7 @@ export default function RefundSummaryStep({ livePrices, onNext, onBack }) {
     <GlowingBox>
       <div className="refund-summary-step">
         <h2>
-          <PiSymbol /> Your Refund Estimate
+          <PiSymbol /> Your Refund Estimate <HelpIcon onClick={() => { setSelectedTopic('refundSummaryStep'); setShowHelpModal(true); }} />
         </h2>
         <p>
           Based on your inputs, here’s your current estimate. A final breakdown will follow post-review.
@@ -134,6 +139,9 @@ export default function RefundSummaryStep({ livePrices, onNext, onBack }) {
           margin-top: 2rem;
         }
       `}</style>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
     </GlowingBox>
   );
 }
