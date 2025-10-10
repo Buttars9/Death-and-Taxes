@@ -4,6 +4,7 @@ import { helpContent } from './helpContent';
 import './HelpIcon.css';
 
 export default function HelpModal({ topic, onClose }) {
+  console.log('Rendering HelpModal with topic:', topic);
   let content;
 if (topic.includes('.')) {
   const [section, key] = topic.split('.');
@@ -11,8 +12,8 @@ if (topic.includes('.')) {
 } else {
   content = helpContent?.[topic];
 }
+  console.log('Modal content:', content);
   if (!content) return null;
-console.log('Modal content:', content);
   return (
     <div
   className="help-modal-overlay"
