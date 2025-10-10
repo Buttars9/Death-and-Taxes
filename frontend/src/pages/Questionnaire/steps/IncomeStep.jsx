@@ -6,6 +6,9 @@ import { useWizardStore } from '../../../stores/wizardStore';
 import { fetchAutofillData } from '../../../services/api';
 import RefundEstimate from '../../../components/RefundEstimate';
 import PiSymbol from '../../../components/PiSymbol.jsx';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 const PiSymbolComponent = process.env.NODE_ENV === 'development' ? () => null : PiSymbol;
 const incomeOptions = [
@@ -56,6 +59,8 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
   const [error, setError] = useState('');
   const [additionalIncomeModalOpen, setAdditionalIncomeModalOpen] = useState(false);
   const [newIncomeType, setNewIncomeType] = useState('');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   useEffect(() => {
     if (answers?.incomeSources && Array.isArray(answers.incomeSources)) {
@@ -983,7 +988,7 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
       <div className="income-step" style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h2>
-            <PiSymbol /> Income Information
+            <PiSymbol /> Income Information <HelpIcon onClick={() => { setSelectedTopic('incomeStep'); setShowHelpModal(true); }} />
           </h2>
           <p>
             Enter all sources of income for the tax year. You may autofill from linked accounts or enter manually.
@@ -1159,6 +1164,9 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
           <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
         </div>
       </div>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
 
       <style jsx>{`
         .income-step {
