@@ -70,32 +70,10 @@ export const helpContent = {
     },
   },
 
-  filingStatus: {
-    overview: {
-      title: 'Filing Status Overview',
-      body: 'Your filing status affects your tax brackets, standard deduction, and eligibility for credits. Common statuses include Single, Married Filing Jointly, Head of Household, Married Filing Separately, and Qualifying Widow(er).',
-    },
-    single: {
-      title: 'Single',
-      body: 'Used if you are unmarried and do not qualify for another status. Offers the lowest standard deduction and narrower tax brackets.',
-    },
-    marriedJoint: {
-      title: 'Married Filing Jointly',
-      body: 'Used by married couples who combine income and deductions. Offers the highest standard deduction and widest tax brackets. Often results in lower overall tax liability.',
-    },
-    marriedSeparate: {
-      title: 'Married Filing Separately',
-      body: 'Used by married couples who want to keep finances separate. May reduce eligibility for credits and deductions. Often used for legal or financial protection.',
-    },
-    headOfHousehold: {
-      title: 'Head of Household',
-      body: 'Used by unmarried taxpayers who pay more than half the cost of maintaining a home for a qualifying dependent. Offers higher deductions than Single.',
-    },
-    qualifyingWidow: {
-      title: 'Qualifying Widow(er)',
-      body: 'Used for two years after a spouse’s death if you have a dependent child. Offers the same tax benefits as Married Filing Jointly.',
-    },
-  },
+  personalInfoStep: {
+  title: 'Your IRS Filing Profile',
+  body: `This section builds your full IRS filing profile. We collect your legal name, SSN, date of birth, and address to match IRS records and prevent rejection. Prior year AGI and IRS PIN help verify your identity and protect against fraud. Your filing status and resident state determine your tax bracket, credit eligibility, and refund routing. If you're married, we also collect your spouse's name, SSN, and date of birth for joint filing. Income sources guide which IRS forms you'll need (W-2, 1099, etc.), and dependents help calculate credits like the Child Tax Credit. Every field here affects your refund path, compliance status, and IRS acceptance. Accuracy matters.`,
+},
 
   income: {
     overview: {
@@ -219,8 +197,5 @@ export const helpContent = {
 Direct deposit is the fastest and most secure way to receive your refund. Your bank details are encrypted and used only for IRS submission. If you prefer to receive a paper check, you can skip this step.`,
   },
 },
-personalDetails: {
-  title: 'Your IRS Filing Profile',
-  body: `This section builds your full IRS filing profile. We collect your legal name, SSN, date of birth, and address to match IRS records and prevent rejection. Prior year AGI and IRS PIN help verify your identity and protect against fraud. Your filing status and resident state determine your tax bracket, credit eligibility, and refund routing. If you're married, we also collect your spouse's name, SSN, and date of birth for joint filing. Income sources guide which IRS forms you'll need (W-2, 1099, etc.), and dependents help calculate credits like the Child Tax Credit. Every field here affects your refund path, compliance status, and IRS acceptance. Accuracy matters.`,
-},
+
 };
