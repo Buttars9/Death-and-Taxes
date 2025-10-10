@@ -5,6 +5,9 @@ import GlowingBox from '../../../components/GlowingBox.jsx';
 import PiSymbol from '../../../components/PiSymbol';
 import RefundEstimate from '../../../components/RefundEstimate';
 import { useWizardStore } from '../../../stores/wizardStore';
+import HelpIcon from '../../../components/HelpIcon';
+import HelpModal from '../../../components/HelpModal';
+import '../../../components/HelpIcon.css';
 
 const deductionTypeOptions = [
   { label: 'Standard Deduction', value: 'standard' },
@@ -33,6 +36,8 @@ export default function DeductionStep({ onNext, onBack }) {
   const [selected, setSelected] = useState([]);
   const [deductionAmounts, setDeductionAmounts] = useState({});
   const [error, setError] = useState('');
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState('');
 
   // Memoized updateStoreAnswers to prevent unnecessary re-renders
   const updateStoreAnswers = useCallback(() => {
@@ -172,7 +177,7 @@ export default function DeductionStep({ onNext, onBack }) {
       <div className="deductions-step" style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
         <div style={{ flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h2>
-            <PiSymbol /> Any deductions to claim?
+            <PiSymbol /> Any deductions to claim? <HelpIcon onClick={() => { setSelectedTopic('deductionStep'); setShowHelpModal(true); }} />
           </h2>
           <p>
             Deductions reduce your taxable income and may unlock a bigger refund.
@@ -318,6 +323,9 @@ export default function DeductionStep({ onNext, onBack }) {
           <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
         </div>
       </div>
+      {showHelpModal && (
+        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+      )}
 
       <style jsx>{`
         .deductions-step {

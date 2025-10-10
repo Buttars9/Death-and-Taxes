@@ -80,6 +80,11 @@ export const helpContent = {
   body: `This step collects detailed income from all sources, including W-2 wages, 1099 self-employment, foreign earnings, and more. Enter amounts, employers, and relevant details to ensure accurate tax calculations. Autofill pulls from linked accounts for convenience. Foreign income may qualify for exclusions or credits—review treaties if applicable. Your entries here directly impact deductions, credits, and refund estimates.`,
 },
 
+  deductionStep: {
+  title: 'Deductions Step Overview',
+  body: `This step lets you choose between the standard deduction (a fixed amount based on filing status) or itemizing specific expenses like mortgage interest, medical costs, and charitable donations to potentially reduce taxable income more. Itemizing requires documentation and may increase your refund if expenses exceed the standard amount. Select options and enter amounts accurately—review IRS limits for each category.`,
+},
+
   income: {
     overview: {
       title: 'Income Types Overview',
