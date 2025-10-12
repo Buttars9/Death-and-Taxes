@@ -10,7 +10,11 @@ let stripeInstance = null;
   }
 })();
 
-const piApiKey = process.env.PI_API_KEY;
+// 🔁 Dynamically select Pi API key based on sandbox mode
+const isSandbox = process.env.VITE_IS_TESTNET === 'true';
+const piApiKey = isSandbox
+  ? process.env.PI_TESTNET_API_KEY
+  : process.env.PI_API_KEY;
 
 export async function payFiat(req, res) {
   if (!stripeInstance) {
@@ -72,10 +76,15 @@ export async function approvePiPayment(req, res) {
 export async function completePiPayment(req, res) {
   const { paymentId, txid } = req.body;
   const userId = req.user.id;
+
   try {
-    const response = await axios.post(`https://api.minepi.com/v2/payments/${paymentId}/complete`, { txid }, {
-      headers: { Authorization: `Key ${piApiKey}` }
-    });
+    const response = await axios.post(
+      `https://api.minepi.com/v2/payments/${paymentId}/complete`,
+      { txid },
+      {
+        headers: { Authorization: `Key ${piApiKey}` }
+      }
+    );
     await updatePayout(userId, txid, 'pi');
     console.log(`[AUDIT][PAYMENT] Pi payment for user ${userId}: ${txid}`);
     res.json(response.data);
