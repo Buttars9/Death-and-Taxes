@@ -2,15 +2,22 @@ import React from 'react';
 
 export default function GlowingBox({ children }) {
   return (
-    <div
-      style={{
-        padding: '2rem',
-        background: '#0f131f',
-        borderRadius: '12px',
-       
-      }}
-    >
-      {children}
-    </div>
+    <>
+      <style>{`
+        .glowing-box {
+          padding: 2rem;
+          background: #0f131f;
+          border-radius: 12px;
+        }
+        @media (max-width: 768px) {
+          .glowing-box {
+            padding: 1rem;
+          }
+        }
+      `}</style>
+      <div className="glowing-box">
+        {children}
+      </div>
+    </>
   );
 }
