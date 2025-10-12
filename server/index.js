@@ -43,11 +43,13 @@ await dbConnect(); // ✅ MongoDB connection
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
       'https://www.deathntaxes.app',
-      'https://death-and-taxes-mj94386wx-austin-buttars-projects.vercel.app'
+      'https://death-and-taxes-mj94386wx-austin-buttars-projects.vercel.app',
+      'https://deathntaxes-nfvzh0bur-austin-buttars-projects.vercel.app' // Added for preview URL
     ]
   : [
       'https://www.deathntaxes.app',
       'https://death-and-taxes-mj94386wx-austin-buttars-projects.vercel.app',
+      'https://deathntaxes-nfvzh0bur-austin-buttars-projects.vercel.app', // Added for preview URL
       'http://localhost:5173'
     ];
 
@@ -171,17 +173,34 @@ app.post('/api/pi-approve', async (req, res) => {
     return res.status(500).json({ error: 'Missing API key configuration' });
   }
 
+  const approveWithRetry = async (retries = 3, delay = 5000) => {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
+          headers: {
+            Authorization: `Key ${apiKey}`,
+          },
+        });
+        console.log('[SUCCESS] Pi approve response:', response.data);
+        return response;
+      } catch (error) {
+        const piError = error.response ? error.response.data : error.message;
+        console.error(`[ERROR] Pi approve attempt ${attempt} failed:`, piError);
+        if (error.response?.status !== 404 || attempt === retries) {
+          throw error; // Non-retryable error or last attempt
+        }
+        console.log(`Retrying approve in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  };
+
   try {
-    const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
-      headers: {
-        Authorization: `Key ${apiKey}`,
-      },
-    });
-    console.log('[SUCCESS] Pi approve response:', response.data);
+    const response = await approveWithRetry();
     res.status(200).json({ success: true });
   } catch (error) {
     const piError = error.response ? error.response.data : error.message;
-    console.error('[ERROR] Pi approve failed:', piError);
+    console.error('[ERROR] Pi approve failed after retries:', piError);
     res.status(500).json({ error: 'Approval failed', details: piError });
   }
 });
