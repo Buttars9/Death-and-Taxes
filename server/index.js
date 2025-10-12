@@ -199,7 +199,12 @@ app.post('/api/pi-approve', async (req, res) => {
     res.status(200).json({ success: true });
   } catch (error) {
     const piError = error.response ? error.response.data : error.message;
-    console.error('[ERROR] Pi approve failed after retries:', piError);
+console.error('[ERROR] Pi approve failed after retries:', {
+  status: error?.response?.status,
+  headers: error?.response?.headers,
+  data: error?.response?.data,
+  message: error.message,
+});
     res.status(500).json({ error: 'Approval failed', details: piError });
   }
 });
