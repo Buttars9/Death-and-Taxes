@@ -4,7 +4,7 @@ import PiSymbol from './PiSymbol.jsx';
 import { useWizardStore } from '../stores/wizardStore';
 import { calculateRefund } from '../shared/utils/calculateRefund.js';
 import deductionVerdictFromAnswers from '../shared/utils/deductionVerdictFromAnswers.js';
-import './RefundEstimate.css';
+// Removed import './RefundEstimate.css'; to eliminate any CSS-added box styles
 
 function calculateAgeFromDOB(dob) {
   if (!dob) return 0;
@@ -221,7 +221,15 @@ export default function RefundEstimate({ manualFields, isSticky = true }) {
       </button>
 
       {showExplanation && (
-        <div className="refund-explanation">
+        <div style={{
+          marginTop: '1rem',
+          maxHeight: '300px',
+          overflowY: 'auto',
+          fontSize: '0.85rem',
+          lineHeight: '1.4',
+          color: '#ffffff',
+          paddingRight: '8px',
+        }}>
           <h3>Calculation Details</h3>
           <p><strong>Filing Status:</strong> {fields.filingStatus}</p>
           <p><strong>Income:</strong> {formatCurrency(fields.income)}</p>
