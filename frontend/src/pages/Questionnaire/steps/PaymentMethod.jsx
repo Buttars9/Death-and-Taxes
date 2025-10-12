@@ -148,27 +148,11 @@ const API_BASE = import.meta.env.VITE_API_BASE;
               placeholder="Enter your Pi wallet address"
               value={answers.piSenderAddress || ''}
               onChange={(e) => setAnswers({ ...answers, piSenderAddress: e.target.value })}
-              style={{
-                marginTop: '1rem',
-                padding: '0.5rem',
-                borderRadius: '6px',
-                border: 'none',
-                background: '#2a2f45',
-                color: '#e1e8fc',
-                width: '100%',
-              }}
+              style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '6px', border: 'none', background: '#2a2f45', color: '#e1e8fc', width: '100%' }}
             />
 
             <button
-              style={{
-                marginTop: '1rem',
-                background: '#72caff',
-                color: '#0f131f',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: 'none',
-                fontWeight: 'bold',
-              }}
+              style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
               onClick={async () => { // Make async to await auth if needed
                 console.log('Pi SDK:', window?.Pi);
                 if (!window?.Pi?.authenticated || !window.Pi.consentedScopes?.includes('payments')) { // Check state
