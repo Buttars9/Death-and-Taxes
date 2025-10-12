@@ -7,11 +7,15 @@ const initPiSDK = () => {
   return new Promise((resolve, reject) => {
     if (window.Pi) {
       try {
+        const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true';
+        console.log('VITE_IS_TESTNET from env:', import.meta.env.VITE_IS_TESTNET);
+        console.log('Initializing Pi SDK with sandbox:', isTestnet);
         window.Pi.init({
           version: '2.0',
-          sandbox: import.meta.env.VITE_IS_TESTNET === 'true'
+          sandbox: isTestnet
         });
         console.log('Pi SDK initialized:', window.Pi);
+        console.log('Pi SDK sandbox mode:', window.Pi.sandbox);
         resolve();
       } catch (err) {
         console.error('Pi SDK init failed:', err);

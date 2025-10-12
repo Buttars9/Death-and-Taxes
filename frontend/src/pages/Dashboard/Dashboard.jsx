@@ -99,138 +99,157 @@ export default function Dashboard() {
   const canStart = true;
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Welcome to Your Dashboard</h1>
-      <p style={styles.subtitle}>
-        Logged in as <strong>{user?.email || 'anonymous'}</strong>
-      </p>
-      <p style={styles.note}>IRS-grade filing tools coming online…</p>
-
-      <div style={styles.uploadInfo}>
-        <RefundEstimate manualFields={{}} parsedFields={parsedFields || {}} />
-      </div>
-
-      <div style={styles.uploadInfo}>
-        <h3 style={styles.uploadTitle}>📄 Upload Documents</h3>
-        <p style={styles.uploadHint}>
-          Upload W-2, 1099, etc. to pre-fill your filing data and see an estimated refund. Click "Start Filing" to complete your tax forms.
+    <>
+      <style>{`
+        .container {
+          min-height: 100vh;
+          background: #0b0014;
+          color: #e0e0ff;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 2rem;
+          font-family: 'Segoe UI, sans-serif';
+        }
+        .title {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+          color: #8c4dcc;
+        }
+        .subtitle {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+          color: #ffffff;
+        }
+        .note {
+          font-size: 1rem;
+          font-style: italic;
+          color: #a166ff;
+          margin-bottom: 2rem;
+        }
+        .uploadInfo {
+          width: 100%;
+          max-width: 600px;
+          background: #1a0028;
+          padding: 1rem;
+          border-radius: 8px;
+          box-shadow: 0 0 12px #8c4dcc;
+          margin-bottom: 2rem;
+        }
+        .uploadTitle {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+          color: #e0e0ff;
+        }
+        .uploadHint {
+          font-size: 0.95rem;
+          color: #c0b3ff;
+          margin-bottom: 0.5rem;
+        }
+        .centerBlock {
+          display: flex;
+          justify-content: center;
+          gap: 1.5rem;
+          margin: 3rem 0;
+        }
+        .authButton {
+          height: 42px;
+          background-color: black;
+          border-radius: 10px;
+          color: white;
+          font-size: 0.9rem;
+          font-weight: bold;
+          box-shadow: 0 0 12px #a166ff;
+          animation: boxGlow 6s infinite;
+          border: none;
+          transition: transform 0.2s ease;
+          padding: 0 14px;
+        }
+        @media (max-width: 768px) {
+          .container {
+            padding: 1rem;
+          }
+          .title {
+            font-size: 1.5rem;
+          }
+          .subtitle {
+            font-size: 1rem;
+          }
+          .note {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+          }
+          .uploadInfo {
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+          }
+          .uploadTitle {
+            font-size: 1rem;
+          }
+          .uploadHint {
+            font-size: 0.85rem;
+          }
+          .centerBlock {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+          }
+          .authButton {
+            width: 100%;
+            max-width: 300px;
+            padding: 0 10px;
+          }
+        }
+      `}</style>
+      <div className="container">
+        <h1 className="title">Welcome to Your Dashboard</h1>
+        <p className="subtitle">
+          Logged in as <strong>{user?.email || 'anonymous'}</strong>
         </p>
-        <DocumentUpload onParsed={setParsedFields} />
+        <p className="note">IRS-grade filing tools coming online…</p>
+
+        <div className="uploadInfo">
+          <RefundEstimate manualFields={{}} parsedFields={parsedFields || {}} />
+        </div>
+
+        <div className="uploadInfo">
+          <h3 className="uploadTitle">📄 Upload Documents</h3>
+          <p className="uploadHint">
+            Upload W-2, 1099, etc. to pre-fill your filing data and see an estimated refund. Click "Start Filing" to complete your tax forms.
+          </p>
+          <DocumentUpload onParsed={setParsedFields} />
+        </div>
+
+        {submissions.length > 0 && <RefundStatusCard />}
+
+        <div className="centerBlock">
+          <button
+            className="authButton"
+            style={{
+              opacity: canStart ? 1 : 0.5,
+              cursor: canStart ? 'pointer' : 'not-allowed',
+            }}
+            onClick={handleStartFiling}
+            title="Begin filing — even if some fields are blank"
+          >
+            Start Filing
+          </button>
+
+          <button
+            className="authButton"
+            onClick={handleLogout}
+            title="Log out and return to home"
+          >
+            Logout
+          </button>
+        </div>
+
+        <div style={{ marginBottom: '3rem' }}>
+          <AuditTrailLedger submissions={submissions} />
+        </div>
       </div>
-
-      {submissions.length > 0 && <RefundStatusCard />}
-
-      <div style={styles.centerBlock}>
-        <button
-          style={{
-            ...styles.authButton,
-            opacity: canStart ? 1 : 0.5,
-            cursor: canStart ? 'pointer' : 'not-allowed',
-          }}
-          onClick={handleStartFiling}
-          title="Begin filing — even if some fields are blank"
-        >
-          Start Filing
-        </button>
-
-        <button
-          style={styles.authButton}
-          onClick={handleLogout}
-          title="Log out and return to home"
-        >
-          Logout
-        </button>
-      </div>
-
-      <div style={{ marginBottom: '3rem' }}>
-        <AuditTrailLedger submissions={submissions} />
-      </div>
-    </div>
+    </>
   );
 }
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    background: '#0b0014',
-    color: '#e0e0ff',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '2rem',
-    fontFamily: 'Segoe UI, sans-serif',
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '1rem',
-    color: '#8c4dcc',
-  },
-  subtitle: {
-    fontSize: '1.2rem',
-    marginBottom: '0.5rem',
-    color: '#ffffff',
-  },
-  note: {
-    fontSize: '1rem',
-    fontStyle: 'italic',
-    color: '#a166ff',
-    marginBottom: '2rem',
-  },
-  uploadInfo: {
-    width: '100%',
-    maxWidth: '600px',
-    background: '#1a0028',
-    padding: '1rem',
-    borderRadius: '8px',
-    boxShadow: '0 0 12px #8c4dcc',
-    marginBottom: '2rem',
-  },
-  uploadTitle: {
-    fontSize: '1.2rem',
-    marginBottom: '0.5rem',
-    color: '#e0e0ff',
-  },
-  uploadHint: {
-    fontSize: '0.95rem',
-    color: '#c0b3ff',
-    marginBottom: '0.5rem',
-  },
-  actionsBlock: {
-    display: 'flex',
-    gap: '1rem',
-    marginBottom: '3rem',
-  },
-  authButton: {
-    height: '42px',
-    backgroundColor: 'black',
-    borderRadius: '10px',
-    color: 'white',
-    fontSize: '0.9rem',
-    fontWeight: 'bold',
-    boxShadow: '0 0 12px #a166ff',
-    animation: 'boxGlow 6s infinite',
-    border: 'none',
-    transition: 'transform 0.2s ease',
-    padding: '0 14px',
-  },
-  secondaryButton: {
-    height: '42px',
-    backgroundColor: '#1a0028',
-    borderRadius: '10px',
-    color: '#e0e0ff',
-    fontSize: '0.9rem',
-    fontWeight: 'bold',
-    border: '1px solid #a166ff',
-    boxShadow: '0 0 8px #a166ff',
-    cursor: 'pointer',
-    padding: '0 14px',
-    transition: 'transform 0.2s ease',
-  },
-  centerBlock: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1.5rem',
-    margin: '3rem 0',
-  },
-};

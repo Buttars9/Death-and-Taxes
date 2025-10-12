@@ -211,14 +211,14 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     console.log('Ready for server approval:', paymentId, 'sandbox:', window.Pi.sandbox);
                     setTimeout(() => {
                       axios
-                        .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox })
+                        .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox || true }) // Force true if undefined
                         .catch(err => console.error('Approval failed:', err));
                     }, 5000); // 5-second delay
                   },
                   onReadyForServerCompletion: (paymentId, txid) => {
                     console.log('Ready for server completion:', paymentId, txid);
                     axios
-                      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid, sandbox: window.Pi.sandbox })
+                      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid, sandbox: window.Pi.sandbox || true }) // Force true if undefined
                       .then(() => {
                         setAnswers({
                           ...answers,
