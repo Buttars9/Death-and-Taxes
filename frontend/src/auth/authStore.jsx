@@ -53,12 +53,17 @@ export const useAuthStore = create((set, get) => ({
     return new Promise((resolve, reject) => {
       if (!window?.Pi) {
         console.error("❌ Pi SDK not available");
-        return reject("Pi SDK not available");
+        return reject(new Error("Pi SDK not available"));
       }
 
-      const scopes = ["payments", "username"]; // ✅ Declare scopes here
+      if (!window.Pi.initialized) {
+        console.error("❌ Pi SDK not initialized");
+        return reject(new Error("Pi SDK not initialized"));
+      }
 
-      // Required callback for handling incomplete payments (expand as needed for backend integration)
+      const scopes = ["payments", "username"];
+      console.log('Calling window.Pi.authenticate with scopes:', scopes);
+
       const onIncompletePaymentFound = (payment) => {
         console.log("Incomplete payment found:", payment);
         // TODO: Optionally send payment details to backend to complete or cancel
@@ -69,17 +74,18 @@ export const useAuthStore = create((set, get) => ({
           console.log("✅ Pi Auth success:", auth);
           const { accessToken, user: piUser } = auth;
 
-          // Optional: send to backend for verification
           try {
+            console.log('Sending to backend /api/pi-auth with:', { accessToken, username: piUser?.username });
             const { data } = await api.post('/api/pi-auth', {
               accessToken,
               username: piUser?.username,
             });
+            console.log('Backend auth response:', data);
 
             set({ user: data.user, isAuthenticated: true });
             resolve(data.user);
           } catch (err) {
-            console.error("❌ Backend Pi auth failed:", err.message || err);
+            console.error("❌ Backend Pi auth failed:", err.response?.data || err.message);
             reject(err);
           }
         })

@@ -177,6 +177,18 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     return;
                   }
                 }
+                // Verify authentication state after attempt
+                if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
+                  console.error('Authentication incomplete, retrying...');
+                  try {
+                    const authResult = await authenticateWithPi();
+                    console.log('Retry authentication successful:', authResult);
+                  } catch (err) {
+                    console.error('Retry auth failed:', err);
+                    alert('Authentication failed after retry. Please try again.');
+                    return;
+                  }
+                }
                 console.log('Creating payment with amount:', piAmount);
                 const paymentData = {
                   amount: piAmount ? parseFloat(piAmount) : 0,
