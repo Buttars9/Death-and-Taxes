@@ -212,7 +212,12 @@ console.error('[ERROR] Pi approve failed after retries:', {
 // New: Complete Pi payment
 app.post('/api/pi-complete', async (req, res) => {
   const { paymentId, txid, sandbox } = req.body;
-  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+const apiKey = (sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY)?.trim();
+
+if (!apiKey || apiKey.includes(' ')) {
+  console.error('[ERROR] API key is missing or malformed:', apiKey);
+  return res.status(500).json({ error: 'Malformed API key' });
+}
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
   console.log(`[DEBUG] Received /pi-complete request: paymentId=${paymentId}, txid=${txid}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
