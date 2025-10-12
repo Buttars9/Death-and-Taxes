@@ -156,10 +156,9 @@ app.post('/api/pi-auth', async (req, res) => {
 
 // New: Approve Pi payment (use PI_API_KEY from .env)
 app.post('/api/pi-approve', async (req, res) => {
-  const { paymentId } = req.body;
-  const apiKey = process.env.NODE_ENV === 'development' ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
-  const isSandbox = process.env.NODE_ENV === 'development';
-  const baseUrl = isSandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
+  const { paymentId, sandbox } = req.body;
+  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+  const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
   try {
     await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
@@ -176,10 +175,9 @@ app.post('/api/pi-approve', async (req, res) => {
 
 // New: Complete Pi payment
 app.post('/api/pi-complete', async (req, res) => {
-  const { paymentId, txid } = req.body;
-  const apiKey = process.env.NODE_ENV === 'development' ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
-  const isSandbox = process.env.NODE_ENV === 'development';
-  const baseUrl = isSandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
+  const { paymentId, txid, sandbox } = req.body;
+  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+  const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
   try {
     const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/complete`, { txid }, {

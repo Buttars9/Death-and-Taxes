@@ -193,13 +193,13 @@ const API_BASE = import.meta.env.VITE_API_BASE;
   onReadyForServerApproval: (paymentId) => {
     console.log('Ready for server approval:', paymentId);
     axios
-      .post(`${API_BASE}/api/pi-approve`, { paymentId })
+      .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox })
       .catch(err => console.error('Approval failed:', err)); // Send to backend for approval
   },
   onReadyForServerCompletion: (paymentId, txid) => {
     console.log('Ready for server completion:', paymentId, txid);
     axios
-      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid })
+      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid, sandbox: window.Pi.sandbox })
       .then(() => {
         setAnswers({
           ...answers,
