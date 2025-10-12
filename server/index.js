@@ -173,7 +173,7 @@ app.post('/api/pi-approve', async (req, res) => {
     return res.status(500).json({ error: 'Missing API key configuration' });
   }
 
-  const approveWithRetry = async (retries = 5, delay = 10000) => {
+  const approveWithRetry = async (retries = 6, delay = 15000) => {
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
