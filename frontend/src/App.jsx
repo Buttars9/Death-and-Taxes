@@ -78,7 +78,28 @@ export default function App() {
       fetch('https://deathntaxes-backend.onrender.com/api/ping').catch(() => {});
     }, 5 * 60 * 1000); // 5 minutes
 
-    return () => clearInterval(interval);
+    // Fix discarding messages from sandbox origin
+    const messageListener = (event) => {
+      const allowedOrigins = ['https://www.deathntaxes.app'];
+      if (window.Pi && window.Pi.sandbox) {
+        allowedOrigins.push('https://sandbox.minepi.com');
+      }
+
+      if (!allowedOrigins.includes(event.origin)) {
+        console.log('Discarding message - origin:', event.origin, '- data is logged below');
+        console.log(event.data);
+        return;
+      }
+
+      // Your existing message handling code here (if any, add it)
+    };
+
+    window.addEventListener('message', messageListener);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('message', messageListener);
+    };
   }, []);
 
   if (!ready) {

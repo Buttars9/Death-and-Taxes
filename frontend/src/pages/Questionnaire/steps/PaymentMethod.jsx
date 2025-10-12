@@ -353,9 +353,9 @@ window.Pi.createPayment(paymentData, paymentCallbacks);
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
-          borderRadius: '6px';
+          border-radius: 6px;
           border: none;
-          fontWeight: 'bold',
+          font-weight: bold;
         }
       `}</style>
     </GlowingBox>
