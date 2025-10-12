@@ -156,7 +156,11 @@ app.post('/api/pi-auth', async (req, res) => {
 
 // New: Approve Pi payment (use PI_API_KEY from .env)
 app.post('/api/pi-approve', async (req, res) => {
-  const { paymentId, sandbox } = req.body;
+  let { paymentId, sandbox } = req.body;
+  if (sandbox === undefined) {
+    sandbox = true; // Default to testnet if param missing
+    console.log('[WARN] sandbox param missing—defaulting to true (testnet)');
+  }
   const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY;
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
