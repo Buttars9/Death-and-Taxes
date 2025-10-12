@@ -47,7 +47,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   }, []);
 
   useEffect(() => {
-    axios.get('/api/settings/wallet')
+    axios.get(`${API_BASE}/api/settings/wallet`) // Fixed: Use API_BASE
       .then((res) => {
         const pi = res.data?.wallet?.pi || '';
         setWalletAddress(pi);
@@ -55,7 +55,10 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
           setAnswers({ ...answers, piWalletAddress: pi });
         }
       })
-      .catch(() => setWalletAddress(''));
+      .catch(() => {
+        console.warn('Wallet endpoint not found, using fallback address');
+        setWalletAddress('your-pi-wallet-address-here'); // Replace with your Testnet wallet
+      });
   }, []);
 
   const handleSubmit = () => {
@@ -153,19 +156,19 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
 
             <button
               style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
-              onClick={async () => { // Make async to await auth if needed
+              onClick={async () => {
                 console.log('Pi SDK:', window?.Pi);
-                if (!window?.Pi?.authenticated || !window.Pi.consentedScopes?.includes('payments')) { // Check state
+                if (!window?.Pi?.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
                   try {
-                    await authenticateWithPi(); // Auth if not ready (requests 'payments' scope)
+                    await authenticateWithPi();
                   } catch (err) {
                     console.error('Auth failed:', err);
                     alert('Authentication failed. Please try logging in again.');
-                    return; // Exit if auth fails
+                    return;
                   }
                 }
                 const paymentData = {
-                  amount: piAmount ? parseFloat(piAmount) : 0, // Updated: Parse to number (required by Pi SDK)
+                  amount: piAmount ? parseFloat(piAmount) : 0,
                   memo: 'Death & Taxes filing fee',
                   metadata: {
                     sender: answers.piSenderAddress || 'unknown',
@@ -174,34 +177,34 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                   },
                 };
                 const paymentCallbacks = {
-  onReadyForServerApproval: (paymentId) => {
-    console.log('Ready for server approval:', paymentId);
-    axios
-      .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox })
-      .catch(err => console.error('Approval failed:', err)); // Send to backend for approval
-  },
-  onReadyForServerCompletion: (paymentId, txid) => {
-    console.log('Ready for server completion:', paymentId, txid);
-    axios
-      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid, sandbox: window.Pi.sandbox })
-      .then(() => {
-        setAnswers({
-          ...answers,
-          paymentConfirmed: true,
-          paymentMethod: 'pi',
-        });
-        onNext();
-      })
-      .catch(err => console.error('Completion failed:', err));
-  },
-  onCancel: (paymentId) => {
-    console.log('Payment cancelled:', paymentId);
-  },
-  onError: (error, payment) => {
-    console.error('Payment error:', error);
-  },
-};
-window.Pi.createPayment(paymentData, paymentCallbacks);
+                  onReadyForServerApproval: (paymentId) => {
+                    console.log('Ready for server approval:', paymentId);
+                    axios
+                      .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox })
+                      .catch(err => console.error('Approval failed:', err));
+                  },
+                  onReadyForServerCompletion: (paymentId, txid) => {
+                    console.log('Ready for server completion:', paymentId, txid);
+                    axios
+                      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid, sandbox: window.Pi.sandbox })
+                      .then(() => {
+                        setAnswers({
+                          ...answers,
+                          paymentConfirmed: true,
+                          paymentMethod: 'pi',
+                        });
+                        onNext();
+                      })
+                      .catch(err => console.error('Completion failed:', err));
+                  },
+                  onCancel: (paymentId) => {
+                    console.log('Payment cancelled:', paymentId);
+                  },
+                  onError: (error, payment) => {
+                    console.error('Payment error:', error);
+                  },
+                };
+                window.Pi.createPayment(paymentData, paymentCallbacks);
               }}
             >
               Pay with Pi Wallet

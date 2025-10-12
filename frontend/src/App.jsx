@@ -9,16 +9,16 @@ import AppLayout from './components/AppLayout.jsx';
 import DeathAndTaxes from './DeathAndTaxes';
 import Dashboard from './pages/Dashboard/Dashboard';
 import WizardRunner from './wizard/WizardRunner';
-import TermsGate from './pages/TermsGate'; // ✅ Modal enforcement
-import PublicTerms from './pages/PublicTerms.jsx'; // ✅ Public route
-import AdminGate from './components/AdminGate.jsx';       // ✅ Admin PIN gate
-import AdminVault from './pages/Admin/AdminVault.jsx';    // ✅ Admin dashboard
-import ResetPassword from './pages/ResetPassword.jsx';    // 🔐 Password reset page
+import TermsGate from './pages/TermsGate';
+import PublicTerms from './pages/PublicTerms.jsx';
+import AdminGate from './components/AdminGate.jsx';
+import AdminVault from './pages/Admin/AdminVault.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted); // Updated: Read from store
+  const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted);
   const hasWizardData = !!localStorage.getItem('wizard-store');
 
   return (
@@ -44,7 +44,6 @@ function AppRoutes() {
               : <DeathAndTaxes />
           }
         />
-        {/* FIX: Ensure /filing routes to WizardRunner */}
         <Route
           path="/filing/*"
           element={
@@ -53,10 +52,10 @@ function AppRoutes() {
               : <DeathAndTaxes />
           }
         />
-        <Route path="/terms" element={<PublicTerms />} /> {/* ✅ Public PiOS route */}
-        <Route path="/admin" element={<AdminGate />} />         {/* ✅ Admin PIN gate */}
-        <Route path="/admin/vault" element={<AdminVault />} />  {/* ✅ Admin dashboard */}
-        <Route path="/reset-password" element={<ResetPassword />} /> {/* 🔐 Password reset route */}
+        <Route path="/terms" element={<PublicTerms />} />
+        <Route path="/admin" element={<AdminGate />} />
+        <Route path="/admin/vault" element={<AdminVault />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </AppLayout>
   );
@@ -67,18 +66,14 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // 🔄 Rehydrate session
     rehydrate().then(() => setReady(true));
 
-    // 🟢 Warm-up backend immediately
     fetch('https://deathntaxes-backend.onrender.com/api/ping').catch(() => {});
 
-    // 🔁 Keep backend warm every 5 minutes
     const interval = setInterval(() => {
       fetch('https://deathntaxes-backend.onrender.com/api/ping').catch(() => {});
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 5 * 60 * 1000);
 
-    // Fix discarding messages from sandbox origin
     const messageListener = (event) => {
       const allowedOrigins = ['https://www.deathntaxes.app'];
       if (window.Pi && window.Pi.sandbox) {
@@ -90,8 +85,6 @@ export default function App() {
         console.log(event.data);
         return;
       }
-
-      // Your existing message handling code here (if any, add it)
     };
 
     window.addEventListener('message', messageListener);
