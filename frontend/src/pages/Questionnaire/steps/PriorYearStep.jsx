@@ -31,69 +31,15 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
   };
 
   return (
-    <GlowingBox>
-      <div className="prior-year-step">
-        <h2>
-          <PiSymbol /> Prior Year Info <HelpIcon onClick={() => { setSelectedTopic('priorYearStep'); setShowHelpModal(true); }} />
-        </h2>
-        <p>
-          The IRS uses your prior year AGI or PIN to verify your identity for e-file.
-          If you don’t have a PIN, leave it blank.
-        </p>
-
-        <div className="input-group">
-          <label htmlFor="priorAGI">Prior Year AGI</label>
-          <input
-            id="priorAGI"
-            type="number"
-            value={priorAGI}
-            onChange={(e) => setPriorAGI(e.target.value)}
-            placeholder="e.g. 52000"
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="irsPIN">IRS PIN (optional)</label>
-          <input
-            id="irsPIN"
-            type="text"
-            value={irsPIN}
-            onChange={(e) => setIrsPIN(e.target.value)}
-            placeholder="6-digit PIN"
-          />
-        </div>
-
-        <div className="step-buttons">
-          {onBack && (
-          <button
-  type="button"
-  onClick={onBack}
-  style={{
-    background: '#1c2232',
-    color: '#e1e8fc',
-    padding: '0.5rem 1rem',
-    borderRadius: '6px',
-    border: '1px solid #3a3f55',
-    fontWeight: 'bold',
-  }}
->
-  Back
-</button>
-          )}
-          <button className="primary" onClick={handleSubmit} disabled={!isValid}>
-            Next
-          </button>
-        </div>
-      </div>
-
-      <style jsx>{`
+    <>
+      <style>{`
         .prior-year-step {
           color: #e1e8fc;
         }
         .input-group {
           margin-bottom: 1.5rem;
         }
-        input {
+        .input-group input {
           width: 100%;
           padding: 0.5rem;
           border-radius: 6px;
@@ -106,7 +52,15 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
           justify-content: space-between;
           margin-top: 2rem;
         }
-        button.primary {
+        .back-button {
+          background: #1c2232;
+          color: #e1e8fc;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          font-weight: bold;
+        }
+        .next-button {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
@@ -114,16 +68,82 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
           border: none;
           font-weight: bold;
         }
-        
-        button:disabled {
+        .next-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
+        @media (max-width: 768px) {
+          .input-group {
+            margin-bottom: 1rem;
+          }
+          .input-group input {
+            padding: 0.4rem;
+          }
+          .step-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+          }
+          .back-button,
+          .next-button {
+            width: 100%;
+            padding: 0.75rem;
+          }
+        }
       `}</style>
-      {showHelpModal && (
-        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
-      )}
-    </GlowingBox>
+      <GlowingBox>
+        <div className="prior-year-step">
+          <h2 className="h2-title">
+            <PiSymbol /> Prior Year Info <HelpIcon onClick={() => { setSelectedTopic('priorYearStep'); setShowHelpModal(true); }} />
+          </h2>
+          <p className="description">
+            The IRS uses your prior year AGI or PIN to verify your identity for e-file.
+            If you don’t have a PIN, leave it blank.
+          </p>
+
+          <div className="input-group">
+            <label htmlFor="priorAGI">Prior Year AGI</label>
+            <input
+              id="priorAGI"
+              type="number"
+              value={priorAGI}
+              onChange={(e) => setPriorAGI(e.target.value)}
+              placeholder="e.g. 52000"
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="irsPIN">IRS PIN (optional)</label>
+            <input
+              id="irsPIN"
+              type="text"
+              value={irsPIN}
+              onChange={(e) => setIrsPIN(e.target.value)}
+              placeholder="6-digit PIN"
+            />
+          </div>
+
+          <div className="step-buttons">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="back-button"
+              >
+                Back
+              </button>
+            )}
+            <button className="next-button" onClick={handleSubmit} disabled={!isValid}>
+              Next
+            </button>
+          </div>
+        </div>
+        {showHelpModal && (
+          <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+        )}
+      </GlowingBox>
+    </>
   );
 }
 

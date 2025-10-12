@@ -160,12 +160,11 @@ app.post('/api/pi-auth', async (req, res) => {
 app.post('/api/pi-approve', async (req, res) => {
   let { paymentId, sandbox } = req.body;
   if (sandbox === undefined) {
-    sandbox = true; // Default to testnet if param missing
+    sandbox = true;
     console.log('[WARN] sandbox param missing—defaulting to true (testnet)');
   }
-  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY;
+  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
-
   console.log(`[DEBUG] Received /pi-approve request: paymentId=${paymentId}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
   if (!apiKey) {
@@ -208,9 +207,8 @@ app.post('/api/pi-approve', async (req, res) => {
 // New: Complete Pi payment
 app.post('/api/pi-complete', async (req, res) => {
   const { paymentId, txid, sandbox } = req.body;
-  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY;
+  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
-
   console.log(`[DEBUG] Received /pi-complete request: paymentId=${paymentId}, txid=${txid}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
   if (!apiKey) {
