@@ -304,37 +304,15 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
     switch (incomeType) {
       case 'w2':
         return (
-          <div className="w2-block" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '1rem',
-            margin: '2rem 0',
-            background: '#1a1f2f',
-            borderRadius: '8px',
-            boxShadow: '0 0 12px rgba(161, 102, 255, 0.3)',
-            maxWidth: '720px'
-          }}>
-            <h4 style={{ color: '#a166ff' }}>{labelPrefix}W-2 Income</h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1rem',
-              marginBottom: '1rem'
-            }}>
+          <div className="w2-block">
+            <h4>{labelPrefix}W-2 Income</h4>
+            <div className="grid-auto-fit">
               <div className="input-group">
                 <label>Employer Name</label>
                 <input
                   type="text"
                   value={source.employerName || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, employerName: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -343,14 +321,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.employerEIN || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, employerEIN: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -359,14 +329,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.employerAddress || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, employerAddress: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -375,14 +337,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box1 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box1: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -391,14 +345,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box2 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box2: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -407,14 +353,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box3 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box3: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -423,14 +361,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box4 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box4: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -439,14 +369,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box5 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box5: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -455,14 +377,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box6 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box6: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -471,14 +385,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box7 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box7: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -487,14 +393,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box8 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box8: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -503,14 +401,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box9 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box9: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -519,14 +409,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box10 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box10: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -535,14 +417,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box11 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box11: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -551,14 +425,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box12a || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box12a: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -567,14 +433,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box12b || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box12b: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -583,14 +441,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box12c || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box12c: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -599,14 +449,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box12d || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box12d: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -615,9 +457,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="checkbox"
                   checked={source.box13Statutory || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, box13Statutory: e.target.checked })}
-                  style={{
-                    marginRight: '0.5rem'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -626,9 +465,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="checkbox"
                   checked={source.box13Retirement || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, box13Retirement: e.target.checked })}
-                  style={{
-                    marginRight: '0.5rem'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -637,9 +473,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="checkbox"
                   checked={source.box13SickPay || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, box13SickPay: e.target.checked })}
-                  style={{
-                    marginRight: '0.5rem'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -648,14 +481,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box14 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box14: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -663,14 +488,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                 <select
                   value={source.box15 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box15: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 >
                   <option value="">Select State</option>
                   {states.map((state) => (
@@ -684,14 +501,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box16 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box16: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -700,14 +509,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box17 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box17: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -716,14 +517,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box18 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box18: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -732,14 +525,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="number"
                   value={source.box19 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box19: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -748,14 +533,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.box20 || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, box20: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
             </div>
@@ -763,15 +540,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
               type="button"
               className="remove-button"
               onClick={() => removeIncomeSource(index)}
-              style={{
-                background: '#1c2232',
-                color: '#e1e8fc',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                fontWeight: 'bold',
-                marginTop: '1rem'
-              }}
             >
               Remove
             </button>
@@ -779,37 +547,15 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
         );
       case 'foreign':
         return (
-          <div className="foreign-block" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '1rem',
-            margin: '2rem 0',
-            background: '#1a1f2f',
-            borderRadius: '8px',
-            boxShadow: '0 0 12px rgba(161, 102, 255, 0.3)',
-            maxWidth: '720px'
-          }}>
-            <h4 style={{ color: '#a166ff' }}>{labelPrefix}Foreign Income</h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1rem',
-              marginBottom: '1rem'
-            }}>
+          <div className="foreign-block">
+            <h4>{labelPrefix}Foreign Income</h4>
+            <div className="grid-auto-fit">
               <div className="input-group">
                 <label>Amount</label>
                 <input
                   type="number"
                   value={source.amount || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, amount: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -818,14 +564,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.country || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, country: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -834,14 +572,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.residency || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, residency: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -850,9 +580,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="checkbox"
                   checked={source.exclusion || false}
                   onChange={(e) => updateIncomeSource(index, { ...source, exclusion: e.target.checked })}
-                  style={{
-                    marginRight: '0.5rem'
-                  }}
                 />
               </div>
               {source.exclusion && (
@@ -863,14 +590,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                       type="number"
                       value={source.exclusionAmount || ''}
                       onChange={(e) => updateIncomeSource(index, { ...source, exclusionAmount: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '0.5rem',
-                        borderRadius: '6px',
-                        border: '1px solid #3a3f55',
-                        background: '#1c2232',
-                        color: '#e1e8fc'
-                      }}
                     />
                   </div>
                   <div className="input-group">
@@ -879,14 +598,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                       type="text"
                       value={source.treaty || ''}
                       onChange={(e) => updateIncomeSource(index, { ...source, treaty: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '0.5rem',
-                        borderRadius: '6px',
-                        border: '1px solid #3a3f55',
-                        background: '#1c2232',
-                        color: '#e1e8fc'
-                      }}
                     />
                   </div>
                 </>
@@ -896,15 +607,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
               type="button"
               className="remove-button"
               onClick={() => removeIncomeSource(index)}
-              style={{
-                background: '#1c2232',
-                color: '#e1e8fc',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                fontWeight: 'bold',
-                marginTop: '1rem'
-              }}
             >
               Remove
             </button>
@@ -912,37 +614,15 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
         );
       default:
         return (
-          <div className="income-block" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '1rem',
-            margin: '2rem 0',
-            background: '#1a1f2f',
-            borderRadius: '8px',
-            boxShadow: '0 0 12px rgba(161, 102, 255, 0.3)',
-            maxWidth: '720px'
-          }}>
-            <h4 style={{ color: '#a166ff' }}>{labelPrefix}{source.type || 'Other'} Income</h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1rem',
-              marginBottom: '1rem'
-            }}>
+          <div className="income-block">
+            <h4>{labelPrefix}{source.type || 'Other'} Income</h4>
+            <div className="grid-auto-fit">
               <div className="input-group">
                 <label>Amount</label>
                 <input
                   type="number"
                   value={source.amount || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, amount: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
               <div className="input-group">
@@ -951,14 +631,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
                   type="text"
                   value={source.employer || ''}
                   onChange={(e) => updateIncomeSource(index, { ...source, employer: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #3a3f55',
-                    background: '#1c2232',
-                    color: '#e1e8fc'
-                  }}
                 />
               </div>
             </div>
@@ -966,15 +638,6 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
               type="button"
               className="remove-button"
               onClick={() => removeIncomeSource(index)}
-              style={{
-                background: '#1c2232',
-                color: '#e1e8fc',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                fontWeight: 'bold',
-                marginTop: '1rem'
-              }}
             >
               Remove
             </button>
@@ -984,241 +647,27 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
   };
 
   return (
-    <GlowingBox>
-      <div className="income-step" style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
-        <div style={{ flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h2>
-            <PiSymbol /> Income Information <HelpIcon onClick={() => { setSelectedTopic('incomeStep'); setShowHelpModal(true); }} />
-          </h2>
-          <p>
-            Enter all sources of income for the tax year. You may autofill from linked accounts or enter manually.
-          </p>
-
-          <div className="section">
-            <div className="autofill-toggle">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={autofillEnabled}
-                  onChange={() => setAutofillEnabled(!autofillEnabled)}
-                />
-                Autofill from linked accounts
-              </label>
-              {autofillLoading && <span className="loading-text">Loading data...</span>}
-            </div>
-            {error && <p className="error-text">{error}</p>}
-          </div>
-
-          <div className="section">
-            <h3>
-              <PiSymbol /> Income Sources
-            </h3>
-            <p>Your selected income types from Personal Info are pre-loaded below.</p>
-            {localIncomeSources.map((source, index) => (
-              <div
-                key={index}
-                className="income-block"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '1rem',
-                  margin: '2rem 0',
-                  background: '#1a1f2f',
-                  borderRadius: '8px',
-                  boxShadow: '0 0 12px rgba(161, 102, 255, 0.3)',
-                  maxWidth: '720px',
-                  width: '100%'
-                }}
-              >
-                {renderIncomeFields(source, index)}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => setAdditionalIncomeModalOpen(true)}
-              style={{
-                background: '#a166ff',
-                color: '#fff',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: 'none',
-                fontWeight: 'bold',
-                marginTop: '1rem'
-              }}
-            >
-              + Add Additional Income
-            </button>
-          </div>
-
-          {additionalIncomeModalOpen && (
-            <div className="modal" style={{
-              position: 'fixed',
-              top: '0',
-              left: '0',
-              width: '100%',
-              height: '100%',
-              background: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <div style={{
-                background: '#1a1f2f',
-                padding: '2rem',
-                borderRadius: '8px',
-                boxShadow: '0 0 12px rgba(161, 102, 255, 0.3)',
-                color: '#e1e8fc',
-                maxWidth: '500px',
-                width: '90%',
-              }}>
-                <h3>
-                  <PiSymbol /> Add Additional Income
-                </h3>
-                <div className="input-group">
-                  <label>Income Type</label>
-                  <select
-                    value={newIncomeType}
-                    onChange={(e) => setNewIncomeType(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '0.5rem',
-                      borderRadius: '6px',
-                      border: '1px solid #3a3f55',
-                      background: '#1c2232',
-                      color: '#e1e8fc'
-                    }}
-                  >
-                    <option value="">Select</option>
-                    {incomeOptions.map(({ value, label }) => (
-                      <option key={value} value={value}>{label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                  <button
-                    onClick={() => setAdditionalIncomeModalOpen(false)}
-                    style={{
-                      background: '#1c2232',
-                      color: '#e1e8fc',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '6px',
-                      border: '1px solid #3a3f55',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleAdditionalIncome}
-                    style={{
-                      background: '#72caff',
-                      color: '#0f131f',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '6px',
-                      border: 'none',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="step-buttons">
-            <button
-              type="button"
-              onClick={handleBack}
-              style={{
-                background: '#1c2232',
-                color: '#e1e8fc',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #3a3f55',
-                fontWeight: 'bold',
-                display: 'block',
-                visibility: 'visible',
-                opacity: 1
-              }}
-            >
-              Back
-            </button>
-            <button
-              className="primary"
-              onClick={handleSubmit}
-              style={{
-                background: '#72caff',
-                color: '#0f131f',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-        <div style={{ flex: 1, padding: '1rem' }}>
-          <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
-        </div>
-      </div>
-      {showHelpModal && (
-        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
-      )}
-
-      <style jsx>{`
+    <>
+      <style>{`
         .income-step {
-          color: #e1e8fc;
-          padding: 2rem;
           display: flex;
-          justify-content: center;
+          flex-direction: row;
+          gap: 2rem;
+        }
+        .flex-2 {
+          flex: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .section {
           margin-bottom: 2rem;
           width: 100%;
           max-width: 720px;
         }
-        h3 {
+        .h3-subtitle {
           color: #a166ff;
           margin-bottom: 1rem;
-        }
-        .input-group {
-          margin-bottom: 1.5rem;
-        }
-        label {
-          display: block;
-          margin-bottom: 0.5rem;
-          color: #e1e8fc;
-        }
-        input, select {
-          width: 100%;
-          padding: 0.5rem;
-          border-radius: 6px;
-          border: 1px solid #3a3f55;
-          background: #1c2232;
-          color: #e1e8fc;
-        }
-        input:focus, select:focus {
-          outline: none;
-          border-color: #72caff;
-          box-shadow: 0 0 4px #72caff;
-        }
-        .income-options {
-          list-style: none;
-          padding: 0;
-          margin: 2rem 0;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1rem;
-        }
-        .income-block {
-          margin: 2rem 0;
-          padding: 1rem;
-          background: #1a1f2f;
-          border-radius: 8px;
-          box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
         }
         .autofill-toggle {
           margin-bottom: 1rem;
@@ -1232,13 +681,123 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
           color: #ff6666;
           margin-top: 0.5rem;
         }
-        .step-buttons {
+        .income-block {
           display: flex;
-          justify-content: space-between;
-          margin-top: 2rem;
+          flex-direction: column;
+          padding: 1rem;
+          margin: 2rem 0;
+          background: #1a1f2f;
+          border-radius: 8px;
+          box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
+          max-width: 720px;
+          width: 100%;
+        }
+        .w2-block {
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+          margin: 2rem 0;
+          background: #1a1f2f;
+          border-radius: 8px;
+          box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
+          max-width: 720px;
+        }
+        .foreign-block {
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+          margin: 2rem 0;
+          background: #1a1f2f;
+          border-radius: 8px;
+          box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
+          max-width: 720px;
+        }
+        .h4-title {
+          color: #a166ff;
+        }
+        .grid-auto-fit {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        .input-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #e1e8fc;
+        }
+        .input-group input,
+        .input-group select {
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          background: #1c2232;
+          color: #e1e8fc;
+        }
+        .input-group input:focus,
+        .input-group select:focus {
+          outline: none;
+          border-color: #72caff;
+          box-shadow: 0 0 4px #72caff;
+        }
+        .input-group input[type="checkbox"] {
+          margin-right: 0.5rem;
+        }
+        .remove-button {
+          background: #1c2232;
+          color: #e1e8fc;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          font-weight: bold;
+          margin-top: 1rem;
+        }
+        .add-button {
+          background: #a166ff;
+          color: #fff;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: none;
+          font-weight: bold;
+          margin-top: 1rem;
+        }
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+        .modal-content {
+          background: #1a1f2f;
+          padding: 2rem;
+          border-radius: 8px;
+          box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
+          color: #e1e8fc;
+          max-width: 500px;
+          width: 90%;
+        }
+        .flex-end-gap {
+          margin-top: 1rem;
+          display: flex;
+          justify-content: flex-end;
           gap: 1rem;
         }
-        button.primary {
+        .cancel-button {
+          background: #1c2232;
+          color: #e1e8fc;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          font-weight: bold;
+        }
+        .add-modal-button {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
@@ -1246,23 +805,203 @@ const IncomeStep = ({ initialData, onNext, onBack, answers }) => {
           border: none;
           font-weight: bold;
         }
-        button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          background: #3a3f55;
+        .step-buttons {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 2rem;
+          gap: 1rem;
         }
-        .modal {
-          z-index: 1000;
+        .back-button {
+          background: #1c2232;
+          color: #e1e8fc;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          font-weight: bold;
+          display: block;
+          visibility: visible;
+          opacity: 1;
         }
-        .w2-block {
-          margin: 2rem 0;
+        .next-button {
+          background: #72caff;
+          color: #0f131f;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: none;
+          font-weight: bold;
+        }
+        .refund-estimate {
+          flex: 1;
           padding: 1rem;
-          background: #1a1f2f;
-          borderRadius: '8px';
-          box-shadow: 0 0 12px rgba(161, 102, 255, 0.3);
+        }
+        @media (max-width: 768px) {
+          .income-step {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+          }
+          .h2-title {
+            font-size: 1.5rem;
+          }
+          .h3-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+          }
+          .h4-title {
+            font-size: 1.1rem;
+          }
+          .section {
+            margin-bottom: 1.5rem;
+          }
+          .grid-auto-fit {
+            grid-template-columns: 1fr;
+          }
+          .income-block,
+          .w2-block,
+          .foreign-block {
+            padding: 0.75rem;
+            margin: 1.5rem 0;
+            max-width: 100%;
+          }
+          .input-group input,
+          .input-group select {
+            padding: 0.4rem;
+          }
+          .remove-button {
+            padding: 0.4rem 0.8rem;
+            margin-top: 0.75rem;
+          }
+          .add-button {
+            padding: 0.4rem 0.8rem;
+            margin-top: 0.75rem;
+          }
+          .modal-content {
+            padding: 1.5rem;
+            max-width: 90%;
+          }
+          .step-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+          }
+          .back-button,
+          .next-button {
+            width: 100%;
+            padding: 0.75rem;
+          }
+          .refund-estimate {
+            padding: 0.75rem;
+          }
         }
       `}</style>
-    </GlowingBox>
+      <GlowingBox>
+        <div className="income-step">
+          <div className="flex-2">
+            <h2 className="h2-title">
+              <PiSymbol /> Income Information <HelpIcon onClick={() => { setSelectedTopic('incomeStep'); setShowHelpModal(true); }} />
+            </h2>
+            <p>
+              Enter all sources of income for the tax year. You may autofill from linked accounts or enter manually.
+            </p>
+
+            <div className="section">
+              <div className="autofill-toggle">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={autofillEnabled}
+                    onChange={() => setAutofillEnabled(!autofillEnabled)}
+                  />
+                  Autofill from linked accounts
+                </label>
+                {autofillLoading && <span className="loading-text">Loading data...</span>}
+              </div>
+              {error && <p className="error-text">{error}</p>}
+            </div>
+
+            <div className="section">
+              <h3 className="h3-subtitle">
+                <PiSymbol /> Income Sources
+              </h3>
+              <p>Your selected income types from Personal Info are pre-loaded below.</p>
+              {localIncomeSources.map((source, index) => (
+                <div
+                  key={index}
+                  className="income-block"
+                >
+                  {renderIncomeFields(source, index)}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setAdditionalIncomeModalOpen(true)}
+                className="add-button"
+              >
+                + Add Additional Income
+              </button>
+            </div>
+
+            {additionalIncomeModalOpen && (
+              <div className="modal">
+                <div className="modal-content">
+                  <h3 className="h3-subtitle">
+                    <PiSymbol /> Add Additional Income
+                  </h3>
+                  <div className="input-group">
+                    <label>Income Type</label>
+                    <select
+                      value={newIncomeType}
+                      onChange={(e) => setNewIncomeType(e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      {incomeOptions.map(({ value, label }) => (
+                        <option key={value} value={value}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex-end-gap">
+                    <button
+                      onClick={() => setAdditionalIncomeModalOpen(false)}
+                      className="cancel-button"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAdditionalIncome}
+                      className="add-modal-button"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="step-buttons">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="back-button"
+              >
+                Back
+              </button>
+              <button
+                className="primary next-button"
+                onClick={handleSubmit}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+          <div className="refund-estimate">
+            <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
+          </div>
+        </div>
+        {showHelpModal && (
+          <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+        )}
+      </GlowingBox>
+    </>
   );
 };
 
