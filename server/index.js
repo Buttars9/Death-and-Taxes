@@ -160,25 +160,18 @@ app.post('/api/pi-approve', async (req, res) => {
   const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY; // Updated to use new var for Testnet
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
-  console.log(`[DEBUG] Received /pi-approve request: paymentId=${paymentId}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}`);
-
-  if (!apiKey) {
-    console.error('[ERROR] Missing API key for environment');
-    return res.status(500).json({ error: 'Missing API key configuration' });
-  }
+  console.log(`[DEBUG] Received /pi-approve request: paymentId=${paymentId}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
   try {
-    const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
+    await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
       headers: {
         Authorization: `Key ${apiKey}`,
       },
     });
-    console.log('[SUCCESS] Pi approve response:', response.data);
     res.status(200).json({ success: true });
   } catch (error) {
-    const piError = error.response ? error.response.data : error.message;
-    console.error('[ERROR] Pi approve failed:', piError);
-    res.status(500).json({ error: 'Approval failed', details: piError });
+    console.error('Pi approve failed:', error);
+    res.status(500).json({ error: 'Approval failed' });
   }
 });
 
@@ -188,12 +181,7 @@ app.post('/api/pi-complete', async (req, res) => {
   const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY; // Updated to use new var for Testnet
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
-  console.log(`[DEBUG] Received /pi-complete request: paymentId=${paymentId}, txid=${txid}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}`);
-
-  if (!apiKey) {
-    console.error('[ERROR] Missing API key for environment');
-    return res.status(500).json({ error: 'Missing API key configuration' });
-  }
+  console.log(`[DEBUG] Received /pi-complete request: paymentId=${paymentId}, txid=${txid}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
   try {
     const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/complete`, { txid }, {
@@ -201,12 +189,10 @@ app.post('/api/pi-complete', async (req, res) => {
         Authorization: `Key ${apiKey}`,
       },
     });
-    console.log('[SUCCESS] Pi complete response:', response.data);
     res.status(200).json(response.data);
   } catch (error) {
-    const piError = error.response ? error.response.data : error.message;
-    console.error('[ERROR] Pi complete failed:', piError);
-    res.status(500).json({ error: 'Completion failed', details: piError });
+    console.error('Pi complete failed:', error);
+    res.status(500).json({ error: 'Completion failed' });
   }
 });
 
