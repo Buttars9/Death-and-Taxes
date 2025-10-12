@@ -173,173 +173,30 @@ export default function DeductionStep({ onNext, onBack }) {
   };
 
   return (
-    <GlowingBox>
-      <div className="deductions-step" style={{ display: 'flex', flexDirection: 'row', gap: '2rem' }}>
-        <div style={{ flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h2>
-            <PiSymbol /> Any deductions to claim? <HelpIcon onClick={() => { setSelectedTopic('deductionStep'); setShowHelpModal(true); }} />
-          </h2>
-          <p>
-            Deductions reduce your taxable income and may unlock a bigger refund.
-            Choose “Standard” for simplicity, or “Itemized” to claim specific expenses.
-          </p>
-
-          <div className="section">
-            <h3 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-              <PiSymbol /> Deduction Type
-            </h3>
-            <ul className="deduction-type-options" style={{
-              listStyle: 'none',
-              padding: 0,
-              margin: '2rem 0',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '1rem',
-            }}>
-              {deductionTypeOptions.map(({ label, value }) => (
-                <li
-                  key={value}
-                  className={`deduction-type-option ${deductionType === value ? 'selected' : ''}`}
-                  onClick={() => handleDeductionTypeToggle(value)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') handleDeductionTypeToggle(value);
-                  }}
-                  style={{
-                    background: deductionType === value ? '#2a3248' : '#1c2232',
-                    padding: '1rem',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                    boxShadow: deductionType === value ? '0 0 20px rgba(118, 198, 255, 0.5)' : '0 0 10px rgba(118, 198, 255, 0.1)',
-                  }}
-                >
-                  {label}
-                </li>
-              ))}
-            </ul>
-            {error && <p className="error-text" style={{ color: '#ff6666', marginTop: '0.5rem' }}>{error}</p>}
-          </div>
-
-          {deductionType === 'itemized' && (
-            <div className="section">
-              <h3 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-                <PiSymbol /> Itemized Deductions
-              </h3>
-              <ul className="deduction-options" style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: '2rem 0',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '1rem',
-              }}>
-                {deductionOptions.map(({ label, value }) => (
-                  <li
-                    key={value}
-                    className={`deduction-option ${selected.includes(value) ? 'selected' : ''}`}
-                    onClick={(e) => {
-                      if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
-                      toggleDeduction(value);
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    onKeyPress={(e) => {
-                      if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
-                      if (e.key === 'Enter') toggleDeduction(value);
-                    }}
-                    style={{
-                      background: selected.includes(value) ? '#2a3248' : '#1c2232',
-                      padding: '1rem',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      boxShadow: selected.includes(value) ? '0 0 20px rgba(118, 198, 255, 0.5)' : '0 0 10px rgba(118, 198, 255, 0.1)',
-                    }}
-                  >
-                    {label}
-                    {selected.includes(value) && (
-                      <div style={{ marginTop: '0.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem' }}>Amount ($):</label>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={deductionAmounts[value] || ''}
-                          onChange={(e) => handleAmountChange(value, e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '0.25rem',
-                            borderRadius: '4px',
-                            border: '1px solid #3a3f55',
-                            background: '#1c2232',
-                            color: '#e1e8fc',
-                          }}
-                        />
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="step-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem', gap: '1rem' }}>
-            {onBack && (
-              <button
-                type="button"
-                onClick={handleBack}
-                style={{
-                  background: '#1c2232',
-                  color: '#e1e8fc',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '6px',
-                  border: '1px solid #3a3f55',
-                  fontWeight: 'bold',
-                }}
-              >
-                Back
-              </button>
-            )}
-            <button
-              type="button"
-              className="primary"
-              onClick={handleSubmit}
-              style={{
-                background: '#72caff',
-                color: '#0f131f',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: 'none',
-                fontWeight: 'bold',
-              }}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-        <div style={{ flex: 1, padding: '1rem' }}>
-          <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
-        </div>
-      </div>
-      {showHelpModal && (
-        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
-      )}
-
-      <style jsx>{`
+    <>
+      <style>{`
         .deductions-step {
-          color: #e1e8fc;
-          padding: 2rem;
           display: flex;
-          justify-content: center;
+          flex-direction: row;
+          gap: 2rem;
+        }
+        .flex-2 {
+          flex: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .section {
           margin-bottom: 2rem;
           width: 100%;
           max-width: 720px;
         }
-        .deduction-type-options, .deduction-options {
+        .h3-subtitle {
+          color: #a166ff;
+          margin-bottom: 1rem;
+        }
+        .deduction-type-options,
+        .deduction-options {
           list-style: none;
           padding: 0;
           margin: 2rem 0;
@@ -347,20 +204,41 @@ export default function DeductionStep({ onNext, onBack }) {
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
           gap: 1rem;
         }
-        .deduction-type-option, .deduction-option {
+        .deduction-type-option,
+        .deduction-option {
           background: #1c2232;
           padding: 1rem;
           border-radius: 8px;
           cursor: pointer;
           transition: all 0.2s ease;
           box-shadow: 0 0 10px rgba(118, 198, 255, 0.1);
+          text-align: center;
         }
-        .deduction-type-option:hover, .deduction-option:hover {
+        .deduction-type-option:hover,
+        .deduction-option:hover {
           box-shadow: 0 0 15px rgba(118, 198, 255, 0.3);
         }
-        .deduction-type-option.selected, .deduction-option.selected {
+        .deduction-type-option.selected,
+        .deduction-option.selected {
           background: #2a3248;
           box-shadow: 0 0 20px rgba(118, 198, 255, 0.5);
+        }
+        .amount-label {
+          display: block;
+          margin-bottom: 0.25rem;
+          font-size: 0.8rem;
+        }
+        .amount-input {
+          width: 100%;
+          padding: 0.25rem;
+          border-radius: 4px;
+          border: 1px solid #3a3f55;
+          background: #1c2232;
+          color: #e1e8fc;
+        }
+        .error-text {
+          color: #ff6666;
+          margin-top: 0.5rem;
         }
         .step-buttons {
           display: flex;
@@ -368,7 +246,15 @@ export default function DeductionStep({ onNext, onBack }) {
           margin-top: 2rem;
           gap: 1rem;
         }
-        button.primary {
+        .back-button {
+          background: #1c2232;
+          color: #e1e8fc;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          font-weight: bold;
+        }
+        .next-button {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
@@ -376,17 +262,161 @@ export default function DeductionStep({ onNext, onBack }) {
           border: none;
           font-weight: bold;
         }
-        button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          background: #3a3f55;
+        .refund-estimate {
+          flex: 1;
+          padding: 1rem;
         }
-        .error-text {
-          color: #ff6666;
-          margin-top: 0.5rem;
+        @media (max-width: 768px) {
+          .deductions-step {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          .h2-title {
+            font-size: 1.5rem;
+          }
+          .h3-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+          }
+          .section {
+            margin-bottom: 1.5rem;
+          }
+          .deduction-type-options,
+          .deduction-options {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+          }
+          .deduction-type-option,
+          .deduction-option {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+          }
+          .amount-label {
+            font-size: 0.75rem;
+            margin-bottom: 0.2rem;
+          }
+          .amount-input {
+            padding: 0.2rem;
+          }
+          .step-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+          }
+          .back-button,
+          .next-button {
+            width: 100%;
+            padding: 0.75rem;
+          }
+          .refund-estimate {
+            padding: 0.75rem;
+          }
         }
       `}</style>
-    </GlowingBox>
+      <GlowingBox>
+        <div className="deductions-step">
+          <div className="flex-2">
+            <h2 className="h2-title">
+              <PiSymbol /> Any deductions to claim? <HelpIcon onClick={() => { setSelectedTopic('deductionStep'); setShowHelpModal(true); }} />
+            </h2>
+            <p>
+              Deductions reduce your taxable income and may unlock a bigger refund.
+              Choose “Standard” for simplicity, or “Itemized” to claim specific expenses.
+            </p>
+
+            <div className="section">
+              <h3 className="h3-subtitle">
+                <PiSymbol /> Deduction Type
+              </h3>
+              <ul className="deduction-type-options">
+                {deductionTypeOptions.map(({ label, value }) => (
+                  <li
+                    key={value}
+                    className={`deduction-type-option ${deductionType === value ? 'selected' : ''}`}
+                    onClick={() => handleDeductionTypeToggle(value)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') handleDeductionTypeToggle(value);
+                    }}
+                  >
+                    {label}
+                  </li>
+                ))}
+              </ul>
+              {error && <p className="error-text">{error}</p>}
+            </div>
+
+            {deductionType === 'itemized' && (
+              <div className="section">
+                <h3 className="h3-subtitle">
+                  <PiSymbol /> Itemized Deductions
+                </h3>
+                <ul className="deduction-options">
+                  {deductionOptions.map(({ label, value }) => (
+                    <li
+                      key={value}
+                      className={`deduction-option ${selected.includes(value) ? 'selected' : ''}`}
+                      onClick={(e) => {
+                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+                        toggleDeduction(value);
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyPress={(e) => {
+                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+                        if (e.key === 'Enter') toggleDeduction(value);
+                      }}
+                    >
+                      {label}
+                      {selected.includes(value) && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <label className="amount-label">Amount ($):</label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={deductionAmounts[value] || ''}
+                            onChange={(e) => handleAmountChange(value, e.target.value)}
+                            className="amount-input"
+                          />
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="step-buttons">
+              {onBack && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="back-button"
+                >
+                  Back
+                </button>
+              )}
+              <button
+                type="button"
+                className="primary next-button"
+                onClick={handleSubmit}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+          <div className="refund-estimate">
+            <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
+          </div>
+        </div>
+        {showHelpModal && (
+          <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+        )}
+      </GlowingBox>
+    </>
   );
 }
 

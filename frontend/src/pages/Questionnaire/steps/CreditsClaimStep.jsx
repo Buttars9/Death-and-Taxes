@@ -205,153 +205,33 @@ useEffect(() => {
   };
 
   return (
-    <GlowingBox>
-      <div className="credits-step">
-        <div className="section">
-          <h2 style={{ color: '#a166ff' }}>
-            <PiSymbol /> Claim Credits <HelpIcon onClick={() => { setSelectedTopic('creditsStep'); setShowHelpModal(true); }} />
-          </h2>
-          <p>
-            Select all tax credits you may qualify for. We’ll calculate the amount based on your details. Enter qualified expenses where prompted.
-          </p>
-
-          <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-              <PiSymbol /> Automatic Credits
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {numDependents > 0 && (
-                <li style={{ marginBottom: '0.5rem', color: '#00ff9d' }}>
-                  Child Tax Credit: Automatically applied for {numDependents} dependent{numDependents > 1 ? 's' : ''} entered earlier.
-                </li>
-              )}
-              {eitcEligible && (
-                <li style={{ marginBottom: '0.5rem', color: '#00ff9d' }}>
-                  Earned Income Tax Credit (EITC): Automatically applied based on your income and family size.
-                </li>
-              )}
-              {numDependents === 0 && !eitcEligible && (
-                <li style={{ marginBottom: '0.5rem', color: '#c0b3ff' }}>
-                  No automatic credits apply based on your details.
-                </li>
-              )}
-            </ul>
-          </div>
-
-          <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-              <PiSymbol /> Additional Credits
-            </h3>
-            <ul className="credit-options">
-              {creditOptions.map(({ label, value }) => {
-                const isVariable = variableCredits.includes(value);
-                const isDisabled = (value === 'eitc' && !eitcEligible) || (value === 'child_tax' && numDependents === 0);
-                const displayLabel = isDisabled ? `${label} (Ineligible)` : label;
-                return (
-                  <li
-                    key={value}
-                    className={`credit-option ${selected.includes(value) ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
-                    onClick={(e) => {
-                      if (isDisabled || e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
-                      toggleCredit(value);
-                    }}
-                    role="button"
-                    tabIndex={isDisabled ? -1 : 0}
-                    onKeyPress={(e) => {
-                      if (isDisabled || e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
-                      if (e.key === 'Enter') toggleCredit(value);
-                    }}
-                    style={{
-                      background: selected.includes(value) ? '#2a3248' : '#1c2232',
-                      padding: '1rem',
-                      borderRadius: '8px',
-                      cursor: isDisabled ? 'not-allowed' : 'pointer',
-                      textAlign: 'center',
-                      boxShadow: selected.includes(value) ? '0 0 20px rgba(118, 198, 255, 0.5)' : '0 0 10px rgba(118, 198, 255, 0.1)',
-                      textDecoration: isDisabled ? 'line-through' : 'none',
-                    }}
-                  >
-                    {displayLabel}
-                    {selected.includes(value) && isVariable && (
-                      <div style={{ marginTop: '0.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem' }}>Qualified Amount ($):</label>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={creditExpenses[value] || ''}
-                          onChange={(e) => handleExpenseChange(value, parseFloat(e.target.value) || 0)}
-                          style={{
-                            width: '100%',
-                            padding: '0.25rem',
-                            borderRadius: '4px',
-                            border: '1px solid #3a3f55',
-                            background: '#1c2232',
-                            color: '#e1e8fc',
-                          }}
-                        />
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-            {error && <p className="error-text" style={{ color: '#ff6666', marginTop: '0.5rem' }}>{error}</p>}
-          </div>
-
-          <div className="step-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem', gap: '1rem' }}>
-            {onBack && (
-              <button
-                type="button"
-                onClick={handleBack}
-                style={{
-                  background: '#1c2232',
-                  color: '#e1e8fc',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '6px',
-                  border: '1px solid #3a3f55',
-                  fontWeight: 'bold',
-                }}
-              >
-                Back
-              </button>
-            )}
-            <button
-              type="button"
-              className="primary"
-              onClick={handleSubmit}
-              style={{
-                background: '#72caff',
-                color: '#0f131f',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                border: 'none',
-                fontWeight: 'bold',
-              }}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-        <div style={{ flex: 1, padding: '1rem' }}>
-          <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
-        </div>
-      </div>
-      {showHelpModal && (
-        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
-      )}
-
-      <style jsx>{`
+    <>
+      <style>{`
         .credits-step {
-          color: #e1e8fc;
-          padding: 2rem;
           display: flex;
-          justify-content: center;
+          flex-direction: row;
+          gap: 2rem;
         }
         .section {
           margin-bottom: 2rem;
           width: 100%;
           max-width: 720px;
+        }
+        .h3-subtitle {
+          color: #a166ff;
+          margin-bottom: 1rem;
+        }
+        .auto-credits-list {
+          list-style: none;
+          padding: 0;
+        }
+        .auto-credit-item {
+          margin-bottom: 0.5rem;
+          color: #00ff9d;
+        }
+        .no-auto-credit {
+          margin-bottom: 0.5rem;
+          color: #c0b3ff;
         }
         .credit-options {
           list-style: none;
@@ -368,6 +248,7 @@ useEffect(() => {
           cursor: pointer;
           transition: all 0.2s ease;
           box-shadow: 0 0 10px rgba(118, 198, 255, 0.1);
+          text-align: center;
         }
         .credit-option:hover {
           box-shadow: 0 0 15px rgba(118, 198, 255, 0.3);
@@ -380,13 +261,38 @@ useEffect(() => {
           text-decoration: line-through;
           cursor: not-allowed;
         }
+        .amount-label {
+          display: block;
+          margin-bottom: 0.25rem;
+          font-size: 0.8rem;
+        }
+        .amount-input {
+          width: 100%;
+          padding: 0.25rem;
+          border-radius: 4px;
+          border: 1px solid #3a3f55;
+          background: #1c2232;
+          color: #e1e8fc;
+        }
+        .error-text {
+          color: #ff6666;
+          margin-top: 0.5rem;
+        }
         .step-buttons {
           display: flex;
           justify-content: space-between;
           margin-top: 2rem;
           gap: 1rem;
         }
-        button.primary {
+        .back-button {
+          background: #1c2232;
+          color: #e1e8fc;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: 1px solid #3a3f55;
+          font-weight: bold;
+        }
+        .next-button {
           background: #72caff;
           color: #0f131f;
           padding: 0.5rem 1rem;
@@ -394,17 +300,166 @@ useEffect(() => {
           border: none;
           font-weight: bold;
         }
-        button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          background: #3a3f55;
+        .refund-estimate {
+          flex: 1;
+          padding: 1rem;
         }
-        .error-text {
-          color: #ff6666;
-          margin-top: 0.5rem;
+        @media (max-width: 768px) {
+          .credits-step {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          .h2-title {
+            font-size: 1.5rem;
+          }
+          .h3-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+          }
+          .section {
+            margin-bottom: 1.5rem;
+          }
+          .credit-options {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+          }
+          .credit-option {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+          }
+          .amount-label {
+            font-size: 0.75rem;
+            margin-bottom: 0.2rem;
+          }
+          .amount-input {
+            padding: 0.2rem;
+          }
+          .auto-credit-item,
+          .no-auto-credit {
+            font-size: 0.9rem;
+          }
+          .step-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+          }
+          .back-button,
+          .next-button {
+            width: 100%;
+            padding: 0.75rem;
+          }
+          .refund-estimate {
+            padding: 0.75rem;
+          }
         }
       `}</style>
-    </GlowingBox>
+      <GlowingBox>
+        <div className="credits-step">
+          <div className="section">
+            <h2 className="h2-title">
+              <PiSymbol /> Claim Credits <HelpIcon onClick={() => { setSelectedTopic('creditsStep'); setShowHelpModal(true); }} />
+            </h2>
+            <p>
+              Select all tax credits you may qualify for. We’ll calculate the amount based on your details. Enter qualified expenses where prompted.
+            </p>
+
+            <div>
+              <h3 className="h3-subtitle">
+                <PiSymbol /> Automatic Credits
+              </h3>
+              <ul className="auto-credits-list">
+                {numDependents > 0 && (
+                  <li className="auto-credit-item">
+                    Child Tax Credit: Automatically applied for {numDependents} dependent{numDependents > 1 ? 's' : ''} entered earlier.
+                  </li>
+                )}
+                {eitcEligible && (
+                  <li className="auto-credit-item">
+                    Earned Income Tax Credit (EITC): Automatically applied based on your income and family size.
+                  </li>
+                )}
+                {numDependents === 0 && !eitcEligible && (
+                  <li className="no-auto-credit">
+                    No automatic credits apply based on your details.
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="h3-subtitle">
+                <PiSymbol /> Additional Credits
+              </h3>
+              <ul className="credit-options">
+                {creditOptions.map(({ label, value }) => {
+                  const isVariable = variableCredits.includes(value);
+                  const isDisabled = (value === 'eitc' && !eitcEligible) || (value === 'child_tax' && numDependents === 0);
+                  const displayLabel = isDisabled ? `${label} (Ineligible)` : label;
+                  return (
+                    <li
+                      key={value}
+                      className={`credit-option ${selected.includes(value) ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+                      onClick={(e) => {
+                        if (isDisabled || e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+                        toggleCredit(value);
+                      }}
+                      role="button"
+                      tabIndex={isDisabled ? -1 : 0}
+                      onKeyPress={(e) => {
+                        if (isDisabled || e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+                        if (e.key === 'Enter') toggleCredit(value);
+                      }}
+                    >
+                      {displayLabel}
+                      {selected.includes(value) && isVariable && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <label className="amount-label">Qualified Amount ($):</label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={creditExpenses[value] || ''}
+                            onChange={(e) => handleExpenseChange(value, parseFloat(e.target.value) || 0)}
+                            className="amount-input"
+                          />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              {error && <p className="error-text">{error}</p>}
+            </div>
+
+            <div className="step-buttons">
+              {onBack && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="back-button"
+                >
+                  Back
+                </button>
+              )}
+              <button
+                type="button"
+                className="primary next-button"
+                onClick={handleSubmit}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+          <div className="refund-estimate">
+            <RefundEstimate manualFields={storeAnswers || { maritalStatus: 'single', incomeSources: [] }} />
+          </div>
+        </div>
+        {showHelpModal && (
+          <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
+        )}
+      </GlowingBox>
+    </>
   );
 }
 
