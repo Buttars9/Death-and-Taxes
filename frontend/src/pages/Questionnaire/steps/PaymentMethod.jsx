@@ -157,55 +157,62 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
             />
 
             <button
-              style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
-              onClick={async () => {
-                setIsAuthenticating(true);
-                setAuthError(null);
-                console.log('Pay with Pi clicked, Pi SDK state:', window?.Pi);
-                if (!window?.Pi?.initialized) {
-                  console.error('Pi SDK not initialized');
-                  alert('Pi SDK failed to initialize. Please refresh and try again.');
-                  setIsAuthenticating(false);
-                  return;
-                }
-                console.log('Attempting authentication, current state:', {
-                  authenticated: window.Pi.authenticated,
-                  scopes: window.Pi.consentedScopes,
-                });
-                if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
-                  try {
-                    const authResult = await authenticateWithPi();
-                    console.log('Authentication successful:', authResult);
-                  } catch (err) {
-                    console.error('Auth failed:', err);
-                    setAuthError('Authentication failed. Please try again or check your Pi app.');
-                    setIsAuthenticating(false);
-                    return;
-                  }
-                }
-                // Verify authentication state after attempt
-                if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
-                  console.error('Authentication incomplete, retrying...');
-                  try {
-                    const authResult = await authenticateWithPi();
-                    console.log('Retry authentication successful:', authResult);
-                  } catch (err) {
-                    console.error('Retry auth failed:', err);
-                    setAuthError('Authentication failed after retry. Please try again.');
-                    setIsAuthenticating(false);
-                    return;
-                  }
-                }
-                console.log('Creating payment with amount:', piAmount);
-                const paymentData = {
-                  amount: piAmount ? parseFloat(piAmount) : 0,
-                  memo: 'Death & Taxes filing fee',
-                  metadata: {
-                    sender: answers.piSenderAddress || 'unknown',
-                    filingFee: totalPrice.toFixed(2),
-                    estatePlan: answers.includeEstatePlan || false,
-                  },
-                };
+  style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
+  onClick={async () => {
+    setIsAuthenticating(true);
+    setAuthError(null);
+
+    window.Pi.init({ sandbox: true }); // ✅ Force SDK into testnet mode
+
+    console.log('Pay with Pi clicked, Pi SDK state:', window?.Pi);
+    if (!window?.Pi?.initialized) {
+      console.error('Pi SDK not initialized');
+      alert('Pi SDK failed to initialize. Please refresh and try again.');
+      setIsAuthenticating(false);
+      return;
+    }
+
+    console.log('Attempting authentication, current state:', {
+      authenticated: window.Pi.authenticated,
+      scopes: window.Pi.consentedScopes,
+    });
+
+    if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
+      try {
+        const authResult = await authenticateWithPi();
+        console.log('Authentication successful:', authResult);
+      } catch (err) {
+        console.error('Auth failed:', err);
+        setAuthError('Authentication failed. Please try again or check your Pi app.');
+        setIsAuthenticating(false);
+        return;
+      }
+    }
+
+    // Verify authentication state after attempt
+    if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
+      console.error('Authentication incomplete, retrying...');
+      try {
+        const authResult = await authenticateWithPi();
+        console.log('Retry authentication successful:', authResult);
+      } catch (err) {
+        console.error('Retry auth failed:', err);
+        setAuthError('Authentication failed after retry. Please try again.');
+        setIsAuthenticating(false);
+        return;
+      }
+    }
+
+    console.log('Creating payment with amount:', piAmount);
+    const paymentData = {
+      amount: piAmount ? parseFloat(piAmount) : 0,
+      memo: 'Death & Taxes filing fee',
+      metadata: {
+        sender: answers.piSenderAddress || 'unknown',
+        filingFee: totalPrice.toFixed(2),
+        estatePlan: answers.includeEstatePlan || false,
+      },
+    };
                 const paymentCallbacks = {
   onReadyForServerApproval: (paymentId) => {
     console.log('Ready for server approval:', paymentId, 'sandbox: true');
