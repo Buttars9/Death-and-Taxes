@@ -157,7 +157,7 @@ app.post('/api/pi-auth', async (req, res) => {
 // New: Approve Pi payment (use PI_API_KEY from .env)
 app.post('/api/pi-approve', async (req, res) => {
   const { paymentId, sandbox } = req.body;
-  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY; // Updated to use new var for Testnet
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
   try {
@@ -176,7 +176,7 @@ app.post('/api/pi-approve', async (req, res) => {
 // New: Complete Pi payment
 app.post('/api/pi-complete', async (req, res) => {
   const { paymentId, txid, sandbox } = req.body;
-  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY_NEW : process.env.PI_API_KEY; // Updated to use new var for Testnet
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
 
   try {
