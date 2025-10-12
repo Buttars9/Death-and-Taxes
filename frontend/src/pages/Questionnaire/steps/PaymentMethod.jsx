@@ -105,28 +105,28 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
         <p>Choose how you’d like to pay. All methods are secure and IRS-compliant.</p>
 
         <ul className="payment-options">
-  {methods.map(({ key, label }) => {
-    const isPi = key === 'pi';
-    return (
-      <li
-        key={key}
-        className={`payment-option ${isPi ? '' : 'disabled'} ${method === key ? 'selected' : ''}`}
-        onClick={() => isPi && setMethod(key)}
-        style={{ cursor: isPi ? 'pointer' : 'not-allowed' }}
-      >
-        <label>
-          <input
-            type="radio"
-            checked={method === key}
-            disabled={!isPi}
-            onChange={() => isPi && setMethod(key)}
-          />
-          {label} {isPi ? '' : '(coming soon)'}
-        </label>
-      </li>
-    );
-  })}
-</ul>
+          {methods.map(({ key, label }) => {
+            const isPi = key === 'pi';
+            return (
+              <li
+                key={key}
+                className={`payment-option ${isPi ? '' : 'disabled'} ${method === key ? 'selected' : ''}`}
+                onClick={() => isPi && setMethod(key)}
+                style={{ cursor: isPi ? 'pointer' : 'not-allowed' }}
+              >
+                <label>
+                  <input
+                    type="radio"
+                    checked={method === key}
+                    disabled={!isPi}
+                    onChange={() => isPi && setMethod(key)}
+                  />
+                  {label} {isPi ? '' : '(coming soon)'}
+                </label>
+              </li>
+            );
+          })}
+        </ul>
 
         <div className="fee-confirmation">
           <p>
@@ -157,21 +157,27 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
             <button
               style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
               onClick={async () => {
-                console.log('Pi SDK:', window?.Pi);
+                console.log('Pay with Pi clicked, Pi SDK state:', window?.Pi);
                 if (!window?.Pi?.initialized) {
                   console.error('Pi SDK not initialized');
                   alert('Pi SDK failed to initialize. Please refresh and try again.');
                   return;
                 }
+                console.log('Attempting authentication, current state:', {
+                  authenticated: window.Pi.authenticated,
+                  scopes: window.Pi.consentedScopes,
+                });
                 if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
                   try {
-                    await authenticateWithPi();
+                    const authResult = await authenticateWithPi();
+                    console.log('Authentication successful:', authResult);
                   } catch (err) {
                     console.error('Auth failed:', err);
                     alert('Authentication failed. Please try logging in again.');
                     return;
                   }
                 }
+                console.log('Creating payment with amount:', piAmount);
                 const paymentData = {
                   amount: piAmount ? parseFloat(piAmount) : 0,
                   memo: 'Death & Taxes filing fee',
@@ -209,6 +215,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     console.error('Payment error:', error);
                   },
                 };
+                console.log('Initiating payment:', paymentData);
                 window.Pi.createPayment(paymentData, paymentCallbacks);
               }}
             >
