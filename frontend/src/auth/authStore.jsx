@@ -38,7 +38,6 @@ export const useAuthStore = create((set, get) => ({
       console.warn('Session rehydration failed:', err.message || err);
       set({ user: null, isAuthenticated: false });
     } finally {
-      // New: Migrate legacy localStorage value if it exists (for backward compatibility)
       const legacyTerms = localStorage.getItem('termsAccepted');
       if (legacyTerms === 'true' && !get().termsAccepted) {
         set({ termsAccepted: true });
@@ -69,8 +68,15 @@ export const useAuthStore = create((set, get) => ({
         // TODO: Optionally send payment details to backend to complete or cancel
       };
 
+      // Add timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        console.error("❌ Pi Auth timed out after 10 seconds");
+        reject(new Error("Authentication timed out"));
+      }, 10000);
+
       window.Pi.authenticate(scopes, onIncompletePaymentFound)
         .then(async (auth) => {
+          clearTimeout(timeout);
           console.log("✅ Pi Auth success:", auth);
           const { accessToken, user: piUser } = auth;
 
@@ -90,6 +96,7 @@ export const useAuthStore = create((set, get) => ({
           }
         })
         .catch((error) => {
+          clearTimeout(timeout);
           console.error("❌ Pi Auth failed:", error);
           reject(error);
         });
