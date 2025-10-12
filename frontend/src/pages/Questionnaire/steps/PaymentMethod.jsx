@@ -156,13 +156,14 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
               style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '6px', border: 'none', background: '#2a2f45', color: '#e1e8fc', width: '100%' }}
             />
 
-            <button
+           <button
   style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
   onClick={async () => {
     setIsAuthenticating(true);
     setAuthError(null);
 
     window.Pi.init({ sandbox: true }); // ✅ Force SDK into testnet mode
+    await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Let SDK settle before createPayment
 
     console.log('Pay with Pi clicked, Pi SDK state:', window?.Pi);
     if (!window?.Pi?.initialized) {
