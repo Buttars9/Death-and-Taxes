@@ -38,13 +38,34 @@ export async function payFiat(req, res) {
 
 export async function approvePiPayment(req, res) {
   const { paymentId } = req.body;
+
+  console.log('[DEBUG][Pi Approval] Incoming payload:', req.body);
+
+  if (!paymentId) {
+    console.error('[ERROR][Pi Approval] Missing paymentId');
+    return res.status(400).json({ error: 'Missing paymentId' });
+  }
+
   try {
-    const response = await axios.post(`https://api.minepi.com/v2/payments/${paymentId}/approve`, {}, {
-      headers: { Authorization: `Key ${piApiKey}` }
-    });
+    const response = await axios.post(
+      `https://api.minepi.com/v2/payments/${paymentId}/approve`,
+      {},
+      {
+        headers: { Authorization: `Key ${piApiKey}` }
+      }
+    );
+
+    if (!response?.data?.transaction || !response?.data?.status) {
+      console.warn('[WARN][Pi Approval] Unexpected response format:', response.data);
+    }
+
     res.json(response.data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[ERROR][Pi Approval] Pi API threw:', err?.response?.data || err.message);
+    res.status(500).json({
+      error: 'Pi approval failed',
+      details: err?.response?.data || err.message
+    });
   }
 }
 
