@@ -29,6 +29,8 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   const totalPrice = basePrice + estateAddon;
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
     if (answers.paymentMethod) {
@@ -157,10 +159,13 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
             <button
               style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
               onClick={async () => {
+                setIsAuthenticating(true);
+                setAuthError(null);
                 console.log('Pay with Pi clicked, Pi SDK state:', window?.Pi);
                 if (!window?.Pi?.initialized) {
                   console.error('Pi SDK not initialized');
                   alert('Pi SDK failed to initialize. Please refresh and try again.');
+                  setIsAuthenticating(false);
                   return;
                 }
                 console.log('Attempting authentication, current state:', {
@@ -173,7 +178,8 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     console.log('Authentication successful:', authResult);
                   } catch (err) {
                     console.error('Auth failed:', err);
-                    alert('Authentication failed. Please try logging in again.');
+                    setAuthError('Authentication failed. Please try again or check your Pi app.');
+                    setIsAuthenticating(false);
                     return;
                   }
                 }
@@ -185,7 +191,8 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                     console.log('Retry authentication successful:', authResult);
                   } catch (err) {
                     console.error('Retry auth failed:', err);
-                    alert('Authentication failed after retry. Please try again.');
+                    setAuthError('Authentication failed after retry. Please try again.');
+                    setIsAuthenticating(false);
                     return;
                   }
                 }
@@ -229,10 +236,14 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                 };
                 console.log('Initiating payment:', paymentData);
                 window.Pi.createPayment(paymentData, paymentCallbacks);
+                setIsAuthenticating(false);
               }}
+              disabled={isAuthenticating}
             >
-              Pay with Pi Wallet
+              {isAuthenticating ? 'Authenticating...' : 'Pay with Pi Wallet'}
             </button>
+            {authError && <p style={{ color: 'red' }}>{authError}</p>}
+            {isAuthenticating && <p>Awaiting approval in your Pi Wallet... This may take up to 60 seconds.</p>}
           </>
         )}
 

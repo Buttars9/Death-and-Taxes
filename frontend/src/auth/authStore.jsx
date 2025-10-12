@@ -70,9 +70,9 @@ export const useAuthStore = create((set, get) => ({
 
       // Add timeout to prevent hanging
       const timeout = setTimeout(() => {
-        console.error("❌ Pi Auth timed out after 10 seconds");
+        console.error("❌ Pi Auth timed out after 60 seconds");
         reject(new Error("Authentication timed out"));
-      }, 10000);
+      }, 60000);
 
       window.Pi.authenticate(scopes, onIncompletePaymentFound)
         .then(async (auth) => {
