@@ -4,7 +4,7 @@ import GlowingBox from '../../../components/GlowingBox';
 import PiSymbol from '../../../components/PiSymbol';
 import PaymentForm from '../../../components/PaymentForm';
 import axios from 'axios';
-import { useAuthStore } from '../../../auth/authStore.jsx'; // Add this import (adjust path if needed)
+import { useAuthStore } from '../../../auth/authStore.jsx';
 import HelpIcon from '../../../components/HelpIcon';
 import HelpModal from '../../../components/HelpModal';
 import '../../../components/HelpIcon.css';
@@ -17,13 +17,13 @@ const methods = [
 ];
 
 export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
-  const authenticateWithPi = useAuthStore((s) => s.authenticateWithPi); // Add this to access auth action
+  const authenticateWithPi = useAuthStore((s) => s.authenticateWithPi);
   const [method, setMethod] = useState('pi');
   const [piPrice, setPiPrice] = useState(null);
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState('');
   const [walletAddress, setWalletAddress] = useState('');
-const API_BASE = import.meta.env.VITE_API_BASE;
+  const API_BASE = import.meta.env.VITE_API_BASE;
   const basePrice = 74.99;
   const estateAddon = answers.includeEstatePlan ? 25.0 : 0;
   const totalPrice = basePrice + estateAddon;
@@ -165,7 +165,7 @@ const API_BASE = import.meta.env.VITE_API_BASE;
                   }
                 }
                 const paymentData = {
-                  amount: piAmount,
+                  amount: piAmount ? parseFloat(piAmount) : 0, // Updated: Parse to number (required by Pi SDK)
                   memo: 'Death & Taxes filing fee',
                   metadata: {
                     sender: answers.piSenderAddress || 'unknown',
