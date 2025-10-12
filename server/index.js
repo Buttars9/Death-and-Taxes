@@ -163,7 +163,13 @@ app.post('/api/pi-approve', async (req, res) => {
     sandbox = true;
     console.log('[WARN] sandbox param missing—defaulting to true (testnet)');
   }
-  const apiKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+  const rawKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
+const apiKey = rawKey?.trim();
+
+if (!apiKey || apiKey.includes(' ')) {
+  console.error('[ERROR] API key is missing or malformed:', apiKey);
+  return res.status(500).json({ error: 'Malformed API key' });
+}
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
   console.log(`[DEBUG] Received /pi-approve request: paymentId=${paymentId}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
