@@ -2,15 +2,31 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 
-if (!window.Pi) {
-  console.error('Pi SDK not loaded. Ensure pi-sdk.js is included.');
-} else {
-  window.Pi.init({
-    version: '2.0',
-    sandbox: import.meta.env.VITE_IS_TESTNET === 'true'
+// Wait for Pi SDK to load
+const initPiSDK = () => {
+  return new Promise((resolve, reject) => {
+    if (window.Pi) {
+      try {
+        window.Pi.init({
+          version: '2.0',
+          sandbox: import.meta.env.VITE_IS_TESTNET === 'true'
+        });
+        console.log('Pi SDK initialized:', window.Pi);
+        resolve();
+      } catch (err) {
+        console.error('Pi SDK init failed:', err);
+        reject(err);
+      }
+    } else {
+      console.error('Pi SDK not loaded. Retrying...');
+      setTimeout(() => initPiSDK().then(resolve).catch(reject), 100);
+    }
   });
-}
+};
 
+initPiSDK().catch(err => console.error('Failed to initialize Pi SDK:', err));
+
+// Fix discarding messages from sandbox origin
 const messageListener = (event) => {
   const allowedOrigins = ['https://www.deathntaxes.app'];
   if (window.Pi && window.Pi.sandbox) {
@@ -38,7 +54,6 @@ ReactDOM.createRoot(root).render(
   </React.StrictMode>
 );
 
-// Cleanup listener on unmount
 window.addEventListener('unload', () => {
   window.removeEventListener('message', messageListener);
 });

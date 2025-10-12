@@ -23,7 +23,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState('');
   const [walletAddress, setWalletAddress] = useState('');
-  const API_BASE = import.meta.env.VITE_API_BASE;
+  const API_BASE = import.meta.env.VITE_API_BASE || 'https://deathntaxes-backend.onrender.com';
   const basePrice = 74.99;
   const estateAddon = answers.includeEstatePlan ? 25.0 : 0;
   const totalPrice = basePrice + estateAddon;
