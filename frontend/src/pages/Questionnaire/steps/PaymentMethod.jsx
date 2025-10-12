@@ -207,35 +207,42 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                   },
                 };
                 const paymentCallbacks = {
-                  onReadyForServerApproval: (paymentId) => {
-                    console.log('Ready for server approval:', paymentId, 'sandbox:', window.Pi.sandbox);
-                    setTimeout(() => {
-                      axios
-                        .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox || true }) // Force true if undefined
-                        .catch(err => console.error('Approval failed:', err));
-                    }, 5000); // 5-second delay
-                  },
-                  onReadyForServerCompletion: (paymentId, txid) => {
-                    console.log('Ready for server completion:', paymentId, txid);
-                    axios
-                      .post(`${API_BASE}/api/pi-complete`, { paymentId, txid, sandbox: window.Pi.sandbox || true }) // Force true if undefined
-                      .then(() => {
-                        setAnswers({
-                          ...answers,
-                          paymentConfirmed: true,
-                          paymentMethod: 'pi',
-                        });
-                        onNext();
-                      })
-                      .catch(err => console.error('Completion failed:', err));
-                  },
-                  onCancel: (paymentId) => {
-                    console.log('Payment cancelled:', paymentId);
-                  },
-                  onError: (error, payment) => {
-                    console.error('Payment error:', error);
-                  },
-                };
+  onReadyForServerApproval: (paymentId) => {
+    console.log('Ready for server approval:', paymentId, 'sandbox: true');
+    setTimeout(() => {
+      axios
+        .post(`${API_BASE}/api/pi-approve`, {
+          paymentId,
+          sandbox: true // ✅ Force testnet explicitly
+        })
+        .catch(err => console.error('Approval failed:', err));
+    }, 5000); // 5-second delay
+  },
+  onReadyForServerCompletion: (paymentId, txid) => {
+    console.log('Ready for server completion:', paymentId, txid);
+    axios
+      .post(`${API_BASE}/api/pi-complete`, {
+        paymentId,
+        txid,
+        sandbox: true // ✅ Force testnet explicitly
+      })
+      .then(() => {
+        setAnswers({
+          ...answers,
+          paymentConfirmed: true,
+          paymentMethod: 'pi',
+        });
+        onNext();
+      })
+      .catch(err => console.error('Completion failed:', err));
+  },
+  onCancel: (paymentId) => {
+    console.log('Payment cancelled:', paymentId);
+  },
+  onError: (error, payment) => {
+    console.error('Payment error:', error);
+  },
+};
                 console.log('Initiating payment:', paymentData);
                 window.Pi.createPayment(paymentData, paymentCallbacks);
                 setIsAuthenticating(false);
