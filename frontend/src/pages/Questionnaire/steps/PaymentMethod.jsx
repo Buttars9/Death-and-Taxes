@@ -208,10 +208,12 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
                 };
                 const paymentCallbacks = {
                   onReadyForServerApproval: (paymentId) => {
-                    console.log('Ready for server approval:', paymentId);
-                    axios
-                      .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox })
-                      .catch(err => console.error('Approval failed:', err));
+                    console.log('Ready for server approval:', paymentId, 'sandbox:', window.Pi.sandbox);
+                    setTimeout(() => {
+                      axios
+                        .post(`${API_BASE}/api/pi-approve`, { paymentId, sandbox: window.Pi.sandbox })
+                        .catch(err => console.error('Approval failed:', err));
+                    }, 5000); // 5-second delay
                   },
                   onReadyForServerCompletion: (paymentId, txid) => {
                     console.log('Ready for server completion:', paymentId, txid);
