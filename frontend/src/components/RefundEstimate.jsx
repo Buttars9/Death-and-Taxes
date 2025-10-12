@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import GlowingBox from './GlowingBox.jsx';
 import PiSymbol from './PiSymbol.jsx';
 import { useWizardStore } from '../stores/wizardStore';
 import { calculateRefund } from '../shared/utils/calculateRefund.js';
 import deductionVerdictFromAnswers from '../shared/utils/deductionVerdictFromAnswers.js';
-import './RefundEstimate.css';
+// Removed import './RefundEstimate.css'; to eliminate any CSS-added box styles
 
 function calculateAgeFromDOB(dob) {
   if (!dob) return 0;
@@ -167,175 +166,103 @@ export default function RefundEstimate({ manualFields, isSticky = true }) {
   const [showExplanation, setShowExplanation] = useState(false);
 
   return (
-    <>
-      <style>{`
-        .refund-estimate-wrapper {
-          position: sticky;
-          top: 100px;
-          align-self: flex-start;
-          z-index: 1000;
-        }
-        .refund-estimate-content {
-          margin-top: 1rem;
-          display: grid;
-          gap: 0.75rem;
-        }
-        .toggle-explanation-button {
-          margin-top: 1rem;
-          padding: 0.5rem 1rem;
-          background: #a166ff;
-          color: #fff;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        .refund-explanation {
-          margin-top: 1rem;
-          max-height: 300px;
-          overflow-y: auto;
-          font-size: 0.85rem;
-          line-height: 1.4;
-          color: #ffffff;
-          padding-right: 8px;
-        }
-        .refund-explanation::-webkit-scrollbar {
-          width: 6px;
-        }
-        .refund-explanation::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .refund-explanation::-webkit-scrollbar-thumb {
-          background-color: #00ffff;
-          border-radius: 3px;
-          border: 1px solid #a166ff;
-        }
-        .refund-explanation::-webkit-scrollbar-thumb:hover {
-          background-color: #a166ff;
-        }
-        .federal-amount {
-          color: #00ff9d;
-        }
-        .balance-due-amount {
-          color: #ff4d6d;
-        }
-        .state-amount {
-          color: #00ff9d;
-        }
-        .state-balance-due-amount {
-          color: #ff4d6d;
-        }
-        .credits-list {
-          margin-left: 1rem;
-          margin-bottom: 1rem;
-          color: #c0b3ff;
-        }
-        @media (max-width: 768px) {
-          .refund-estimate-wrapper {
-            position: relative;
-            top: 0;
-          }
-          .refund-estimate-content {
-            gap: 0.5rem;
-          }
-          .toggle-explanation-button {
-            padding: 0.4rem 0.8rem;
-            margin-top: 0.75rem;
-          }
-          .refund-explanation {
-            font-size: 0.8rem;
-            max-height: 250px;
-            padding-right: 4px;
-          }
-          .refund-explanation::-webkit-scrollbar {
-            width: 4px;
-          }
-          .credits-list {
-            margin-left: 0.75rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.85rem;
-          }
-        }
-      `}</style>
-      <div className="refund-estimate-wrapper" style={!isSticky ? { position: 'relative', top: '0' } : {}}>
-        <GlowingBox>
-          <h2 className="h2-title">
-            <PiSymbol /> Refund Estimate
-          </h2>
-          <p className="description">
-            Based on your entries, we’ve calculated your estimated refund or balance due for both federal and state taxes.
-          </p>
+    <div
+      style={{
+        ...(isSticky ? { position: 'sticky', top: '100px', alignSelf: 'flex-start', zIndex: 1000 } : {}),
+      }}
+    >
+      <h2 style={{ color: '#a166ff' }}>
+        <PiSymbol /> Refund Estimate
+      </h2>
+      <p style={{ color: '#c0b3ff' }}>
+        Based on your entries, we’ve calculated your estimated refund or balance due for both federal and state taxes.
+      </p>
 
-          <div className="refund-estimate-content">
-            <div>
-              <strong>Federal:</strong>{' '}
-              <span className={isFederalRefund ? 'federal-amount' : 'balance-due-amount'}>
-                {isFederalRefund
-                  ? `Refund of ${formatCurrency(federalAmount)}`
-                  : `Balance Due of ${formatCurrency(federalAmount)}`}
+      <div style={{ display: 'grid', gap: '0.75rem', marginTop: '1rem' }}>
+        <div>
+          <strong>Federal:</strong>{' '}
+          <span style={{ color: isFederalRefund ? '#00ff9d' : '#ff4d6d' }}>
+            {isFederalRefund
+              ? `Refund of ${formatCurrency(federalAmount)}`
+              : `Balance Due of ${formatCurrency(federalAmount)}`}
+          </span>
+        </div>
+
+        {stateNames.map((stateName) => {
+          const data = stateRefunds[stateName];
+          const isRefund = data.stateRefund > 0;
+          const amount = isRefund ? data.stateRefund : data.stateBalanceDue;
+          return (
+            <div key={stateName}>
+              <strong>{stateName}:</strong>{' '}
+              <span style={{ color: isRefund ? '#00ff9d' : '#ff4d6d' }}>
+                {isRefund
+                  ? `Refund of ${formatCurrency(amount)}`
+                  : `Balance Due of ${formatCurrency(amount)}`}
               </span>
             </div>
-
-            {stateNames.map((stateName) => {
-              const data = stateRefunds[stateName];
-              const isRefund = data.stateRefund > 0;
-              const amount = isRefund ? data.stateRefund : data.stateBalanceDue;
-              return (
-                <div key={stateName}>
-                  <strong>{stateName}:</strong>{' '}
-                  <span className={isRefund ? 'state-amount' : 'state-balance-due-amount'}>
-                    {isRefund
-                      ? `Refund of ${formatCurrency(amount)}`
-                      : `Balance Due of ${formatCurrency(amount)}`}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={() => setShowExplanation(!showExplanation)}
-            className="toggle-explanation-button"
-          >
-            {showExplanation ? 'Hide Explanation' : 'Show Explanation'}
-          </button>
-
-          {showExplanation && (
-            <div className="refund-explanation">
-              <h3>Calculation Details</h3>
-              <p><strong>Filing Status:</strong> {fields.filingStatus}</p>
-              <p><strong>Income:</strong> {formatCurrency(fields.income)}</p>
-              <p><strong>Dependents:</strong> {fields.dependents}</p>
-              <p><strong>Age:</strong> {fields.age}</p>
-              <p><strong>Deduction Type:</strong> {fields.deductionType}</p>
-              <p><strong>Deduction Amount:</strong> {formatCurrency(refundData.deductionAmount)}</p>
-              <p><strong>Taxable Income:</strong> {formatCurrency(refundData.taxableIncome)}</p>
-              <p><strong>Federal Tax Owed:</strong> {formatCurrency(refundData.federalTaxOwed)}</p>
-              <p><strong>Credits Total:</strong> {formatCurrency(refundData.creditAmount)}</p>
-              {fields.credits?.length > 0 && (
-                <ul className="credits-list">
-                  {fields.credits.map((c, i) => (
-                    <li key={i}>
-                      {c.type === 'child_tax' && 'Child Tax Credit:'}
-                      {c.type === 'eitc' && 'Earned Income Tax Credit (EITC):'}
-                      {!['child_tax', 'eitc'].includes(c.type) && `${c.type}:`}
-                      {' '}
-                      {formatCurrency(c.amount)} {c.note ? `– ${c.note}` : ''}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <p><strong>Total Payments:</strong> {formatCurrency(refundData.totalPayments)}</p>
-              <p><strong>Tip Deduction:</strong> {formatCurrency(refundData.tipDeduction)}</p>
-              <p><strong>Overtime Deduction:</strong> {formatCurrency(refundData.overtimeDeduction)}</p>
-              <p><strong>Senior Bonus:</strong> {formatCurrency(refundData.seniorBonus)}</p>
-              <p><strong>SALT Adjustment:</strong> {formatCurrency(refundData.saltAdjustment)}</p>
-              <p><strong>Bonus Depreciation:</strong> {formatCurrency(refundData.bonusDepreciation)}</p>
-              <p><strong>Notes:</strong> {refundData.notes}</p>
-            </div>
-          )}
-        </GlowingBox>
+          );
+        })}
       </div>
-    </>
+
+      <button
+        onClick={() => setShowExplanation(!showExplanation)}
+        style={{
+          marginTop: '1rem',
+          padding: '0.5rem 1rem',
+          background: '#a166ff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        {showExplanation ? 'Hide Explanation' : 'Show Explanation'}
+      </button>
+
+      {showExplanation && (
+        <div style={{
+          marginTop: '1rem',
+          maxHeight: '300px',
+          overflowY: 'auto',
+          fontSize: '0.85rem',
+          lineHeight: '1.4',
+          color: '#ffffff',
+          paddingRight: '8px',
+        }}>
+          <h3>Calculation Details</h3>
+          <p><strong>Filing Status:</strong> {fields.filingStatus}</p>
+          <p><strong>Income:</strong> {formatCurrency(fields.income)}</p>
+          <p><strong>Dependents:</strong> {fields.dependents}</p>
+          <p><strong>Age:</strong> {fields.age}</p>
+          <p><strong>Deduction Type:</strong> {fields.deductionType}</p>
+          <p><strong>Deduction Amount:</strong> {formatCurrency(refundData.deductionAmount)}</p>
+          <p><strong>Taxable Income:</strong> {formatCurrency(refundData.taxableIncome)}</p>
+          <p><strong>Federal Tax Owed:</strong> {formatCurrency(refundData.federalTaxOwed)}</p>
+          <p><strong>Credits Total:</strong> {formatCurrency(refundData.creditAmount)}</p>
+          {fields.credits?.length > 0 && (
+            <ul style={{ marginLeft: '1rem', marginBottom: '1rem', color: '#c0b3ff' }}>
+              {fields.credits.map((c, i) => (
+                <li key={i}>
+                  {c.type === 'child_tax' && 'Child Tax Credit:'}
+                  {c.type === 'eitc' && 'Earned Income Tax Credit (EITC):'}
+                  {!['child_tax', 'eitc'].includes(c.type) && `${c.type}:`}
+                  {' '}
+                  {formatCurrency(c.amount)} {c.note ? `– ${c.note}` : ''}
+                </li>
+              ))}
+            </ul>
+          )}
+          <p><strong>Total Payments:</strong> {formatCurrency(refundData.totalPayments)}</p>
+          <p><strong>Tip Deduction:</strong> {formatCurrency(refundData.tipDeduction)}</p>
+          <p><strong>Overtime Deduction:</strong> {formatCurrency(refundData.overtimeDeduction)}</p>
+          <p><strong>Senior Bonus:</strong> {formatCurrency(refundData.seniorBonus)}</p>
+          <p><strong>SALT Adjustment:</strong> {formatCurrency(refundData.saltAdjustment)}</p>
+          <p><strong>Bonus Depreciation:</strong> {formatCurrency(refundData.bonusDepreciation)}</p>
+          <p><strong>Notes:</strong> {refundData.notes}</p>
+        </div>
+      )}
+    </div>
   );
 }
 
