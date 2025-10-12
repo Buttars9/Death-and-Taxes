@@ -47,7 +47,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
   }, []);
 
   useEffect(() => {
-    axios.get(`${API_BASE}/api/settings/wallet`) // Fixed: Use API_BASE
+    axios.get(`${API_BASE}/api/settings/wallet`)
       .then((res) => {
         const pi = res.data?.wallet?.pi || '';
         setWalletAddress(pi);
@@ -158,7 +158,12 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
               style={{ marginTop: '1rem', background: '#72caff', color: '#0f131f', padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', fontWeight: 'bold' }}
               onClick={async () => {
                 console.log('Pi SDK:', window?.Pi);
-                if (!window?.Pi?.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
+                if (!window?.Pi?.initialized) {
+                  console.error('Pi SDK not initialized');
+                  alert('Pi SDK failed to initialize. Please refresh and try again.');
+                  return;
+                }
+                if (!window.Pi.authenticated || !window.Pi.consentedScopes?.includes('payments')) {
                   try {
                     await authenticateWithPi();
                   } catch (err) {
