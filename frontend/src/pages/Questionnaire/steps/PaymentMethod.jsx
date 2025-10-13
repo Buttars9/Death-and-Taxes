@@ -163,7 +163,7 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
     setAuthError(null);
 
 if (!window.Pi?.initialized) {
-  window.Pi.init({ sandbox: true }); // ✅ No version key — Pi auto-detects
+  window.Pi.init({ version: "2.0", sandbox: true }); // ✅ Force SDK into testnet mode
 }
     await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Let SDK settle before createPayment
 

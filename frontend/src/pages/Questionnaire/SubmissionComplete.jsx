@@ -202,114 +202,184 @@ const handleViewPayload = () => {
   });
 
   return (
-    <GlowingBox>
-      <div style={{
-        padding: '2rem',
-        background: '#1a0028',
-        borderRadius: '8px',
-        boxShadow: '0 0 12px #8c4dcc',
-        color: '#e0e0ff',
-      }}>
-        <h2 style={{ color: '#a166ff', marginBottom: '1rem' }}>
-          <PiSymbol /> You Did It! <HelpIcon onClick={() => { setSelectedTopic('submissionCompleteStep'); setShowHelpModal(true); }} />
-        </h2>
-        <p>Your filing is complete and securely queued. We’ll notify you as it moves through review and disbursement.</p>
+    <>
+      <style>{`
+        .submission-complete {
+          padding: 2rem;
+          background: #1a0028;
+          border-radius: 8px;
+          box-shadow: 0 0 12px #8c4dcc;
+          color: #e0e0ff;
+        }
+        .submission-complete h2 {
+          color: #a166ff;
+          margin-bottom: 1rem;
+        }
+        .submission-complete p {
+          margin-bottom: 1rem;
+        }
+        .submission-complete ul {
+          margin-left: 1.5rem;
+        }
+        .submission-complete ul li {
+          margin-bottom: 0.5rem;
+        }
+        .submission-complete strong {
+          color: #ffffff;
+        }
+        .submission-complete span {
+          color: #00ff9d;
+        }
+        .submission-complete .buttons {
+          margin-top: 2rem;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+        .pdf-preview-modal {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 1rem;
+        }
+        .pdf-preview-container {
+          width: 80vw;
+          max-width: 960px;
+          box-shadow: 0 0 12px rgba(0,0,0,0.2);
+          background: #f8f8ff;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .pdf-preview-iframe {
+          width: 100%;
+          height: 850px;
+          border: none;
+          display: block;
+        }
+        @media (max-width: 768px) {
+          .submission-complete {
+            padding: 1rem;
+          }
+          .submission-complete h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+          }
+          .submission-complete p {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+          }
+          .submission-complete ul {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+          }
+          .submission-complete ul li {
+            margin-bottom: 0.4rem;
+          }
+          .submission-complete .buttons {
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+          }
+          .submission-complete button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-right: 0;
+            margin-top: 0;
+          }
+          .pdf-preview-container {
+            width: 100vw;
+            max-width: none;
+            border-radius: 0;
+          }
+          .pdf-preview-iframe {
+            height: 600px;
+          }
+        }
+      `}</style>
+      <GlowingBox>
+        <div className="submission-complete">
+          <h2>
+            <PiSymbol /> You Did It! <HelpIcon onClick={() => { setSelectedTopic('submissionCompleteStep'); setShowHelpModal(true); }} />
+          </h2>
+          <p>Your filing is complete and securely queued. We’ll notify you as it moves through review and disbursement.</p>
 
-        <div style={{ marginTop: '2rem' }}>
-          {confirmationId && <p><strong>Confirmation ID:</strong> {confirmationId}</p>}
-          {formattedTime && <p><strong>Submitted At:</strong> {formattedTime}</p>}
-          <p><strong>Filing Status:</strong> {maritalStatus}</p>
-          <div style={{ marginTop: '1rem' }}>
-            <strong>Federal Refund:</strong>{' '}
-            <span style={{ color: '#00ff9d' }}>
-              {formatCurrency(estimatedRefund)}
-            </span>
+          <div>
+            {confirmationId && <p><strong>Confirmation ID:</strong> {confirmationId}</p>}
+            {formattedTime && <p><strong>Submitted At:</strong> {formattedTime}</p>}
+            <p><strong>Filing Status:</strong> {maritalStatus}</p>
+            <div>
+              <strong>Federal Refund:</strong>{' '}
+              <span>
+                {formatCurrency(estimatedRefund)}
+              </span>
+            </div>
+            <p><strong>Income Sources:</strong></p>
+            <ul>
+              {incomeSources.map((src, i) => (
+                <li key={i}>
+                  {src.owner || 'N/A'} W-2: {src.employerName || 'N/A'} - ${src.box1 || src.amount || 0}
+                </li>
+              ))}
+            </ul>
+            <p><strong>Will Summary:</strong> {willData.fullName
+              ? `${willData.fullName}, Beneficiary: ${willData.primaryBeneficiary || 'N/A'}`
+              : 'N/A'}
+            </p>
+            <div>
+              <strong>State Refunds:</strong>
+              {Object.entries(stateRefunds).map(([stateName, data]) => {
+                const isRefund = data.stateRefund > 0;
+                const amount = isRefund ? data.stateRefund : data.stateBalanceDue;
+                return (
+                  <div key={stateName}>
+                    <strong>{stateName}:</strong>{' '}
+                    <span style={{ color: isRefund ? '#00ff9d' : '#ff4d6d' }}>
+                      {isRefund
+                        ? `Refund of ${formatCurrency(amount)}`
+                        : `Balance Due of ${formatCurrency(amount)}`}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <p><strong>Income Sources:</strong></p>
-          <ul>
-            {incomeSources.map((src, i) => (
-              <li key={i}>
-                {src.owner || 'N/A'} W-2: {src.employerName || 'N/A'} - ${src.box1 || src.amount || 0}
-              </li>
-            ))}
-          </ul>
-          <p><strong>Will Summary:</strong> {willData.fullName
-            ? `${willData.fullName}, Beneficiary: ${willData.primaryBeneficiary || 'N/A'}`
-            : 'N/A'}
-          </p>
-          <div style={{ marginTop: '1rem' }}>
-            <strong>State Refunds:</strong>
-            {Object.entries(stateRefunds).map(([stateName, data]) => {
-              const isRefund = data.stateRefund > 0;
-              const amount = isRefund ? data.stateRefund : data.stateBalanceDue;
-              return (
-                <div key={stateName}>
-                  <strong>{stateName}:</strong>{' '}
-                  <span style={{ color: isRefund ? '#00ff9d' : '#ff4d6d' }}>
-                    {isRefund
-                      ? `Refund of ${formatCurrency(amount)}`
-                      : `Balance Due of ${formatCurrency(amount)}`}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
-        <div style={{ marginTop: '2rem' }}>
-          <button onClick={handlePrintTaxReturn} style={buttonStyle('#72caff', '#0f131f')}>Print Tax Return</button>
-          <button onClick={handlePreviewTaxReturn} style={buttonStyle('#3f8cff', '#fff')}>Preview Tax Return</button>
-          <button onClick={handleViewPayload} style={buttonStyle('#a166ff', '#fff')}>View IRS Payload</button>
-          <button onClick={handleSubmitToDrake} style={buttonStyle('#00c78b', '#0f131f')}>Submit</button>
-          <button onClick={handleDownloadReceipt} style={buttonStyle('#ffb347', '#0f131f')}>Download Receipt</button>
-          <button onClick={handleGoToDashboard} style={buttonStyle('#1c2232', '#e0e0ff', true)}>Go to Dashboard</button>
-        </div>
+          <div className="buttons">
+            <button onClick={handlePrintTaxReturn} style={buttonStyle('#72caff', '#0f131f')}>Print Tax Return</button>
+            <button onClick={handlePreviewTaxReturn} style={buttonStyle('#3f8cff', '#fff')}>Preview Tax Return</button>
+            <button onClick={handleViewPayload} style={buttonStyle('#a166ff', '#fff')}>View IRS Payload</button>
+            <button onClick={handleSubmitToDrake} style={buttonStyle('#00c78b', '#0f131f')}>Submit</button>
+            <button onClick={handleDownloadReceipt} style={buttonStyle('#ffb347', '#0f131f')}>Download Receipt</button>
+            <button onClick={handleGoToDashboard} style={buttonStyle('#1c2232', '#e0e0ff', true)}>Go to Dashboard</button>
+          </div>
 
 {showPdfPreview && (
   <Modal onClose={() => setShowPdfPreview(false)}>
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '1rem',
-      }}
-    >
-      <div
-        style={{
-          width: '80vw',
-          maxWidth: '960px',
-          boxShadow: '0 0 12px rgba(0,0,0,0.2)',
-          background: '#f8f8ff',
-          borderRadius: '8px',
-          overflow: 'hidden',
-        }}
-      >
+    <div className="pdf-preview-modal">
+      <div className="pdf-preview-container">
         <iframe
           src={URL.createObjectURL(irsPdfBlob)}
           width="100%"
           height="850px"
           title="IRS PDF Preview"
-          style={{
-            border: 'none',
-            display: 'block',
-          }}
+          className="pdf-preview-iframe"
         />
       </div>
     </div>
   </Modal>
 )}
 
-        {showPayloadPreview && (
-          <Modal onClose={() => setShowPayloadPreview(false)}>
-            <IrsPayloadPreview payload={irsPayload} />
-          </Modal>
+          {showPayloadPreview && (
+            <Modal onClose={() => setShowPayloadPreview(false)}>
+              <IrsPayloadPreview payload={irsPayload} />
+            </Modal>
+          )}
+        </div>
+        {showHelpModal && (
+          <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
         )}
-      </div>
-      {showHelpModal && (
-        <HelpModal topic={selectedTopic} onClose={() => setShowHelpModal(false)} />
-      )}
-    </GlowingBox>
+      </GlowingBox>
+    </>
   );
 }
 
