@@ -37,11 +37,15 @@ const messageListener = (event) => {
     allowedOrigins.push('https://sandbox.minepi.com');
   }
 
+  console.log('[DEBUG] Received message from origin:', event.origin); // Added: Log every incoming message origin for debugging
+
   if (!allowedOrigins.includes(event.origin)) {
     console.log('Discarding message - origin:', event.origin, '- data is logged below');
     console.log(event.data);
     return;
   }
+
+  console.log('[DEBUG] Accepted message:', event.data); // Added: Log accepted messages
 };
 
 window.addEventListener('message', messageListener);

@@ -55,7 +55,7 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log(`[CORS] Incoming origin: ${origin}`);
+    console.log(`[CORS] Incoming origin: ${origin}`); // This should log—check if it appears in Render
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -158,27 +158,30 @@ app.post('/api/pi-auth', async (req, res) => {
 
 // New: Approve Pi payment (use PI_API_KEY from .env)
 app.post('/api/pi-approve', async (req, res) => {
+  console.log('[INFO] Entered /api/pi-approve endpoint'); // Added: Early log to confirm requests hit here
   let { paymentId, sandbox } = req.body;
   if (sandbox === undefined) {
     sandbox = true;
     console.log('[WARN] sandbox param missing—defaulting to true (testnet)');
   }
   const rawKey = sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY;
-const apiKey = rawKey?.trim();
+  const apiKey = rawKey?.trim();
 
-if (!apiKey || apiKey.includes(' ')) {
-  console.error('[ERROR] API key is missing or malformed:', apiKey);
-  return res.status(500).json({ error: 'Malformed API key' });
-}
+  console.log('[DEBUG] Loaded API key:', apiKey ? '[redacted]' : 'MISSING'); // Added: Log key presence early
+
+  if (!apiKey || apiKey.includes(' ')) {
+    console.error('[ERROR] API key is missing or malformed:', apiKey ? '[redacted]' : 'MISSING');
+    return res.status(500).json({ error: 'Malformed API key' });
+  }
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
   console.log(`[DEBUG] Received /pi-approve request: paymentId=${paymentId}, sandbox=${sandbox}, using apiKey=${apiKey ? '[redacted]' : 'MISSING'}, baseUrl=${baseUrl}, full req.body=${JSON.stringify(req.body)}`);
 
-  if (!apiKey) {
+  if (!apiKey) { // This is redundant with above check, but kept for consistency
     console.error('[ERROR] Missing API key for environment');
     return res.status(500).json({ error: 'Missing API key configuration' });
   }
 
-  const approveWithRetry = async (retries = 6, delay = 15000) => {
+  const approveWithRetry = async (retries = 6, delay = 5000) => { // Changed: Reduced delay to 5s for faster retries (matches frontend timeout)
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         const response = await axios.post(`${baseUrl}/v2/payments/${paymentId}/approve`, {}, {
@@ -190,8 +193,8 @@ if (!apiKey || apiKey.includes(' ')) {
         return response;
       } catch (error) {
         const piError = error.response ? error.response.data : error.message;
-        console.error(`[ERROR] Pi approve attempt ${attempt} failed:`, piError);
-        if (error.response?.status !== 404 || attempt === retries) {
+        console.error(`[ERROR] Pi approve attempt ${attempt} failed:`, { status: error?.response?.status, data: piError });
+        if (![404, 500, 503].includes(error.response?.status) || attempt === retries) { // Changed: Retry on 500/503 (Pi transient errors) in addition to 404
           throw error; // Non-retryable error or last attempt
         }
         console.log(`Retrying approve in ${delay}ms...`);
@@ -217,11 +220,12 @@ console.error('[ERROR] Pi approve failed after retries:', {
 
 // New: Complete Pi payment
 app.post('/api/pi-complete', async (req, res) => {
+  console.log('[INFO] Entered /api/pi-complete endpoint'); // Added: Early log for this endpoint too
   const { paymentId, txid, sandbox } = req.body;
 const apiKey = (sandbox ? process.env.PI_TESTNET_API_KEY : process.env.PI_API_KEY)?.trim();
 
 if (!apiKey || apiKey.includes(' ')) {
-  console.error('[ERROR] API key is missing or malformed:', apiKey);
+  console.error('[ERROR] API key is missing or malformed:', apiKey ? '[redacted]' : 'MISSING');
   return res.status(500).json({ error: 'Malformed API key' });
 }
   const baseUrl = sandbox ? 'https://api.testnet.minepi.com' : 'https://api.minepi.com';
