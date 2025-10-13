@@ -256,6 +256,7 @@ if (!window.Pi?.initialized) {
                 
            try {
   const payment = await window.Pi.createPayment(paymentData, paymentCallbacks);
+ console.log('[DEBUG] createPayment full response:', payment); 
   console.log('[DEBUG] createPayment response:', payment);
 } catch (err) {
   console.error('createPayment failed:', err);
