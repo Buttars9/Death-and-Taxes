@@ -162,7 +162,9 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
     setIsAuthenticating(true);
     setAuthError(null);
 
-window.Pi.init({ version: '2.0', sandbox: true });    // ✅ Force SDK into testnet mode
+if (!window.Pi?.initialized) {
+  window.Pi.init({ sandbox: true }); // ✅ No version key — Pi auto-detects
+}
     await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Let SDK settle before createPayment
 
     console.log('Pay with Pi clicked, Pi SDK state:', window?.Pi);
