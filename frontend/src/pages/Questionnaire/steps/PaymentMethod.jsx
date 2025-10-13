@@ -251,8 +251,16 @@ export default function PaymentMethod({ answers, setAnswers, onNext, onBack }) {
     console.error('Payment error:', error);
   },
 };
-                console.log('Initiating payment:', paymentData);
-                window.Pi.createPayment(paymentData, paymentCallbacks);
+                
+               console.log('Initiating payment:', paymentData);
+
+// ✅ Handle any incomplete payments before creating a new one
+window.Pi.onIncompletePaymentFound((payment) => {
+  console.log('Found incomplete payment:', payment);
+  // Optionally auto-resume or notify user
+});
+
+window.Pi.createPayment(paymentData, paymentCallbacks);
                 setIsAuthenticating(false);
               }}
               disabled={isAuthenticating}
