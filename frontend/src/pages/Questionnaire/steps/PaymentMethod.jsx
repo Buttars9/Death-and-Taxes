@@ -254,15 +254,15 @@ if (!window.Pi?.initialized) {
   },
 };
                 
-               console.log('Initiating payment:', paymentData);
-
-// ✅ Handle any incomplete payments before creating a new one
-window.Pi.onIncompletePaymentFound((payment) => {
-  console.log('Found incomplete payment:', payment);
-  // Optionally auto-resume or notify user
-});
-
-window.Pi.createPayment(paymentData, paymentCallbacks);
+           try {
+  const payment = await window.Pi.createPayment(paymentData, paymentCallbacks);
+  console.log('[DEBUG] createPayment response:', payment);
+} catch (err) {
+  console.error('createPayment failed:', err);
+  setAuthError('Payment creation failed. Please try again.');
+  setIsAuthenticating(false);
+  return;
+}
                 setIsAuthenticating(false);
               }}
               disabled={isAuthenticating}
