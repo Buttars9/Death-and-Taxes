@@ -256,6 +256,26 @@ const handleViewPayload = () => {
           border: none;
           display: block;
         }
+        .payload-preview-modal {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 1rem;
+          color: #000000; /* Force dark text for better visibility on light background */
+        }
+        .payload-preview-container {
+          width: 80vw;
+          max-width: 960px;
+          box-shadow: 0 0 12px rgba(0,0,0,0.2);
+          background: #f8f8ff; /* Light background consistent with PDF preview */
+          border-radius: 8px;
+          overflow: hidden;
+          color: #000000; /* Override any inherited light colors */
+          padding: 1rem;
+        }
+        .payload-preview-container pre, .payload-preview-container code {
+          color: #000000 !important; /* Ensure code text is dark, overriding any highlighter styles */
+        }
         @media (max-width: 768px) {
           .submission-complete {
             padding: 1rem;
@@ -371,7 +391,11 @@ const handleViewPayload = () => {
 
           {showPayloadPreview && (
             <Modal onClose={() => setShowPayloadPreview(false)}>
-              <IrsPayloadPreview payload={irsPayload} />
+              <div className="payload-preview-modal">
+                <div className="payload-preview-container">
+                  <IrsPayloadPreview payload={irsPayload} />
+                </div>
+              </div>
             </Modal>
           )}
         </div>

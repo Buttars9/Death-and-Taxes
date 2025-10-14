@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import GlowingBox from "../components/GlowingBox";
+import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
 
 export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
-  const navigate = useNavigate();
+  const acceptTerms = useAuthStore((s) => s.acceptTerms);
 
   const handleContinue = () => {
     if (agreed) {
-      localStorage.setItem('termsAccepted', 'true');
-      navigate('/dashboard');
+      acceptTerms(); // Updates store, triggers re-render in parent routes
     }
   };
 
@@ -30,7 +29,7 @@ export default function TermsGate() {
           <li>You understand that your refund estimate is based on current inputs and may change after IRS review. Final refund amounts are determined solely by the IRS.</li>
           <li>You consent to receive digital receipts and updates at the email address provided. Your data will never be sold or shared.</li>
           <li>You accept that this platform is not liable for IRS or state delays, rejections, or changes to refund amounts once submitted.</li>
-          <li>You acknowledge that until this platform receives direct IRS and state e-file approval, all returns will be securely transmitted via <strong>Drake Software</strong>, an IRS-authorized e-file provider. Drake handles both federal and state submissions under IRS Publication 1345.</li>
+          <li>You acknowledge that until this platform receives direct IRS and state e-file approval, all returns will be securely transmitted via <strong>PDP Tax Service</strong>, an IRS-authorized e-file provider. PDP handles both federal and state submissions under IRS Publication 1345.</li>
         </ul>
 
         <h3>⚖️ Legal Terms</h3>
@@ -40,7 +39,7 @@ export default function TermsGate() {
           <li>By clicking “Agree & Continue,” you consent to the electronic preparation and submission of your tax return. This action constitutes a digital signature under IRS guidelines and applicable law.</li>
           <li>By agreeing to these terms, you also consent to the digital generation of estate documents, including wills, affidavits, and powers of attorney, where applicable. These documents are generated based on your inputs and jurisdictional defaults, and you are responsible for reviewing them prior to execution.</li>
           <li>Refund delivery timelines are controlled solely by the IRS, state agencies, and your financial institution. This platform does not guarantee refund speed, and is not responsible for delays caused by IRS review, identity verification, or banking issues.</li>
-          <li>Drake Software acts solely as a transmission provider. This platform is responsible for generating your return and ensuring its accuracy prior to submission.</li>
+          <li>PDP Tax Service acts solely as a transmission provider. This platform is responsible for generating your return and ensuring its accuracy prior to submission.</li>
           <li>This platform operates under U.S. jurisdiction and complies with IRS and state reporting standards.</li>
           <li>You accept that all communications, transactions, and audit logs may be retained for legal and regulatory review.</li>
         </ul>
