@@ -13,9 +13,10 @@ export default function TermsGate() {
 
 const handleContinue = () => {
   console.log('✅ Button clicked');
-  localStorage.setItem('hasAcceptedTerms', 'true');
+  acceptTerms(); // ✅ Update store
+  localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
   console.log('✅ localStorage updated');
-  navigate('/dashboard'); // Restore routing
+  navigate('/dashboard'); // ✅ Route
 };
 
   return (
