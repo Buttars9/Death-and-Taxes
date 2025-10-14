@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Added for explicit navigation
 import GlowingBox from "../components/GlowingBox";
 import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
 
@@ -7,14 +6,12 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Added to prevent double-clicks and show feedback
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
-  const navigate = useNavigate(); // Added for navigation
 
   const handleContinue = () => {
     if (agreed && !isLoading) {
       setIsLoading(true); // Disable button during process
       acceptTerms(); // Updates store, triggers re-render in parent routes
-      navigate('/dashboard'); // Added: Explicitly navigate to dashboard after acceptance
-      setIsLoading(false); // Re-enable (though navigation should unmount this component)
+      // Removed direct navigation to restore original behavior; parent/router should handle redirect
     }
   };
 
@@ -89,7 +86,7 @@ export default function TermsGate() {
         <button
           type="button"
           onClick={handleContinue}
-          disabled={!agreed || isLoading} // Updated: Disable if loading
+          disabled={!agreed || isLoading} // Disable if loading
           style={{
             background: '#72caff',
             color: '#0f131f',
@@ -102,7 +99,7 @@ export default function TermsGate() {
             cursor: (agreed && !isLoading) ? 'pointer' : 'not-allowed',
           }}
         >
-          {isLoading ? 'Processing...' : 'Agree & Continue'} // Added: Show loading text
+          {isLoading ? 'Processing...' : 'Agree & Continue'} // Show loading text
         </button>
       </div>
 

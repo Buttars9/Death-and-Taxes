@@ -1,0 +1,243 @@
+[33mcommit a2196ddf1d6df8f1dec887359591673d8668c5a2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Tue Oct 14 12:54:49 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 5026d168644665be05ff1d3a5bf2bc5f19190b01[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Tue Oct 14 12:37:20 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 225d410457c1a33ec8c54366f9aa8d3e6802cdf3[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Tue Oct 14 12:20:26 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 8f64bce5b39af79c74b626063f6b818ad23166a7[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 21:53:20 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 54b33e7ed581be970a67f6d82f89b1870ebbbed8[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 21:50:04 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit a4f4aed3e2e46277d87e9b878324ceb8a3d3a8d4[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 20:47:02 2025 -0600
+
+    Trigger Vercel redeploy
+
+[33mcommit 9ba1afc8a99029af78b389ac222423a6beba39a9[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 19:32:48 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 25d0da5398efe7fcef927fda53d649116d698c2d[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 18:53:10 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 46000d4a24241fe13eb1bb8d4ba0b0fc0e424933[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 18:33:57 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 8104a9e2d9c6f0cb7962a3c2ec80f26279771ea0[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 18:30:51 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 0de8cdda253d108b43a368db6d11d6cfb195cfe2[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 18:05:48 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit 8f4708d7829d578dede5acb2d1db96f582c8288a[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 17:48:17 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit d073911f2b2f023b29c404faaed35d5d94196cfa[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 17:43:55 2025 -0600
+
+    Deploy latest backend updates and fixes
+
+[33mcommit e49fe05b3bccb4217ddcc3a70529bef85fbb115e[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 12:59:35 2025 -0600
+
+    Deploy all recent changes: Pi key patch, error logging, and sandbox lifecycle fixes
+
+[33mcommit de88a38f31db134af1c410e70af584ce695a46e3[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 12:47:10 2025 -0600
+
+    Deploy all recent changes: Pi key patch, sandbox logic, and backend routes
+
+[33mcommit 3109fd08fecdac25d985b38ff51cfb69e5fc0b41[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 12:43:02 2025 -0600
+
+    Deploy all recent changes: Pi key patch, sandbox logic, and backend routes
+
+[33mcommit 77b48e9e11bbf62a7aeb8644a5423aaaf4f160fe[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 12:29:37 2025 -0600
+
+    Patch Pi payment logic and environment for sandbox/mainnet switch
+
+[33mcommit c141d1aa838c07ef307fb6141462a7531083ea40[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 11:49:09 2025 -0600
+
+    Update validation-key.txt for mainnet domain rebind
+
+[33mcommit 2a06ec10a944bc1179f510efb3e0eb12e241357b[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 11:25:36 2025 -0600
+
+    General push: backend patch, frontend fixes, and SDK alignment
+
+[33mcommit 99e93bcd0cb5c74798a28def54064b0c0e162170[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 11:16:57 2025 -0600
+
+    General push: backend patch, frontend fixes, and SDK alignment
+
+[33mcommit 869c7941d2bc77631e8142ef462376b16d0b2a6a[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 11:12:33 2025 -0600
+
+    General push: latest frontend and backend updates
+
+[33mcommit 5a8122d71a1bf5afa5ef1c7477a3a00c80849386[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 10:51:44 2025 -0600
+
+    General push: latest frontend and backend updates
+
+[33mcommit d11e7fe6e1b1dda154a9e61ecffcc8de7fc151d4[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 10:47:52 2025 -0600
+
+    General push: latest frontend and backend updates
+
+[33mcommit de8071c4fbf605d3bb61ba825d106e0197bd1f92[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 10:46:11 2025 -0600
+
+    General push: latest frontend and backend updates
+
+[33mcommit f5a3316e46b9632e7e3942c97cdc796cf829f639[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 10:36:09 2025 -0600
+
+    General push: latest updates and fixes
+
+[33mcommit ee5fdfab0db87775741c7e8ca545df94bf0cde48[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 10:33:50 2025 -0600
+
+    Force Pi SDK into sandbox mode with window.Pi.init({ sandbox: true })
+
+[33mcommit f7685fcecbb66eef5197686dbc552c54576a0f07[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 10:13:41 2025 -0600
+
+    Increase Pi approve retry delay to 15s for testnet propagation
+
+[33mcommit 61d34e90b0f3f468cbd5834d5c3a8f33f7eadb75[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 09:49:27 2025 -0600
+
+    Force sandbox: true for Pi testnet approval flow
+
+[33mcommit 6fc550c51573ce3172c1e773c28d8ddb7443a4db[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 00:32:02 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit a3bdac9979658b716e8c0834adcd358051d35106[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 00:28:03 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit db8368c1f7f4333c19fd52851a0d025bb923c451[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 00:20:45 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit f4dc0c7c65af04f37af7b324179b4c40d43554e3[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 00:11:14 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 7a9ae0691acdd12d30e132f8c5d04d04d3bc649a[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sun Oct 12 00:04:22 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 5a0203db413d6ec0e0b55d2a2d093c87eebc7745[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 23:56:26 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 6faa16b777062dd6e3bfe712a574ad58cc6a7654[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 23:50:55 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 85d4aefaca8f11b3edf41ab89b45c58994fa59f5[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 23:10:29 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 822292a6f98902b9c9b6e66b40501f7e8ce0f7d6[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 22:01:21 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 4fc7382e6a6ab3c3e3bc117c0a99590439971d18[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 21:40:50 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit f5e7fdd531553f6e17e4c58b795fedee31654e41[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 21:33:20 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 31b71522302efd6952b67a6eaa2e2c8c9c625fba[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 21:24:28 2025 -0600
+
+    � Multi-file HelpModal integration and helpContent expansion
+
+[33mcommit 589f11a461f8aa7542b9c8e176792e651103d16c[m
+Author: Buttars9 <austinrbuttars@gmail.com>
+Date:   Sat Oct 11 21:16:17 2025 -0600
