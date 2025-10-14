@@ -10,19 +10,15 @@ export default function TermsGate() {
   const hasAcceptedTerms = useAuthStore((s) => s.hasAcceptedTerms); // Added to monitor store state
   const navigate = useNavigate(); // Added for navigation
 
-  useEffect(() => {
-    if (hasAcceptedTerms) {
-      console.log('Terms accepted, navigating to dashboard');
-      navigate('/dashboard'); // Route after store confirms acceptance
-    }
-  }, [hasAcceptedTerms, navigate]);
 
   const handleContinue = () => {
-    if (agreed && !isLoading) {
-      setIsLoading(true); // Disable button during process
-      acceptTerms(); // Updates store, triggers re-render in parent routes
-    }
-  };
+  if (agreed && !isLoading) {
+    setIsLoading(true);
+    acceptTerms(); // Store update
+    localStorage.setItem('hasAcceptedTerms', 'true'); // Restore persistence
+    navigate('/dashboard'); // Route immediately
+  }
+};
 
   return (
     <GlowingBox>
