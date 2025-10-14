@@ -1,4 +1,5 @@
 import { formMapping } from '../../questions/formMapping.js';
+import { calculateRefund } from './calculateRefund.js'; // Correct import for same folder
 
 export function buildIrsPayload(validatedAnswers) {
   const payload = {
@@ -59,6 +60,32 @@ export function buildIrsPayload(validatedAnswers) {
 
     payload.forms[meta.form][meta.line] = value;
   });
+
+  // Added: Calculate refund and set refundEstimate to avoid null
+  const refundParams = {
+    state: validatedAnswers.residentState || 'N/A',
+    statesPaid: Array.from(new Set(validatedAnswers.incomeSources?.map(src => src.box15?.trim()).filter(Boolean))) || [],
+    filingStatus: validatedAnswers.maritalStatus || 'single',
+    income: validatedAnswers.incomeSources?.reduce((sum, src) => sum + Number(src.box1 || src.amount || 0), 0) || 0,
+    dependents: Array.isArray(validatedAnswers.dependents) ? validatedAnswers.dependents.length : validatedAnswers.dependents ? 1 : 0,
+    age: validatedAnswers.age || 0,
+    tipIncome: validatedAnswers.tipIncome || 0,
+    overtimeIncome: validatedAnswers.overtimeIncome || 0,
+    saltPaid: validatedAnswers.saltPaid || 0,
+    assets: validatedAnswers.assets || [],
+    deductionType: validatedAnswers.deductionType || 'standard',
+    deductions: validatedAnswers.deductions || [],
+    credits: validatedAnswers.credits || [],
+    taxWithheld: validatedAnswers.incomeSources?.reduce((sum, src) => sum + Number(src.box2 || src.federalTaxWithheld || 0), 0) || 0,
+    estimatedPayments: Number(validatedAnswers.estimatedPayments) || 0,
+    stateTaxWithheld: validatedAnswers.incomeSources?.reduce((sum, src) => sum + Number(src.box17 || 0), 0) || 0,
+    incomeSources: validatedAnswers.incomeSources || [],
+  };
+  const refundSummary = calculateRefund(refundParams);
+  if (!payload.forms.summary) {
+    payload.forms.summary = {};
+  }
+  payload.forms.summary.refundEstimate = refundSummary.federalRefund || 0; // Set to 0 if null
 
   return payload;
 }
