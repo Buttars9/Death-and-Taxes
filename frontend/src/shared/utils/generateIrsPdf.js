@@ -30,7 +30,19 @@ export default async function generateIrsPdf(payload) {
     doc.text(`Form ${section}`, 20, y);
     y += 6;
 
-    if (content && typeof content === 'object' && !Array.isArray(content)) {
+    if (content == null) {
+      const formatted = formatValue(content);
+      const lines = doc.splitTextToSize(`Value: ${formatted}`, 160);
+      lines.forEach(line => {
+        doc.setFontSize(10);
+        doc.text(line, 30, y);
+        y += 5;
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+    } else if (content && typeof content === 'object' && !Array.isArray(content)) {
       Object.entries(content).forEach(([key, value]) => {
         console.log(`🧩 Line ${key}:`, value);
 
