@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import GlowingBox from "../components/GlowingBox";
 import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
 
-export default function TermsGate() {
+export default function PublicTerms() {
   const [agreed, setAgreed] = useState(false);
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
 
