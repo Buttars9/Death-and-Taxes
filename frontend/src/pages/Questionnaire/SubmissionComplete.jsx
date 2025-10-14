@@ -137,7 +137,7 @@ const handleViewPayload = () => {
   }
 };
 
-  const handleSubmitToDrake = async () => {
+  const handleSubmitToPDP = async () => {
     if (!answers?.paymentMethod) {
       alert('Please complete payment before submitting your return.');
       return;
@@ -157,7 +157,7 @@ const handleViewPayload = () => {
         refund,
         signature,
         will: willData,
-        transmitter: 'drake',
+        transmitter: 'pdp',
       });
 
       console.log('✅ Submission confirmed:', result);
@@ -348,7 +348,7 @@ const handleViewPayload = () => {
             <button onClick={handlePrintTaxReturn} style={buttonStyle('#72caff', '#0f131f')}>Print Tax Return</button>
             <button onClick={handlePreviewTaxReturn} style={buttonStyle('#3f8cff', '#fff')}>Preview Tax Return</button>
             <button onClick={handleViewPayload} style={buttonStyle('#a166ff', '#fff')}>View IRS Payload</button>
-            <button onClick={handleSubmitToDrake} style={buttonStyle('#00c78b', '#0f131f')}>Submit</button>
+            <button onClick={handleSubmitToPDP} style={buttonStyle('#00c78b', '#0f131f')}>Submit</button>
             <button onClick={handleDownloadReceipt} style={buttonStyle('#ffb347', '#0f131f')}>Download Receipt</button>
             <button onClick={handleGoToDashboard} style={buttonStyle('#1c2232', '#e0e0ff', true)}>Go to Dashboard</button>
           </div>

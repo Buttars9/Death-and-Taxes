@@ -1,5 +1,3 @@
-// src/lib/submitFinalReturn.js
-
 import axios from 'axios';
 
 /**
@@ -16,12 +14,13 @@ import axios from 'axios';
  * }
  */
 
-export async function submitFinalReturn({ refund, signature, will }) {
+export async function submitFinalReturn({ refund, signature, will, transmitter }) {
   try {
     const payload = {
       refund,
       signature,
       ...(will && { will }), // 🧠 Include will payload if present
+      transmitter,
     };
 
     // 🔐 Finalize return
