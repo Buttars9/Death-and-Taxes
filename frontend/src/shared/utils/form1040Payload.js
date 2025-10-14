@@ -1,4 +1,4 @@
-// death-and-taxes/src/shared/utils/form1040Payload.js
+import { calculateRefund } from './calculateRefund.js'; // Added: Import to compute refund
 
 export default function buildForm1040Payload(answers) {
   if (!answers?.trustConfirmed) {
@@ -52,12 +52,35 @@ export default function buildForm1040Payload(answers) {
     ? credits.reduce((sum, c) => sum + Number(c.amount || 0), 0)
     : 0;
 
+  // Added: Calculate refund and set refundEstimate to avoid null
+  const refundParams = {
+    state: residentState || 'N/A',
+    statesPaid: Array.from(new Set(incomeSources?.map(src => src.box15?.trim()).filter(Boolean))) || [],
+    filingStatus: maritalStatus || 'single',
+    income: totalIncome,
+    dependents: mappedDependents.length,
+    age: answers.age || 0,
+    tipIncome: answers.tipIncome || 0,
+    overtimeIncome: answers.overtimeIncome || 0,
+    saltPaid: answers.saltPaid || 0,
+    assets: answers.assets || [],
+    deductionType: deductionType,
+    deductions: deductions,
+    credits: credits,
+    taxWithheld: incomeSources?.reduce((sum, src) => sum + Number(src.box2 || src.federalTaxWithheld || 0), 0) || 0,
+    estimatedPayments: Number(answers.estimatedPayments) || 0,
+    stateTaxWithheld: incomeSources?.reduce((sum, src) => sum + Number(src.box17 || 0), 0) || 0,
+    incomeSources: incomeSources,
+  };
+  const refundSummary = calculateRefund(refundParams);
+  const calculatedRefundEstimate = refundSummary.federalRefund || 0; // Set to 0 if null
+
   return {
     metadata: {
       submittedAt: submissionTimestamp || new Date().toISOString(),
       confirmed: true,
       contactEmail: contactEmail || null,
-      refundEstimate: estimatedRefund || null,
+      refundEstimate: calculatedRefundEstimate, // Updated: Use calculated value
     },
     taxpayer: {
       fullName,
@@ -93,7 +116,7 @@ export default function buildForm1040Payload(answers) {
     },
     summary: {
       taxableIncome: Math.max(totalIncome - deductionAmount, 0),
-      refundEstimate: estimatedRefund || null,
+      refundEstimate: calculatedRefundEstimate, // Updated: Use calculated value
     },
   };
 }
