@@ -13,7 +13,9 @@ export default function TermsGate() {
 
 const handleContinue = () => {
   console.log('✅ Button clicked');
-  alert('Button is wired and firing');
+  localStorage.setItem('hasAcceptedTerms', 'true');
+  console.log('✅ localStorage updated');
+  alert('Button fired and localStorage set');
 };
 
   return (
