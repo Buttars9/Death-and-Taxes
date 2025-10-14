@@ -86,10 +86,11 @@ export function generateEfileXml(payload) {
 function getFilingStatusCode(status) {
   const codes = {
     single: 1,
-    marriedFilingJointly: 2,
-    marriedFilingSeparately: 3,
-    headOfHousehold: 4,
-    qualifyingWidow: 5,
+    marriedfilingjointly: 2,
+    marriedfilingseparately: 3,
+    headofhousehold: 4,
+    qualifyingwidow: 5,
+    marriedjointly: 2, // Added: To handle 'marriedJointly' or similar variants
   };
   return codes[status.toLowerCase()] || 1; // Default to single
 }
