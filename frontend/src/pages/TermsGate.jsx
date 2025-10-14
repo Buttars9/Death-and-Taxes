@@ -11,12 +11,19 @@ export default function TermsGate() {
   const navigate = useNavigate(); // Added for navigation
 
 
-  const handleContinue = () => {
+ const handleContinue = () => {
   if (agreed && !isLoading) {
+    console.log('Button clicked');
     setIsLoading(true);
-    acceptTerms(); // Store update
-    localStorage.setItem('hasAcceptedTerms', 'true'); // Restore persistence
-    navigate('/dashboard'); // Route immediately
+    try {
+      acceptTerms();
+      console.log('acceptTerms() called');
+      localStorage.setItem('hasAcceptedTerms', 'true');
+      console.log('localStorage updated');
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Error in handleContinue:', err);
+    }
   }
 };
 
