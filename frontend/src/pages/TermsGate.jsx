@@ -9,13 +9,15 @@ export default function TermsGate() {
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
   const navigate = useNavigate(); // Added for navigation
 
-  const handleContinue = () => {
-    if (agreed && !isLoading) {
-      setIsLoading(true); // Disable button during process
-      acceptTerms(); // Updates store, triggers re-render in parent routes
-      navigate('/dashboard'); // Restored: Explicit navigation to dashboard
-    }
-  };
+ const handleContinue = () => {
+  if (agreed && !isLoading) {
+    setIsLoading(true); // Disable button during process
+    Promise.resolve(acceptTerms()).then(() => {
+      console.log('Terms accepted, navigating to dashboard');
+      navigate('/dashboard'); // Route after store update
+    });
+  }
+};
 
   return (
     <GlowingBox>
