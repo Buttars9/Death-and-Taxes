@@ -13,13 +13,7 @@ export default function TermsGate() {
 
 const handleContinue = () => {
   console.log('✅ Button clicked');
-  if (agreed && !isLoading) {
-    console.log('✅ Passed conditions');
-    setIsLoading(true);
-    acceptTerms();
-    localStorage.setItem('hasAcceptedTerms', 'true');
-    navigate('/dashboard');
-  }
+  alert('Button is wired and firing');
 };
 
   return (
