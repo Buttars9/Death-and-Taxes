@@ -15,7 +15,7 @@ const handleContinue = () => {
   console.log('✅ Button clicked');
   localStorage.setItem('hasAcceptedTerms', 'true');
   console.log('✅ localStorage updated');
-  alert('Button fired and localStorage set');
+  navigate('/dashboard'); // Restore routing
 };
 
   return (
@@ -102,7 +102,7 @@ const handleContinue = () => {
             cursor: (agreed && !isLoading) ? 'pointer' : 'not-allowed',
           }}
         >
-          {isLoading ? 'Processing...' : 'Agree & Continue'} // Show loading text
+{isLoading ? 'Processing...' : 'Agree & Continue'}
         </button>
       </div>
 
