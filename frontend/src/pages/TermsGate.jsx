@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Added for navigation
 import GlowingBox from "../components/GlowingBox";
 import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
 
@@ -6,12 +7,13 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Added to prevent double-clicks and show feedback
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
+  const navigate = useNavigate(); // Added for navigation
 
   const handleContinue = () => {
     if (agreed && !isLoading) {
       setIsLoading(true); // Disable button during process
       acceptTerms(); // Updates store, triggers re-render in parent routes
-      // Removed direct navigation to restore original behavior; parent/router should handle redirect
+      navigate('/dashboard'); // Restored: Explicit navigation to dashboard
     }
   };
 
