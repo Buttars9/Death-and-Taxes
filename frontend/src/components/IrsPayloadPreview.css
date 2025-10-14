@@ -24,6 +24,19 @@
 
 .irs-form-block li {
   margin-bottom: 0.25rem;
+  color: #222 !important; /* Ensure all list item text is dark */
+}
+
+.irs-form-block li strong {
+  color: #222 !important; /* Force dark color for labels */
+}
+
+.irs-form-block li pre {
+  color: #222 !important; /* Force dark color for JSON in pre tags */
+}
+
+.irs-xml-block pre {
+  color: #222 !important; /* Force dark color for XML */
 }
 
 .irs-actions {

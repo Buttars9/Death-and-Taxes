@@ -276,6 +276,9 @@ const handleViewPayload = () => {
         .payload-preview-container pre, .payload-preview-container code {
           color: #000000 !important; /* Ensure code text is dark, overriding any highlighter styles */
         }
+        .payload-preview-container .hljs, .payload-preview-container .hljs-string, .payload-preview-container .hljs-number, .payload-preview-container .hljs-literal, .payload-preview-container .hljs-keyword, .payload-preview-container .hljs-attribute, .payload-preview-container .hljs-selector-tag, .payload-preview-container .hljs-meta, .payload-preview-container .hljs-name, .payload-preview-container .hljs-built_in, .payload-preview-container .hljs-params, .payload-preview-container .hljs-symbol, .payload-preview-container .hljs-bullet, .payload-preview-container .hljs-link, .payload-preview-container .hljs-section, .payload-preview-container .hljs-title, .payload-preview-container .hljs-emphasis, .payload-preview-container .hljs-strong, .payload-preview-container .hljs-quote, .payload-preview-container .hljs-comment, .payload-preview-container .hljs-variable, .payload-preview-container .hljs-template-variable, .payload-preview-container .hljs-type, .payload-preview-container .hljs-selector-class, .payload-preview-container .hljs-selector-id, .payload-preview-container .hljs-selector-attr, .payload-preview-container .hljs-selector-pseudo {
+          color: #000000 !important; /* Override common highlighter classes for strings/values to black */
+        }
         @media (max-width: 768px) {
           .submission-complete {
             padding: 1rem;
