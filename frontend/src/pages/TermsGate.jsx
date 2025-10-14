@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Added for navigation
 import GlowingBox from "../components/GlowingBox";
 import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
@@ -7,17 +7,22 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Added to prevent double-clicks and show feedback
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
+  const hasAcceptedTerms = useAuthStore((s) => s.hasAcceptedTerms); // Added to monitor store state
   const navigate = useNavigate(); // Added for navigation
 
- const handleContinue = () => {
-  if (agreed && !isLoading) {
-    setIsLoading(true); // Disable button during process
-    Promise.resolve(acceptTerms()).then(() => {
+  useEffect(() => {
+    if (hasAcceptedTerms) {
       console.log('Terms accepted, navigating to dashboard');
-      navigate('/dashboard'); // Route after store update
-    });
-  }
-};
+      navigate('/dashboard'); // Route after store confirms acceptance
+    }
+  }, [hasAcceptedTerms, navigate]);
+
+  const handleContinue = () => {
+    if (agreed && !isLoading) {
+      setIsLoading(true); // Disable button during process
+      acceptTerms(); // Updates store, triggers re-render in parent routes
+    }
+  };
 
   return (
     <GlowingBox>
