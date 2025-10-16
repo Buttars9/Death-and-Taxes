@@ -11,6 +11,7 @@ import EstatePlanWizard from '../pages/Questionnaire/steps/EstatePlanWizard';
 import PaymentMethod from '../pages/Questionnaire/steps/PaymentMethod.jsx';
 import FinalReview from '../pages/FinalReview';
 import SubmitStep from '../pages/Questionnaire/SubmissionComplete';
+import AuditReviewStep from '../pages/Questionnaire/steps/AuditReviewStep'; // Added new step
 
 export const wizardSteps = [
   {
@@ -83,7 +84,13 @@ export const wizardSteps = [
     key: 'review',
     label: 'Review & Confirm',
     component: FinalReview,
-    next: 'submit',
+    next: 'audit',
+  },
+  {
+    key: 'audit',
+    label: 'Review & Fix',
+    component: AuditReviewStep,
+    next: (answers) => isAuditPassed(answers) ? 'submit' : 'review', // Conditional based on audit
   },
   {
     key: 'submit',
