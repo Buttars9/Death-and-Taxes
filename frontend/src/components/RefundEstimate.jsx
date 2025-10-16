@@ -4,7 +4,7 @@ import PiSymbol from './PiSymbol.jsx';
 import { useWizardStore } from '../stores/wizardStore';
 import { calculateRefund } from '../shared/utils/calculateRefund.js';
 import deductionVerdictFromAnswers from '../shared/utils/deductionVerdictFromAnswers.js';
-// Removed import './RefundEstimate.css'; to eliminate any CSS-added box styles
+
 
 function calculateAgeFromDOB(dob) {
   if (!dob) return 0;
@@ -148,8 +148,15 @@ export default function RefundEstimate({ manualFields, isSticky = true }) {
     console.log('deductionVerdictFromAnswers result:', taxVerdict);
   } catch (error) {
     console.error('Deduction verdict error:', error.message);
+    const standardDeductionMap = {
+      single: 15750,
+      marriedJointly: 31500,
+      marriedFilingSeparately: 15750,
+      headOfHousehold: 23625,
+      qualifyingWidow: 31500,
+    };
     taxVerdict = {
-      standardAmount: 15750,
+      standardAmount: standardDeductionMap[fields.filingStatus] || 15750,
       itemizedTotal: 0,
       recommendedStrategy: 'standard',
       reasoning: 'No deductions provided yet or error in verdict calculation.',
