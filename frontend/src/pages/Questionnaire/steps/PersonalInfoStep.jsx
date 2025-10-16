@@ -63,6 +63,7 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
     spouseName,
     spouseSSN,
     spouseDob,
+    spouseIncomeSources,
     updateField,
   } = useWizardStore();
 
@@ -71,6 +72,8 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
   const [localSsn, setLocalSsn] = useState(answers.ssn || ssn || '');
   const [localDob, setLocalDob] = useState(answers.dob || dob || '');
   const [localAddress, setLocalAddress] = useState(answers.address || address || '');
+  const [localCity, setLocalCity] = useState(answers.city || ''); // Added for city
+  const [localZip, setLocalZip] = useState(answers.zip || ''); // Added for ZIP
   const [localMaritalStatus, setLocalMaritalStatus] = useState(answers.maritalStatus || maritalStatus || '');
   const [localResidentState, setLocalResidentState] = useState(answers.residentState || residentState || '');
   const [localPriorAGI, setLocalPriorAGI] = useState(answers.priorAGI || priorAGI || '');
@@ -90,6 +93,8 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
     setLocalSsn(answers.ssn || ssn || '');
     setLocalDob(answers.dob || dob || '');
     setLocalAddress(answers.address || address || '');
+    setLocalCity(answers.city || ''); // Added
+    setLocalZip(answers.zip || ''); // Added
     setLocalMaritalStatus(answers.maritalStatus || maritalStatus || '');
     setLocalResidentState(answers.residentState || residentState || '');
     setLocalPriorAGI(answers.priorAGI || priorAGI || '');
@@ -121,8 +126,8 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
       return;
     }
     if (action === 'add_dependent') {
-  setLocalDependents((prev) => [...prev, { name: '', ssn: '', dob: '', relationship: '' }]);
-}
+      setLocalDependents((prev) => [...prev, { firstName: '', lastName: '', ssn: '', dob: '', relationship: '' }]); // Split name, uppercase relationship
+    }
   };
 
   const updateDependent = (index, field, value) => {
@@ -143,6 +148,8 @@ const removeDependent = (index) => {
         ssn: localSsn,
         dob: localDob,
         address: localAddress,
+        city: localCity, // Added
+        zip: localZip, // Added
         maritalStatus: localMaritalStatus,
         residentState: localResidentState,
         priorAGI: localPriorAGI,
@@ -229,7 +236,7 @@ const removeDependent = (index) => {
         .dependent-grid {
           margin-bottom: 1rem;
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr 1fr;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
           gap: 1rem;
         }
         .dependent-label {
@@ -337,7 +344,7 @@ const removeDependent = (index) => {
         <div className="flex-row">
           <div className="flex-2">
             <h2 className="h2-title">
-              <PiSymbol /> Personal Information <HelpIcon onClick={() => { console.log('HelpIcon clicked!'); setSelectedTopic('personalInfoStep'); setShowHelpModal(true); }} />
+              <PiSymbol /> Personal Information <HelpIcon onClick={() => { setSelectedTopic('personalInfoStep'); setShowHelpModal(true); }} />
             </h2>
             <p>
               Fill in your details to start your filing. This information is required for accurate IRS filing.
@@ -370,6 +377,8 @@ const removeDependent = (index) => {
                     type="text"
                     value={localSsn}
                     onChange={(e) => setLocalSsn(e.target.value)}
+                    pattern="\d{9}"
+                    required
                   />
                 </div>
                 <div className="input-group">
@@ -381,11 +390,27 @@ const removeDependent = (index) => {
                   />
                 </div>
                 <div className="input-group">
-                  <label>Address</label>
+                  <label>Street Address</label>
                   <input
                     type="text"
                     value={localAddress}
                     onChange={(e) => setLocalAddress(e.target.value)}
+                  />
+                </div>
+                <div className="input-group">
+                  <label>City</label>
+                  <input
+                    type="text"
+                    value={localCity}
+                    onChange={(e) => setLocalCity(e.target.value)}
+                  />
+                </div>
+                <div className="input-group">
+                  <label>ZIP Code</label>
+                  <input
+                    type="text"
+                    value={localZip}
+                    onChange={(e) => setLocalZip(e.target.value)}
                   />
                 </div>
                 <div className="input-group">
@@ -425,6 +450,8 @@ const removeDependent = (index) => {
                     type="text"
                     value={localIrsPin}
                     onChange={(e) => setLocalIrsPin(e.target.value)}
+                    pattern="\d{5}"
+                    required
                   />
                 </div>
               </div>
@@ -450,6 +477,8 @@ const removeDependent = (index) => {
                       type="text"
                       value={localSpouseSSN}
                       onChange={(e) => setLocalSpouseSSN(e.target.value)}
+                      pattern="\d{9}"
+                      required
                     />
                   </div>
                   <div className="input-group">
@@ -492,19 +521,36 @@ const removeDependent = (index) => {
       <div
         className="dependent-grid"
       >
-        {/* Name */}
+        {/* First Name */}
         <div className="input-group">
           <label
             className="dependent-label"
-            htmlFor={`dependentName-${i}`}
+            htmlFor={`dependentFirstName-${i}`}
           >
-            Name
+            First Name
           </label>
           <input
-            id={`dependentName-${i}`}
+            id={`dependentFirstName-${i}`}
             type="text"
-            value={dep.name || ''}
-            onChange={(e) => updateDependent(i, 'name', e.target.value)}
+            value={dep.firstName || ''}
+            onChange={(e) => updateDependent(i, 'firstName', e.target.value)}
+            className="dependent-input"
+          />
+        </div>
+
+        {/* Last Name */}
+        <div className="input-group">
+          <label
+            className="dependent-label"
+            htmlFor={`dependentLastName-${i}`}
+          >
+            Last Name
+          </label>
+          <input
+            id={`dependentLastName-${i}`}
+            type="text"
+            value={dep.lastName || ''}
+            onChange={(e) => updateDependent(i, 'lastName', e.target.value)}
             className="dependent-input"
           />
         </div>
@@ -523,6 +569,8 @@ const removeDependent = (index) => {
             value={dep.ssn || ''}
             onChange={(e) => updateDependent(i, 'ssn', e.target.value)}
             className="dependent-input"
+            pattern="\d{9}"
+            required
           />
         </div>
 
@@ -551,13 +599,19 @@ const removeDependent = (index) => {
           >
             Relationship
           </label>
-          <input
+          <select
             id={`dependentRelationship-${i}`}
-            type="text"
             value={dep.relationship || ''}
-            onChange={(e) => updateDependent(i, 'relationship', e.target.value)}
+            onChange={(e) => updateDependent(i, 'relationship', e.target.value.toUpperCase())}
             className="dependent-input"
-          />
+          >
+            <option value="">Select</option>
+            <option value="SON">Son</option>
+            <option value="DAUGHTER">Daughter</option>
+            <option value="CHILD">Child</option>
+            <option value="PARENT">Parent</option>
+            <option value="OTHER">Other</option>
+          </select>
         </div>
       </div>
 
@@ -626,11 +680,7 @@ const removeDependent = (index) => {
 
             <div className="flex-space-between">
               {onBack && (
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="back-button"
-                >
+                <button type="button" onClick={handleBack} className="back-button">
                   Back
                 </button>
               )}
