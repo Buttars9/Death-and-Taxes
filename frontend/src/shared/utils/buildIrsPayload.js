@@ -16,7 +16,7 @@ export function buildIrsPayload(validatedAnswers) {
   if (Array.isArray(validatedAnswers.incomeSources)) {
     validatedAnswers.incomeSources.forEach((src, i) => {
       Object.entries(src).forEach(([subKey, value]) => {
-        const key = `incomeSources.${subKey}`;
+        const key = `incomeSources_${i}_${subKey}`;
         flatAnswers[key] = value;
       });
     });
@@ -86,6 +86,11 @@ export function buildIrsPayload(validatedAnswers) {
     payload.forms.summary = {};
   }
   payload.forms.summary.refundEstimate = refundSummary.federalRefund || 0; // Set to 0 if null
+  payload.forms.summary.taxableIncome = refundSummary.taxableIncome || 0; // Added for completeness
+
+  // Added basic validation for required fields
+  if (!validatedAnswers.ssn) throw new Error('Missing SSN');
+  if (!validatedAnswers.fullName) throw new Error('Missing fullName');
 
   return payload;
 }

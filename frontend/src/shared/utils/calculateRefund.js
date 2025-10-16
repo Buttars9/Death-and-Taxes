@@ -26,9 +26,14 @@ export function calculateRefund({
   // Calculate AGI adjustments (above-the-line deductions)
   let agiAdjustments = 0;
   deductions.forEach((d) => {
-    const amt = Number(d.amount || 0);
+    let amt = Number(d.amount || 0);
     switch (d.value) {
       case 'student_loan':
+        // Add phaseout for student loan interest (IRS/OBBBA: full up to AGI $75k single/$150k MFJ, phase to $90k/$180k)
+        const phaseStart = filingStatus === 'marriedJointly' ? 150000 : 75000;
+        const phaseRange = filingStatus === 'marriedJointly' ? 30000 : 15000;
+        if (grossIncome > phaseStart + phaseRange) amt = 0;
+        else if (grossIncome > phaseStart) amt *= 1 - ((grossIncome - phaseStart) / phaseRange);
         agiAdjustments += Math.min(amt, 2500);
         break;
       case 'education':
@@ -77,7 +82,7 @@ export function calculateRefund({
         if (agi < 500000) {
           itemizedSum += amt;
         } else {
-          itemizedSum += Math.min(amt, OBBBA_LAW.thresholds.saltCap);
+          itemizedSum += Math.min(amt, 40000); // OBBBA cap
         }
         break;
       default:
@@ -90,7 +95,7 @@ export function calculateRefund({
     single: 15750,
     marriedJointly: 31500,
     marriedFilingSeparately: 15750,
-    headOfHousehold: 23650,
+    headOfHousehold: 23625,
     qualifyingWidow: 31500,
   };
 

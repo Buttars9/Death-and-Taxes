@@ -3,15 +3,15 @@
 export const OBBBA_LAW = {
   year: 2025,
   thresholds: {
-    bonusDepreciation: 1.0, // 100%
-    section179Limit: 2500000,
-    section179PhaseOut: 4000000,
+    bonusDepreciation: 0.6, // Actual 2025 phase-down
+    section179Limit: 1220000,
+    section179PhaseOut: 3050000,
     tipDeductionCap: 25000,
     overtimeDeductionCap: 12500,
     saltCap: 40000,
     seniorBonusDeduction: {
-      single: 6000,
-      married: 12000,
+      single: 1550,
+      married: 3100,
     },
   },
   phaseouts: {

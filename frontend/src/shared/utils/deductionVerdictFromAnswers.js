@@ -8,12 +8,42 @@ export default function deductionVerdictFromAnswers(answers) {
     filingStatus = 'single',
     itemizedDeductions = [],
     state = 'N/A',
+    age,
   } = answers;
 
-  const stateData = deductionsByState[state] || {};
-  const standardAmount = stateData.standardDeduction || 0;
+  const standardDeductionMap = {
+    single: 15750,
+    marriedJointly: 31500,
+    marriedFilingSeparately: 15750,
+    headOfHousehold: 23625,
+    qualifyingWidow: 31500,
+  };
 
-  const itemizedTotal = itemizedDeductions.reduce((sum, val) => sum + val.amount, 0);
+  let standardAmount = standardDeductionMap[filingStatus] || 15750;
+
+  // Add OBBBA senior extra if applicable
+  if (age >= 65) {
+    standardAmount += 6000; // Simplified for primary filer
+  }
+
+  let itemizedTotal = 0;
+  itemizedDeductions.forEach((val) => {
+    let amt = Number(val.amount || 0);
+    switch (val.value) {
+      case 'medical':
+        amt = Math.max(0, amt - 0.075 * income);
+        break;
+      case 'casualty':
+        amt = Math.max(0, amt - 0.1 * income);
+        break;
+      case 'salt':
+        amt = Math.min(amt, 40400); // OBBBA cap
+        break;
+      default:
+        break;
+    }
+    itemizedTotal += amt;
+  });
 
   const recommendedStrategy =
     itemizedTotal > standardAmount ? 'itemized' : 'standard';
