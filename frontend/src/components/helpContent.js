@@ -77,7 +77,7 @@ export const helpContent = {
 
   incomeStep: {
   title: 'Income Step Overview',
-  body: `This step collects detailed income from all sources, including W-2 wages, 1099 self-employment, foreign earnings, and more. Enter amounts, employers, and relevant details to ensure accurate tax calculations. Autofill pulls from linked accounts for convenience. Foreign income may qualify for exclusions or credits—review treaties if applicable. Your entries here directly impact deductions, credits, and refund estimates.`,
+  body: `This step collects detailed income from all sources, including W-2 wages, 1099 self-employment, foreign earnings, and more. Enter amounts, employers, and relevant details to ensure accurate tax calculations. Foreign income may qualify for exclusions or credits—review treaties if applicable. Your entries here directly impact deductions, credits, and refund estimates.`,
 },
 
   deductionStep: {
@@ -283,4 +283,4 @@ Direct deposit is the fastest and most secure way to receive your refund. Your b
   },
 },
 
-};
+}; 
