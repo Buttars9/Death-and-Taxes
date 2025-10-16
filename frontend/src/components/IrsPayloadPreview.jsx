@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import generateIrsPdf from '../shared/utils/generateIrsPdf.js'; // ✅ default import
+import jsPDF from 'jspdf'; // Added for PDF generation
 import './IrsPayloadPreview.css';
 
 export function IrsPayloadPreview({ payload, onConfirm }) {
@@ -17,7 +17,8 @@ export function IrsPayloadPreview({ payload, onConfirm }) {
   }
 
   const handleDownload = () => {
-    const doc = generateIrsPdf({ json });
+    const doc = new jsPDF();
+    doc.text(JSON.stringify(json, null, 2), 10, 10); // Simple JSON dump to PDF
     doc.save('IRS-Filing.pdf');
   };
 
