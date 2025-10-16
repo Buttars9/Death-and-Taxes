@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import GlowingBox from '../../../components/GlowingBox.jsx';
@@ -16,7 +16,7 @@ export default function AuditReviewStep({ onNext, onBack }) {
 
   // Audit logic: Check for missing/ invalid fields
   const issues = [];
-  if (!answers.firstName || !answers.lastName) issues.push({ message: 'Missing full name', step: 'personal' });
+  if (!answers.firstName || !answers.lastName) issues.push({ message: 'Missing: Full name', step: 'personal' });
   if (!answers.ssn || !/^\d{9}$/.test(answers.ssn)) issues.push({ message: 'Invalid or missing SSN', step: 'personal' });
   if (!answers.dob) issues.push({ message: 'Missing date of birth', step: 'personal' });
   if (!answers.address || !answers.city || !answers.zip) issues.push({ message: 'Incomplete address (street, city, ZIP)', step: 'personal' });
