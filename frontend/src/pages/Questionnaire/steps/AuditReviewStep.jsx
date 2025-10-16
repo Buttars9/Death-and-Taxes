@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import GlowingBox from '../../../components/GlowingBox.jsx';
@@ -13,6 +13,12 @@ export default function AuditReviewStep({ onNext, onBack }) {
   const navigate = useNavigate();
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
+  const [isScanning, setIsScanning] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsScanning(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Audit logic: Check for missing/ invalid fields
   const issues = [];
@@ -32,7 +38,7 @@ export default function AuditReviewStep({ onNext, onBack }) {
   const isPassed = issues.length === 0;
 
   const handleFix = (stepKey) => {
-    navigate(`/filing/${stepKey}`, { state: { fromAudit: true } }); // Added state to prevent sync loop
+    navigate(`/filing/${stepKey}`, { state: { fromAudit: true } });
   };
 
   const handleProceed = () => {
@@ -87,6 +93,25 @@ export default function AuditReviewStep({ onNext, onBack }) {
           color: #00ff9d;
           font-weight: bold;
         }
+        .scanner {
+          text-align: center;
+          color: #a166ff;
+          font-size: 1.2rem;
+          margin-bottom: 2rem;
+        }
+        .spinner {
+          border: 4px solid #1c2232;
+          border-top: 4px solid #72caff;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
         @media (max-width: 768px) {
           .audit-step {
             padding: 1rem;
@@ -112,7 +137,12 @@ export default function AuditReviewStep({ onNext, onBack }) {
             Checking for missing or invalid information. Fix any issues below to ensure your filing is complete.
           </p>
 
-          {issues.length === 0 ? (
+          {isScanning ? (
+            <div className="scanner">
+              <div className="spinner"></div>
+              Scanning your filing...
+            </div>
+          ) : issues.length === 0 ? (
             <p className="all-good">All good! Your filing is ready.</p>
           ) : (
             <ul className="issue-list">
@@ -127,7 +157,7 @@ export default function AuditReviewStep({ onNext, onBack }) {
             </ul>
           )}
 
-          <button className="proceed-button" onClick={handleProceed} disabled={!isPassed}>
+          <button className="proceed-button" onClick={handleProceed} disabled={!isPassed || isScanning}>
             Proceed to Submit
           </button>
 

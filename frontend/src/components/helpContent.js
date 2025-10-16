@@ -282,5 +282,8 @@ export const helpContent = {
 Direct deposit is the fastest and most secure way to receive your refund. Your bank details are encrypted and used only for IRS submission. If you prefer to receive a paper check, you can skip this step.`,
   },
 },
-
+  auditReviewStep: {
+    title: 'Review & Fix Overview',
+    body: 'This step audits your inputs for completeness. Click "Fix" to return to the relevant step and fill missing info. Once all good, proceed to submit. This ensures your payload is valid for IRS/state acceptance.',
+  },
 }; 

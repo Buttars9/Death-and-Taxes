@@ -53,7 +53,7 @@ export default function WizardRunner() {
 
   useEffect(() => {
     const expectedStepKey = steps[currentStep - 1]?.key;
-    const isBackNavigation = location.state?.fromBack;
+    const isBackNavigation = location.state?.fromBack || location.state?.fromAudit;
     if (location.pathname !== `/filing/${expectedStepKey}` && !isBackNavigation) {
       console.log('Syncing navigation:', { currentStep, expectedStepKey, currentPath: location.pathname });
       navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });
