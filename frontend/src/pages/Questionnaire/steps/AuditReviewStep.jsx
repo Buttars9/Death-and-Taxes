@@ -32,7 +32,7 @@ export default function AuditReviewStep({ onNext, onBack }) {
   const isPassed = issues.length === 0;
 
   const handleFix = (stepKey) => {
-    navigate(`/filing/${stepKey}`);
+    navigate(`/filing/${stepKey}`, { state: { fromAudit: true } }); // Added state to prevent sync loop
   };
 
   const handleProceed = () => {
