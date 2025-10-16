@@ -31,7 +31,7 @@ export const useWizardStore = create(
         }
         // Added validation for required fields
         if (payload.ssn && !/^\d{9}$/.test(payload.ssn)) throw new Error('Invalid SSN');
-        if (payload.address && !payload.city || !payload.zip) throw new Error('Incomplete address');
+        if (payload.address && (!payload.city || !payload.zip)) console.warn('Incomplete address'); // Changed to warn
 
         // Added computation for deduction/credit totals
         const deductionAmount = payload.deductions.reduce((sum, d) => sum + Number(d.amount || 0), 0);
