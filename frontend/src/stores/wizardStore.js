@@ -25,13 +25,20 @@ export const useWizardStore = create(
         credits: [],        // ✅ From CreditsClaimStep
        trustConfirmed: false, 
       },
-     setAnswers: (payload, callback) => {
-  if (!payload || typeof payload !== 'object') {
-    throw new Error('❌ Invalid answers payload');
-  }
-  set({ answers: { ...payload } });
-  if (typeof callback === 'function') callback();
-},
+      setAnswers: (payload, callback) => {
+        if (!payload || typeof payload !== 'object') {
+          throw new Error('❌ Invalid answers payload');
+        }
+        // Added validation for required fields
+        if (payload.ssn && !/^\d{9}$/.test(payload.ssn)) throw new Error('Invalid SSN');
+        if (payload.address && !payload.city || !payload.zip) throw new Error('Incomplete address');
+
+        // Added computation for deduction/credit totals
+        const deductionAmount = payload.deductions.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        const creditAmount = payload.credits.reduce((sum, c) => sum + Number(c.amount || 0), 0);
+        set({ answers: { ...payload, deductionAmount, creditAmount } });
+        if (typeof callback === 'function') callback();
+      },
 
       // 🧭 State Selection
       state: '',

@@ -80,6 +80,10 @@ export default function WizardRunner() {
   } else {
     nextStep(); // fallback for normal steps
   }
+  // Added: Run calculations and save to store after next
+  const refundParams = { /* ... from fields in RefundEstimate */ };
+  const summary = calculateRefund(refundParams);
+  setAnswers({ ...answers, deductionAmount: summary.deductionAmount, taxableIncome: summary.taxableIncome });
 };
 
   if (!StepComponent) {
