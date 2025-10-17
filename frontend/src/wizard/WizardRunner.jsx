@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useStepNavigator } from '../hooks/useStepNavigator';
 import steps from './wizardStep';
 import { useWizardStore } from '../stores/wizardStore';
-import { calculateRefund } from '../shared/utils/refundUtils'; // ✅ Added import
+import { calculateRefund } from '../shared/utils/calculateRefund'; // ✅ correct path
+
 
 // Error boundary to catch render errors
 class ErrorBoundary extends Component {
