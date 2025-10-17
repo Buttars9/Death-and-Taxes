@@ -109,6 +109,14 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
     setLocalSpouseDob(answers.spouseDob || spouseDob || '');
   }, [answers, firstName, lastName, ssn, dob, address, maritalStatus, residentState, priorAGI, irsPin, incomeSources, spouseName, spouseSSN, spouseDob]);
 
+  // New: Save localDependents to store on change (debounced for performance)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnswers({ ...answers, dependents: localDependents });
+    }, 500); // Debounce by 500ms
+    return () => clearTimeout(timer);
+  }, [localDependents, answers, setAnswers]);
+
   const toggleIncome = (incomeType, owner = 'self') => {
     if (incomeType === 'clear_all') {
       const setSources = owner === 'self' ? setLocalIncomeSources : setLocalSpouseIncomeSources;
@@ -644,7 +652,7 @@ const removeDependent = (index) => {
                       if (e.key === 'Enter') toggleIncome(value);
                     }}
                   >
-                    {pi && !isClear && <PiSymbol />} {label} {!isClear && localIncomeSources.filter(s => s.type === value).length > 0 ? ` (${localIncomeSources.filter(s => s.type === value).length})` : ''}
+                    {pi && !isClear && <PiSymbol /> } {label} {!isClear && localIncomeSources.filter(s => s.type === value).length > 0 ? ` (${localIncomeSources.filter(s => s.type === value).length})` : ''}
                   </li>
                 ))}
               </ul>
@@ -670,7 +678,7 @@ const removeDependent = (index) => {
                         if (e.key === 'Enter') toggleIncome(value, 'spouse');
                       }}
                     >
-                      {pi && !isClear && <PiSymbol />} {isClear ? label : `Spouse ${label}`} {!isClear && localSpouseIncomeSources.filter(s => s.type === value).length > 0 ? ` (${localSpouseIncomeSources.filter(s => s.type === value).length})` : ''}
+                      {pi && !isClear && <PiSymbol /> } {isClear ? label : `Spouse ${label}`} {!isClear && localSpouseIncomeSources.filter(s => s.type === value).length > 0 ? ` (${localSpouseIncomeSources.filter(s => s.type === value).length})` : ''}
                     </li>
                   ))}
                 </ul>
