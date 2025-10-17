@@ -47,9 +47,9 @@ export function generateEfileXml(payload) {
       ${Array.isArray(taxpayer.dependents) ? `
       <DependentDetail>
         ${taxpayer.dependents.map((dep) => `
-        <DependentFirstNm>${dep.name.split(' ')[0]}</DependentFirstNm>
-        <DependentLastNm>${dep.name.split(' ').slice(1).join(' ')}</DependentLastNm>
-        <DependentNameControlTxt>${getNameControl(dep.name)}</DependentNameControlTxt>
+        <DependentFirstNm>${dep.firstName}</DependentFirstNm>
+        <DependentLastNm>${dep.lastName}</DependentLastNm>
+        <DependentNameControlTxt>${getNameControl(dep.lastName)}</DependentNameControlTxt>
         <DependentSSN>${dep.ssn}</DependentSSN>
         <DependentBirthDt>${dep.dob}</DependentBirthDt>
         <DependentRelationshipCd>${dep.relationship.toUpperCase()}</DependentRelationshipCd>`).join('\n')}
@@ -57,13 +57,13 @@ export function generateEfileXml(payload) {
     </Filer>
     <IdentityVerification>
       <PriorYearAGIAmt>${identityVerification.priorAGI || ''}</PriorYearAGIAmt>
-      <PIN>${identityVerification.irsPIN || ''}</PIN>
+      <PIN>${identityVerification.irsPin || ''}</PIN>
     </IdentityVerification>
     <TaxYr>2025</TaxYr>
     <Preparer> <!-- Added required preparer -->
       <SelfPreparedInd>1</SelfPreparedInd>
     </Preparer>
-    <TaxpayerPIN>${identityVerification.irsPIN || '00000'}</TaxpayerPIN> <!-- Added signature PIN -->
+    <TaxpayerPIN>${identityVerification.irsPin || '00000'}</TaxpayerPIN> <!-- Added signature PIN -->
   </ReturnHeader>
   <ReturnData>
     <IRS1040>
@@ -76,6 +76,7 @@ export function generateEfileXml(payload) {
       <TaxableIncomeAmt>${summary.taxableIncome}</TaxableIncomeAmt>
       <TaxAmt>${calculateTax(summary.taxableIncome, taxpayer.filingStatus)}</TaxAmt> <!-- Added tax computation -->
       <RefundAmt>${summary.refundEstimate || 0}</RefundAmt>
+      <FederalIncomeTaxWithheldAmt>${summary.withholding || 0}</FederalIncomeTaxWithheldAmt> <!-- New: Withholding -->
       ${Array.isArray(deductions.items)
         ? `<ItemizedDeductions>
             ${deductions.items.map((d) => getDeductionXml(d)).join('\n')}
@@ -86,6 +87,12 @@ export function generateEfileXml(payload) {
             ${credits.items.map((c) => getCreditXml(c)).join('\n')}
           </Credits>`
         : ''}
+      ${summary.refundEstimate > 0 ? `
+      <DirectDepositRefund>
+        <RoutingTransitNumber>${taxpayer.bankRouting || ''}</RoutingTransitNumber>
+        <DepositorAccountNumber>${taxpayer.bankAccount || ''}</DepositorAccountNumber>
+        <TypeOfAccountCd>${taxpayer.bankType === 'checking' ? 1 : 2}</TypeOfAccountCd>
+      </DirectDepositRefund>` : ''}
     </IRS1040>
   </ReturnData>
 </Return>

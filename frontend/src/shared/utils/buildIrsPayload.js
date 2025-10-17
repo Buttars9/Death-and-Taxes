@@ -41,11 +41,19 @@ export function buildIrsPayload(validatedAnswers) {
   // Flatten dependents
   if (Array.isArray(validatedAnswers.dependents)) {
     validatedAnswers.dependents.forEach((dep, i) => {
-      flatAnswers[`dependent_${i}_name`] = dep.name;
+      flatAnswers[`dependent_${i}_firstName`] = dep.firstName; // New: Split for XML
+      flatAnswers[`dependent_${i}_lastName`] = dep.lastName;
       flatAnswers[`dependent_${i}_ssn`] = dep.ssn;
       flatAnswers[`dependent_${i}_dob`] = dep.dob;
       flatAnswers[`dependent_${i}_relationship`] = dep.relationship;
     });
+  }
+
+  // New: Flatten bank info for refund
+  if (validatedAnswers.bankInfo) {
+    flatAnswers.bankRouting = validatedAnswers.bankInfo.routingNumber;
+    flatAnswers.bankAccount = validatedAnswers.bankInfo.accountNumber;
+    flatAnswers.bankType = validatedAnswers.bankInfo.accountType;
   }
 
   Object.entries(flatAnswers).forEach(([key, value]) => {
@@ -88,9 +96,14 @@ export function buildIrsPayload(validatedAnswers) {
   payload.forms.summary.refundEstimate = refundSummary.federalRefund || 0; // Set to 0 if null
   payload.forms.summary.taxableIncome = refundSummary.taxableIncome || 0; // Added for completeness
 
-  // Added basic validation for required fields
+  // New: Withholding from W-2s (for FederalIncomeTaxWithheldAmt)
+  payload.forms.summary.withholding = refundParams.taxWithheld;
+
+  // New: Basic validation for required fields (throw errors if missing)
   if (!validatedAnswers.ssn) throw new Error('Missing SSN');
   if (!validatedAnswers.fullName) throw new Error('Missing fullName');
+  if (summary.refundEstimate > 0 && !validatedAnswers.bankInfo) console.warn('Missing bank info for direct deposit—refund will be mailed');
+  if (validatedAnswers.dependents?.some(dep => !dep.firstName || !dep.lastName)) throw new Error('Incomplete dependent names');
 
   return payload;
 }

@@ -42,8 +42,25 @@ if (!answers.irsPin) {
 } else if (!/^\d{6}$/.test(answers.irsPin)) {
   issues.push({ message: 'IRS PIN must be 6 digits if provided', step: 'prior-year' });
 }
-  if (answers.incomeSources?.length === 0 || answers.incomeSources.some(src => !src.box1 && !src.amount)) issues.push({ message: 'Incomplete income sources (missing amount/wages)', step: 'income' });
+  if (
+    !Array.isArray(answers.incomeSources) ||
+    answers.incomeSources.length === 0 ||
+    answers.incomeSources.some(src => typeof src === 'object' && !src.box1 && !src.amount)
+  ) issues.push({ message: 'Incomplete income sources (missing amount/wages)', step: 'income' });
   // Add more checks as needed (e.g., deductions, credits, bank info)
+
+  // New: IRS-level validations (approximated from public IRS rules)
+  if (answers.ssn && (answers.ssn.startsWith('000') || answers.ssn.startsWith('666') || answers.ssn.startsWith('9'))) issues.push({ message: 'Invalid SSN format (cannot start with 000, 666, or 9xx - IRS rule)', step: 'personal' });
+  if (answers.zip && !/^\d{5}(-\d{4})?$/.test(answers.zip)) issues.push({ message: 'Invalid ZIP code format (must be 5 or 9 digits - IRS rule)', step: 'personal' });
+  if (answers.dependents?.length > 0) {
+    answers.dependents.forEach((dep, i) => {
+      const depAge = dep.dob ? calculateAge(dep.dob) : null;
+      if (depAge !== null && depAge >= 17) issues.push({ message: `Dependent #${i+1} is over 16 (may not qualify for Child Tax Credit - IRS rule)`, step: 'personal', optional: true });
+      if (dep.ssn && (dep.ssn.startsWith('000') || dep.ssn.startsWith('666') || dep.ssn.startsWith('9'))) issues.push({ message: `Invalid SSN for dependent #${i+1} (cannot start with 000, 666, or 9xx - IRS rule)`, step: 'personal' });
+    });
+  }
+  if (answers.refundEstimate > 0 && (!answers.bankRouting || !answers.bankAccount || !answers.bankType)) issues.push({ message: 'Missing bank info for direct deposit refund (required if refund >0 - IRS rule)', step: 'bank' });
+  if (answers.priorAGI < 0) issues.push({ message: 'Prior AGI cannot be negative (IRS rule)', step: 'prior-year' });
 
   const mandatoryIssues = issues.filter(issue => !issue.optional);
   const isPassed = mandatoryIssues.length === 0;
