@@ -45,7 +45,8 @@ if (!answers.irsPIN) {
   if (answers.incomeSources?.length === 0 || answers.incomeSources.some(src => !src.box1 && !src.amount)) issues.push({ message: 'Incomplete income sources (missing amount/wages)', step: 'income' });
   // Add more checks as needed (e.g., deductions, credits, bank info)
 
-  const isPassed = issues.length === 0;
+  const mandatoryIssues = issues.filter(issue => !issue.optional);
+  const isPassed = mandatoryIssues.length === 0;
 
   const handleFix = (stepKey) => {
     const stepIndex = steps.findIndex((s) => s.key === stepKey); // ✅ Added
