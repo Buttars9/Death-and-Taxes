@@ -10,7 +10,7 @@ import '../../../components/HelpIcon.css';
 
 // @ts-ignore
 export default function AuditReviewStep({ onNext, onBack }) {
-  const { answers, setCurrentStep } = useWizardStore();
+  const { answers } = useWizardStore();
   const navigate = useNavigate();
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -39,7 +39,7 @@ export default function AuditReviewStep({ onNext, onBack }) {
   const isPassed = issues.length === 0;
 
   const handleFix = (stepKey) => {
-    setCurrentStep(stepKey);
+    navigate(`/filing/${stepKey}`, { state: { fromAudit: true } });
   };
 
   const handleProceed = () => {
