@@ -7,11 +7,14 @@ import { useWizardStore } from '../../../stores/wizardStore';
 import HelpIcon from '../../../components/HelpIcon';
 import HelpModal from '../../../components/HelpModal';
 import '../../../components/HelpIcon.css';
+import { useStepNavigator } from '../../../hooks/useStepNavigator'; // ✅ Added
+import steps from '../../wizard/wizardStep'; // ✅ Added
 
 // @ts-ignore
 export default function AuditReviewStep({ onNext, onBack }) {
   const { answers } = useWizardStore();
   const navigate = useNavigate();
+  const { setCurrentStep } = useStepNavigator(steps.length); // ✅ Added
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
   const [isScanning, setIsScanning] = useState(true);
@@ -39,7 +42,13 @@ export default function AuditReviewStep({ onNext, onBack }) {
   const isPassed = issues.length === 0;
 
   const handleFix = (stepKey) => {
-    navigate(`/filing/${stepKey}`, { state: { fromAudit: true } });
+    const stepIndex = steps.findIndex((s) => s.key === stepKey); // ✅ Added
+    if (stepIndex !== -1) {
+      setCurrentStep(stepIndex + 1); // ✅ Sync wizard step
+      navigate(`/filing/${stepKey}`, { state: { fromAudit: true } }); // ✅ Navigate
+    } else {
+      console.warn('❌ Unknown stepKey:', stepKey); // ✅ Fallback
+    }
   };
 
   const handleProceed = () => {
