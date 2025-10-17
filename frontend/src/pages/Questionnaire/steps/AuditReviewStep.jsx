@@ -8,7 +8,8 @@ import HelpIcon from '../../../components/HelpIcon';
 import HelpModal from '../../../components/HelpModal';
 import '../../../components/HelpIcon.css';
 import { useStepNavigator } from '../../../hooks/useStepNavigator'; // ✅ Added
-import steps from '../../wizard/wizardStep'; // ✅ Added
+import steps from '../../../wizard/wizardStep';
+
 
 // @ts-ignore
 export default function AuditReviewStep({ onNext, onBack }) {
