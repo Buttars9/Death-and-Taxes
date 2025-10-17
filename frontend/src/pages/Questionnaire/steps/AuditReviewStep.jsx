@@ -35,7 +35,9 @@ export default function AuditReviewStep({ onNext, onBack }) {
   if (answers.dependents?.some(dep => !dep.firstName || !dep.lastName || !dep.ssn || !/^\d{9}$/.test(dep.ssn) || !dep.dob || !dep.relationship)) issues.push({ message: 'Incomplete dependent info (name, SSN, DOB, relationship)', step: 'personal' });
   if (!answers.residentState) issues.push({ message: 'Missing resident state', step: 'personal' });
   if (!answers.priorAGI) issues.push({ message: 'Missing prior year AGI', step: 'prior-year' });
- if (answers.irsPIN && !/^\d{6}$/.test(answers.irsPIN)) {
+if (!answers.irsPIN) {
+  issues.push({ message: 'IRS PIN not provided (optional, but recommended for identity protection)', step: 'prior-year', optional: true });
+} else if (!/^\d{6}$/.test(answers.irsPIN)) {
   issues.push({ message: 'IRS PIN must be 6 digits if provided', step: 'prior-year' });
 }
   if (answers.incomeSources?.length === 0 || answers.incomeSources.some(src => !src.box1 && !src.amount)) issues.push({ message: 'Incomplete income sources (missing amount/wages)', step: 'income' });
@@ -160,7 +162,10 @@ export default function AuditReviewStep({ onNext, onBack }) {
             <ul className="issue-list">
               {issues.map((issue, i) => (
                 <li key={i} className="issue-item">
-                  <span>{issue.message}</span>
+                 <span>
+  {issue.message}
+  {issue.optional && <em style={{ color: '#888', marginLeft: '0.5rem' }}>(optional)</em>}
+</span>
                   <button className="fix-button" onClick={() => handleFix(issue.step)}>
                     Fix
                   </button>
