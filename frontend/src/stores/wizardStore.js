@@ -20,11 +20,12 @@ export const useWizardStore = create(
 
       // 🧾 Answers Payload (filingStatus, incomeSources, deductions, credits, AGI, etc.)
       answers: {
-        incomeSources: [], // ✅ From IncomeSourcesStep
-        deductions: [],     // ✅ From DeductionsClaimStep
-        credits: [],        // ✅ From CreditsClaimStep
-       trustConfirmed: false, 
-      },
+  incomeSources: [],
+  deductions: [],
+  credits: [],
+  dependents: [], // ✅ Add this line
+  trustConfirmed: false,
+},
       setAnswers: (payload, callback) => {
         if (!payload || typeof payload !== 'object') {
           throw new Error('❌ Invalid answers payload');
