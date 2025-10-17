@@ -112,7 +112,7 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
   // New: Save localDependents to store on change (debounced for performance)
   useEffect(() => {
     const timer = setTimeout(() => {
-     setAnswers({ ...answers, dependents: localDependents });
+      setAnswers({ ...answers, dependents: localDependents });
     }, 500); // Debounce by 500ms
     return () => clearTimeout(timer);
   }, [localDependents, answers, setAnswers]);
