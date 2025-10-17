@@ -88,8 +88,9 @@ export default function Dashboard() {
   }, [parsedFields, updateField]);
 
   function handleStartFiling() {
-    navigate('/filing');
-  }
+  useWizardStore.getState().resetSteps(); // ✅ Reset to step 1
+  navigate('/filing/personal');           // ✅ Navigate to first step
+}
 
   function handleLogout() {
     logout();
