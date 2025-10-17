@@ -47,9 +47,9 @@ export function generateEfileXml(payload) {
       ${Array.isArray(taxpayer.dependents) ? `
       <DependentDetail>
         ${taxpayer.dependents.map((dep) => `
-        <DependentFirstNm>${dep.firstName || (dep.name || '').split(' ')[0] || ''}</DependentFirstNm>
-        <DependentLastNm>${dep.lastName || (dep.name || '').split(' ').slice(1).join(' ') || ''}</DependentLastNm>
-        <DependentNameControlTxt>${getNameControl(dep.lastName || (dep.name || '').split(' ').slice(1).join(' ') || '')}</DependentNameControlTxt>
+        <DependentFirstNm>${dep.firstName || ''}</DependentFirstNm>
+<DependentLastNm>${dep.lastName || ''}</DependentLastNm>
+<DependentNameControlTxt>${getNameControl(dep.lastName || '')}</DependentNameControlTxt>
         <DependentSSN>${dep.ssn}</DependentSSN>
         <DependentBirthDt>${dep.dob}</DependentBirthDt>
         <DependentRelationshipCd>${dep.relationship.toUpperCase()}</DependentRelationshipCd>`).join('\n')}
