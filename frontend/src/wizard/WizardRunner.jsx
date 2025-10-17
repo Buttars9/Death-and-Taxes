@@ -31,7 +31,7 @@ class ErrorBoundary extends Component {
 export default function WizardRunner() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentStep, nextStep, resetSteps, prevStep, setCurrentStep } = useStepNavigator(steps.length);  // Added setCurrentStep
+  const { currentStep, nextStep, resetSteps, prevStep } = useStepNavigator(steps.length);
 
   const parsedFields = useWizardStore((s) => s.parsedFields);
   const answers = useWizardStore((s) => s.answers);
@@ -54,21 +54,13 @@ export default function WizardRunner() {
   }), [answers]);
 
   useEffect(() => {
-    const pathParts = location.pathname.split('/');
-    const urlStepKey = pathParts[pathParts.length - 1];
     const expectedStepKey = steps[currentStep - 1]?.key;
     const isBackNavigation = location.state?.fromBack || location.state?.fromAudit;
-
-    if (urlStepKey !== expectedStepKey && !isBackNavigation) {
+    if (location.pathname !== `/filing/${expectedStepKey}` && !isBackNavigation) {
       console.log('Syncing navigation:', { currentStep, expectedStepKey, currentPath: location.pathname });
-      const urlStepIndex = steps.findIndex((s) => s.key === urlStepKey);
-      if (urlStepIndex !== -1) {
-        setCurrentStep(urlStepIndex + 1);  // Sync internal to URL for jumps (e.g., from "Fix")
-      } else {
-        navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });  // Fallback for invalid URL
-      }
+      navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });
     }
-  }, [currentStep, location, navigate, setCurrentStep]);
+  }, [currentStep, location, navigate]);
 
   const StepComponent = steps[currentStep - 1]?.component;
 
