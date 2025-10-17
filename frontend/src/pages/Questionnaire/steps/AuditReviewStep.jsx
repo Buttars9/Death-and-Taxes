@@ -162,9 +162,13 @@ if (!answers.irsPIN) {
             <ul className="issue-list">
               {issues.map((issue, i) => (
                 <li key={i} className="issue-item">
-                 <span>
+            <span>
   {issue.message}
-  {issue.optional && <em style={{ color: '#888', marginLeft: '0.5rem' }}>(optional)</em>}
+  {issue.optional && (
+    <em style={{ color: '#aaa', marginLeft: '0.5rem' }}>
+      (optional — you may proceed without this)
+    </em>
+  )}
 </span>
                   <button className="fix-button" onClick={() => handleFix(issue.step)}>
                     Fix
