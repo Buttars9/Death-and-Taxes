@@ -1,4 +1,4 @@
-import React, { useEffect, Component } from 'react';
+import React, { useEffect, useMemo, Component } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStepNavigator } from '../hooks/useStepNavigator';
 import steps from './wizardStep';
@@ -31,7 +31,7 @@ class ErrorBoundary extends Component {
 export default function WizardRunner() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentStep, nextStep, resetSteps, prevStep } = useStepNavigator(steps.length);
+  const { currentStep, nextStep, resetSteps, prevStep, setCurrentStep } = useStepNavigator(steps.length);
 
   const parsedFields = useWizardStore((s) => s.parsedFields);
   const answers = useWizardStore((s) => s.answers);
@@ -48,19 +48,33 @@ export default function WizardRunner() {
     }
   }, []);
 
-  const initialData = React.useMemo(() => ({
+  const initialData = useMemo(() => ({
     ...answers,
     incomeSources: answers.incomeSources || [],
   }), [answers]);
 
   useEffect(() => {
+    const pathParts = location.pathname.split('/');
+    const urlStepKey = pathParts[pathParts.length - 1];
     const expectedStepKey = steps[currentStep - 1]?.key;
+    const isInternalNav = location.state?.refresh;
     const isBackNavigation = location.state?.fromBack || location.state?.fromAudit;
-    if (location.pathname !== `/filing/${expectedStepKey}` && !isBackNavigation) {
-      console.log('Syncing navigation:', { currentStep, expectedStepKey, currentPath: location.pathname });
-      navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });
+
+    if (urlStepKey !== expectedStepKey) {
+      if (!isInternalNav) {
+        const urlStepIndex = steps.findIndex((s) => s.key === urlStepKey);
+        if (urlStepIndex !== -1) {
+          console.log('Syncing internal step to URL (direct nav):', urlStepKey);
+          setCurrentStep(urlStepIndex + 1);
+          return; // Skip redirect after sync
+        }
+      }
+      if (!isBackNavigation) {
+        console.log('Syncing navigation to expected:', { currentStep, expectedStepKey, currentPath: location.pathname });
+        navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });
+      }
     }
-  }, [currentStep, location, navigate]);
+  }, [currentStep, location, navigate, setCurrentStep]);
 
   const StepComponent = steps[currentStep - 1]?.component;
 
