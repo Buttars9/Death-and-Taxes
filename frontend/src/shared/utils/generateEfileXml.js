@@ -16,6 +16,11 @@ export function generateEfileXml(payload) {
 
   const stateAbbrev = getStateAbbrev(taxpayer.residentState); // Added helper for 2-letter code
 
+  // ✅ Normalize dependents to always be an array
+  const dependents = Array.isArray(taxpayer.dependents)
+    ? taxpayer.dependents
+    : taxpayer.dependents ? [taxpayer.dependents] : [];
+
   const xml = `
 <Return returnVersion="2025v4.0"
   xmlns="http://www.irs.gov/efile"
@@ -44,12 +49,12 @@ export function generateEfileXml(payload) {
       <SpouseLastNm>${(taxpayer.spouse.name || '').split(' ').slice(1).join(' ') || ''}</SpouseLastNm>
       <SpouseNameControlTxt>${getNameControl(taxpayer.spouse.name || '')}</SpouseNameControlTxt>
       <SpouseSSN>${taxpayer.spouse.ssn}</SpouseSSN>` : ''}
-      ${Array.isArray(taxpayer.dependents) ? `
+      ${dependents.length > 0 ? `
       <DependentDetail>
-        ${taxpayer.dependents.map((dep) => `
+        ${dependents.map((dep) => `
         <DependentFirstNm>${dep.firstName || ''}</DependentFirstNm>
-<DependentLastNm>${dep.lastName || ''}</DependentLastNm>
-<DependentNameControlTxt>${getNameControl(dep.lastName || '')}</DependentNameControlTxt>
+        <DependentLastNm>${dep.lastName || ''}</DependentLastNm>
+        <DependentNameControlTxt>${getNameControl(dep.lastName || '')}</DependentNameControlTxt>
         <DependentSSN>${dep.ssn}</DependentSSN>
         <DependentBirthDt>${dep.dob}</DependentBirthDt>
         <DependentRelationshipCd>${dep.relationship.toUpperCase()}</DependentRelationshipCd>`).join('\n')}
