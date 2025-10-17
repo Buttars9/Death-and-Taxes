@@ -8,6 +8,7 @@ import HelpIcon from '../../../components/HelpIcon';
 import HelpModal from '../../../components/HelpModal';
 import '../../../components/HelpIcon.css';
 
+// @ts-ignore
 export default function AuditReviewStep({ onNext, onBack }) {
   const { answers } = useWizardStore();
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function AuditReviewStep({ onNext, onBack }) {
   const [isScanning, setIsScanning] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsScanning(false), 2000);
+    const timer = setTimeout(() => setIsScanning(false), 4000); // Longer scan
     return () => clearTimeout(timer);
   }, []);
 
