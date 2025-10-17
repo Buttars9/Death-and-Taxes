@@ -59,7 +59,6 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
     priorAGI,
     irsPin,
     incomeSources,
-    dependents,
     spouseName,
     spouseSSN,
     spouseDob,
@@ -80,7 +79,7 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
   const [localIrsPin, setLocalIrsPin] = useState(answers.irsPin || irsPin || '');
   const [localIncomeSources, setLocalIncomeSources] = useState(answers.incomeSources || incomeSources || []);
   const [localSpouseIncomeSources, setLocalSpouseIncomeSources] = useState([]);
-  const [localDependents, setLocalDependents] = useState(answers.dependents || dependents || []);
+  const [localDependents, setLocalDependents] = useState(answers.dependents || []);
   const [localSpouseName, setLocalSpouseName] = useState(answers.spouseName || spouseName || '');
   const [localSpouseSSN, setLocalSpouseSSN] = useState(answers.spouseSSN || spouseSSN || '');
   const [localSpouseDob, setLocalSpouseDob] = useState(answers.spouseDob || spouseDob || '');
@@ -104,11 +103,11 @@ export default function PersonalInfoStep({ answers, setAnswers, onNext, onBack }
     const spouseIncomes = (answers.incomeSources || incomeSources || []).filter(s => s.owner === 'spouse');
     setLocalIncomeSources(userIncomes);
     setLocalSpouseIncomeSources(spouseIncomes);
-    setLocalDependents(answers.dependents || dependents || []);
+    setLocalDependents(answers.dependents || []);
     setLocalSpouseName(answers.spouseName || spouseName || '');
     setLocalSpouseSSN(answers.spouseSSN || spouseSSN || '');
     setLocalSpouseDob(answers.spouseDob || spouseDob || '');
-  }, [answers, firstName, lastName, ssn, dob, address, maritalStatus, residentState, priorAGI, irsPin, incomeSources, dependents, spouseName, spouseSSN, spouseDob]);
+  }, [answers, firstName, lastName, ssn, dob, address, maritalStatus, residentState, priorAGI, irsPin, incomeSources, spouseName, spouseSSN, spouseDob]);
 
   const toggleIncome = (incomeType, owner = 'self') => {
     if (incomeType === 'clear_all') {
