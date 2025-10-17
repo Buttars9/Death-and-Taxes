@@ -11,6 +11,18 @@ import { useStepNavigator } from '../../../hooks/useStepNavigator'; // ✅ Added
 import steps from '../../../wizard/wizardStep';
 
 
+// Helper to calculate age from DOB (for IRS dependent checks)
+function calculateAge(dob) {
+  const today = new Date();
+  const birthDate = new Date(dob);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 // @ts-ignore
 export default function AuditReviewStep({ onNext, onBack }) {
   const { answers } = useWizardStore();
