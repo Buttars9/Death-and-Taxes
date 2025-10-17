@@ -65,6 +65,17 @@ export const useWizardStore = create(
         set({ stateBranch: branchKey || null });
       },
       getStateBranch: () => get().stateBranch,
+// 🧭 Wizard Step Navigation
+currentStep: 1,
+setCurrentStep: (step) => {
+  if (typeof step !== 'number' || step < 1) {
+    throw new Error('❌ Invalid step index');
+  }
+  set({ currentStep: step });
+},
+nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
+prevStep: () => set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),
+resetSteps: () => set({ currentStep: 1 }),
 
       // 🧠 Filing Status Access + Validation
       getFilingStatus: () => get().answers?.maritalStatus || '',
@@ -173,6 +184,7 @@ export const useWizardStore = create(
       storage: createJSONStorage(() => localStorage),
       // FIX: Persist key fields to prevent reset on refresh
       partialize: (state) => ({
+        currentStep: state.currentStep,
         answers: state.answers,
         w2s: state.w2s,
         state: state.state,

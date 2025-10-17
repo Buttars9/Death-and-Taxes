@@ -15,7 +15,8 @@ import steps from '../../../wizard/wizardStep';
 export default function AuditReviewStep({ onNext, onBack }) {
   const { answers } = useWizardStore();
   const navigate = useNavigate();
-  const { setCurrentStep } = useStepNavigator(steps.length); // ✅ Added
+  const setCurrentStep = useWizardStore((s) => s.setCurrentStep);
+ // ✅ Added
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
   const [isScanning, setIsScanning] = useState(true);

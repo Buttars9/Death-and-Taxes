@@ -31,7 +31,11 @@ class ErrorBoundary extends Component {
 export default function WizardRunner() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentStep, nextStep, resetSteps, prevStep } = useStepNavigator(steps.length);
+  const currentStep = useWizardStore((s) => s.currentStep);
+const setCurrentStep = useWizardStore((s) => s.setCurrentStep);
+const nextStep = useWizardStore((s) => s.nextStep);
+const prevStep = useWizardStore((s) => s.prevStep);
+const resetSteps = useWizardStore((s) => s.resetSteps);
 
   const parsedFields = useWizardStore((s) => s.parsedFields);
   const answers = useWizardStore((s) => s.answers);
