@@ -37,7 +37,14 @@ export const useWizardStore = create(
         // Added computation for deduction/credit totals
         const deductionAmount = (payload.deductions || []).reduce((sum, d) => sum + Number(d.amount || 0), 0);
         const creditAmount = (payload.credits || []).reduce((sum, c) => sum + Number(c.amount || 0), 0);
-        set({ answers: { ...payload, deductionAmount, creditAmount } });
+        set((state) => ({
+  answers: {
+    ...state.answers,
+    ...payload,
+    deductionAmount,
+    creditAmount,
+  },
+}));
         if (typeof callback === 'function') callback();
       },
 
