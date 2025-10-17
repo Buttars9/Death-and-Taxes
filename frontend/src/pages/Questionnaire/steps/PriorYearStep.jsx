@@ -8,14 +8,22 @@ import '../../../components/HelpIcon.css';
 
 export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
   const [priorAGI, setPriorAGI] = useState('');
-  const [irsPIN, setIrsPIN] = useState('');
+  const [irsPin, setIrsPin] = useState('');
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState('');
 
   useEffect(() => {
     setPriorAGI(answers.priorAGI || '');
-    setIrsPIN(answers.irsPIN || '');
+    setIrsPin(answers.irsPin || '');
   }, [answers]);
+
+  // New: Save local fields to store on change (debounced for performance)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnswers({ ...answers, priorAGI: Number(priorAGI), irsPin: irsPin || null });
+    }, 500); // Debounce by 500ms
+    return () => clearTimeout(timer);
+  }, [priorAGI, irsPin, answers, setAnswers]);
 
   const isValid = priorAGI !== '' && !isNaN(priorAGI);
 
@@ -25,7 +33,7 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
     setAnswers({
       ...answers,
       priorAGI: Number(priorAGI),
-      irsPIN: irsPIN || null,
+      irsPin: irsPin || null,
     });
     onNext();
   };
@@ -114,12 +122,12 @@ export default function PriorYearStep({ answers, setAnswers, onNext, onBack }) {
           </div>
 
           <div className="input-group">
-            <label htmlFor="irsPIN">IRS PIN (optional)</label>
+            <label htmlFor="irsPin">IRS PIN (optional)</label>
             <input
-              id="irsPIN"
+              id="irsPin"
               type="text"
-              value={irsPIN}
-              onChange={(e) => setIrsPIN(e.target.value)}
+              value={irsPin}
+              onChange={(e) => setIrsPin(e.target.value)}
               placeholder="6-digit PIN"
             />
           </div>
