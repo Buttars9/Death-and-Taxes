@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useStepNavigator } from '../hooks/useStepNavigator';
 import steps from './wizardStep';
 import { useWizardStore } from '../stores/wizardStore';
+import { calculateRefund } from '../shared/utils/refundUtils'; // ✅ Added import
 
 // Error boundary to catch render errors
 class ErrorBoundary extends Component {
@@ -68,23 +69,24 @@ export default function WizardRunner() {
     return typeof current.next === 'function' ? current.next(answers) : current.next;
   };
 
- const handleNext = () => {
-  const current = steps[currentStep - 1];
-  if (typeof current.next === 'function') {
-    const nextKey = current.next(answers);
-    const nextIndex = steps.findIndex((s) => s.key === nextKey);
-    if (nextIndex !== -1) {
-      nextStep(); // advance internal tracker
-      navigate(`/filing/${nextKey}`, { replace: true, state: { refresh: true } });
+  const handleNext = () => {
+    const current = steps[currentStep - 1];
+    if (typeof current.next === 'function') {
+      const nextKey = current.next(answers);
+      const nextIndex = steps.findIndex((s) => s.key === nextKey);
+      if (nextIndex !== -1) {
+        nextStep(); // advance internal tracker
+        navigate(`/filing/${nextKey}`, { replace: true, state: { refresh: true } });
+      }
+    } else {
+      nextStep(); // fallback for normal steps
     }
-  } else {
-    nextStep(); // fallback for normal steps
-  }
-  // Added: Run calculations and save to store after next
-  const refundParams = { /* ... from fields in RefundEstimate */ };
-  const summary = calculateRefund(refundParams);
-  setAnswers({ ...answers, deductionAmount: summary.deductionAmount, taxableIncome: summary.taxableIncome });
-};
+
+    // Added: Run calculations and save to store after next
+    const refundParams = { /* ... from fields in RefundEstimate */ };
+    const summary = calculateRefund(refundParams);
+    setAnswers({ ...answers, deductionAmount: summary.deductionAmount, taxableIncome: summary.taxableIncome });
+  };
 
   if (!StepComponent) {
     return <p>❌ Invalid step. Please restart the wizard.</p>;

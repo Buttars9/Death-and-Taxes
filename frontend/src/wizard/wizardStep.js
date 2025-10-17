@@ -13,6 +13,23 @@ import FinalReview from '../pages/FinalReview';
 import SubmitStep from '../pages/Questionnaire/SubmissionComplete';
 import AuditReviewStep from '../pages/Questionnaire/steps/AuditReviewStep'; // Added new step
 
+const isAuditPassed = (answers) => {
+  const issues = [];
+  if (!answers.firstName || !answers.lastName) issues.push({ message: 'Missing: Full name', step: 'personal' });
+  if (!answers.ssn || !/^\d{9}$/.test(answers.ssn)) issues.push({ message: 'Invalid or missing SSN', step: 'personal' });
+  if (!answers.dob) issues.push({ message: 'Missing date of birth', step: 'personal' });
+  if (!answers.address || !answers.city || !answers.zip) issues.push({ message: 'Incomplete address (street, city, ZIP)', step: 'personal' });
+  if (!answers.maritalStatus) issues.push({ message: 'Missing filing status', step: 'personal' });
+  if (answers.maritalStatus === 'marriedJointly' && (!answers.spouseName || !answers.spouseSSN || !answers.spouseDob)) issues.push({ message: 'Incomplete spouse info', step: 'personal' });
+  if (answers.dependents?.some(dep => !dep.firstName || !dep.lastName || !dep.ssn || !/^\d{9}$/.test(dep.ssn) || !dep.dob || !dep.relationship)) issues.push({ message: 'Incomplete dependent info (name, SSN, DOB, relationship)', step: 'personal' });
+  if (!answers.residentState) issues.push({ message: 'Missing resident state', step: 'personal' });
+  if (!answers.priorAGI) issues.push({ message: 'Missing prior year AGI', step: 'prior-year' });
+  if (!answers.irsPin || !/^\d{5}$/.test(answers.irsPin)) issues.push({ message: 'Invalid or missing IRS PIN', step: 'prior-year' });
+  if (answers.incomeSources?.length === 0 || answers.incomeSources.some(src => !src.box1 && !src.amount)) issues.push({ message: 'Incomplete income sources (missing amount/wages)', step: 'income' });
+  // Add more checks as needed (e.g., deductions, credits, bank info)
+  return issues.length === 0;
+};
+
 export const wizardSteps = [
   {
     key: 'personal',
