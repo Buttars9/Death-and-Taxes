@@ -31,7 +31,7 @@ class ErrorBoundary extends Component {
 export default function WizardRunner() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentStep, nextStep, resetSteps, prevStep, setCurrentStep } = useStepNavigator(steps.length);  // Added setCurrentStep if not already in hook
+  const { currentStep, nextStep, resetSteps, prevStep } = useStepNavigator(steps.length);
 
   const parsedFields = useWizardStore((s) => s.parsedFields);
   const answers = useWizardStore((s) => s.answers);
@@ -54,23 +54,13 @@ export default function WizardRunner() {
   }), [answers]);
 
   useEffect(() => {
-    // Extract stepKey from URL (e.g., /filing/personal -> 'personal')
-    const pathParts = location.pathname.split('/');
-    const urlStepKey = pathParts[pathParts.length - 1];
-
     const expectedStepKey = steps[currentStep - 1]?.key;
     const isBackNavigation = location.state?.fromBack || location.state?.fromAudit;
-    if (urlStepKey !== expectedStepKey) {
-      // Sync internal step to URL if mismatched (fixes direct nav from "Fix")
-      const urlStepIndex = steps.findIndex((s) => s.key === urlStepKey);
-      if (urlStepIndex !== -1) {
-        setCurrentStep(urlStepIndex + 1);  // Assumes useStepNavigator has setCurrentStep; add if not
-      } else if (!isBackNavigation) {
-        // Fallback redirect if invalid URL
-        navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });
-      }
+    if (location.pathname !== `/filing/${expectedStepKey}` && !isBackNavigation) {
+      console.log('Syncing navigation:', { currentStep, expectedStepKey, currentPath: location.pathname });
+      navigate(`/filing/${expectedStepKey}`, { replace: true, state: { refresh: true } });
     }
-  }, [currentStep, location, navigate, setCurrentStep]);
+  }, [currentStep, location, navigate]);
 
   const StepComponent = steps[currentStep - 1]?.component;
 
