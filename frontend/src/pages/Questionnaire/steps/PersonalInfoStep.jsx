@@ -168,6 +168,7 @@ const removeDependent = (index) => {
         spouseDob: localSpouseDob,
       };
       console.log('Updated answers:', updatedAnswers);
+      console.log('Submitting dependents:', updatedAnswers.dependents);
       setAnswers(updatedAnswers);
       onNext();
     } catch (error) {
