@@ -35,7 +35,9 @@ export default function AuditReviewStep({ onNext, onBack }) {
   if (answers.dependents?.some(dep => !dep.firstName || !dep.lastName || !dep.ssn || !/^\d{9}$/.test(dep.ssn) || !dep.dob || !dep.relationship)) issues.push({ message: 'Incomplete dependent info (name, SSN, DOB, relationship)', step: 'personal' });
   if (!answers.residentState) issues.push({ message: 'Missing resident state', step: 'personal' });
   if (!answers.priorAGI) issues.push({ message: 'Missing prior year AGI', step: 'prior-year' });
-  if (!answers.irsPin || !/^\d{5}$/.test(answers.irsPin)) issues.push({ message: 'Invalid or missing IRS PIN', step: 'prior-year' });
+ if (answers.irsPIN && !/^\d{6}$/.test(answers.irsPIN)) {
+  issues.push({ message: 'IRS PIN must be 6 digits if provided', step: 'prior-year' });
+}
   if (answers.incomeSources?.length === 0 || answers.incomeSources.some(src => !src.box1 && !src.amount)) issues.push({ message: 'Incomplete income sources (missing amount/wages)', step: 'income' });
   // Add more checks as needed (e.g., deductions, credits, bank info)
 
