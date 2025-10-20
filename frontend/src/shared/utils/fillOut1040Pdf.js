@@ -18,7 +18,7 @@ export async function fillOut1040Pdf(payload) {
   const pageHeight = page.getHeight(); // Typically 792 for letter size
 
   const draw = (label, value, x, yFromTop, p = page, size = 10, align = 'left') => {
-    const offset = Math.floor(size * 0.3); // Reduced offset
+    const offset = Math.floor(size * 0.8); // Adjusted offset for better alignment
     const adjustedY = pageHeight - yFromTop - offset;
     let adjustedX = x;
     if (align === 'right') {
@@ -57,7 +57,7 @@ export async function fillOut1040Pdf(payload) {
     const additionalPer = (fsKey === 'single' || fsKey === 'headofhousehold') ? 1950 : 1550;
     let additional = 0;
     const youBornBefore = youDOB && youDOB < bornBeforeDate;
-    const spouseBornBefore = spouseDOB && spouseDOB < bornBeforeDate;
+    const spouseBornBefore = spouseDOB && spouseBornBefore < bornBeforeDate;
     if (youBornBefore) additional += additionalPer;
     if (payload?.ageBlindness?.youBlind) additional += additionalPer;
     if (fsKey.includes('married') || fsKey === 'qualifyingsurvivingspouse') {

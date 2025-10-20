@@ -114,10 +114,8 @@ const pdfD = await fillOutScheduleD(payload);
   const handlePrintTaxReturn = async () => {
   try {
     const finalPdf = await buildPdf();
-    const pdfBytes = await finalPdf.save();
+    const pdfBytes = await finalPdf.save(`irs-return-${contactEmail || 'anonymous'}_${new Date().getFullYear()}.pdf`, { returnPromise: true });
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-    setIrsPdfBlob(blob);
-
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `irs-return-${contactEmail || 'anonymous'}_${new Date().getFullYear()}.pdf`;
