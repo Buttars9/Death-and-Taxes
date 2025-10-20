@@ -12,6 +12,11 @@ export function buildIrsPayload(validatedAnswers) {
 
   const flatAnswers = { ...validatedAnswers };
 
+  // Add fullName if not present
+  if (!flatAnswers.fullName && flatAnswers.firstName && flatAnswers.lastName) {
+    flatAnswers.fullName = `${flatAnswers.firstName} ${flatAnswers.lastName}`;
+  }
+
   // Flatten incomeSources
   if (Array.isArray(validatedAnswers.incomeSources)) {
     validatedAnswers.incomeSources.forEach((src, i) => {
@@ -38,11 +43,11 @@ export function buildIrsPayload(validatedAnswers) {
     });
   }
 
-  // Flatten dependents
+  // Flatten dependents with name fallbacks
   if (Array.isArray(validatedAnswers.dependents)) {
     validatedAnswers.dependents.forEach((dep, i) => {
-      flatAnswers[`dependent_${i}_firstName`] = dep.firstName; // New: Split for XML
-      flatAnswers[`dependent_${i}_lastName`] = dep.lastName;
+      flatAnswers[`dependent_${i}_firstName`] = dep.firstName || ''; // Ensure present
+      flatAnswers[`dependent_${i}_lastName`] = dep.lastName || ''; // Ensure present
       flatAnswers[`dependent_${i}_ssn`] = dep.ssn;
       flatAnswers[`dependent_${i}_dob`] = dep.dob;
       flatAnswers[`dependent_${i}_relationship`] = dep.relationship;
@@ -101,8 +106,8 @@ export function buildIrsPayload(validatedAnswers) {
 
   // New: Basic validation for required fields (throw errors if missing)
   if (!validatedAnswers.ssn) throw new Error('Missing SSN');
-  if (!validatedAnswers.fullName) throw new Error('Missing fullName');
-  if (summary.refundEstimate > 0 && !validatedAnswers.bankInfo) console.warn('Missing bank info for direct deposit—refund will be mailed');
+  if (!flatAnswers.fullName) throw new Error('Missing fullName'); // Updated to check flatAnswers
+  if (refundSummary.federalRefund > 0 && !validatedAnswers.bankInfo) console.warn('Missing bank info for direct deposit—refund will be mailed');
   if (validatedAnswers.dependents?.some(dep => !dep.firstName || !dep.lastName)) throw new Error('Incomplete dependent names');
 
   return payload;
