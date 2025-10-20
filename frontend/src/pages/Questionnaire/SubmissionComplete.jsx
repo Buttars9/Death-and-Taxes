@@ -7,6 +7,7 @@ import GlowingBox from '../../components/GlowingBox.jsx';
 import PiSymbol from '../../components/PiSymbol.jsx';
 import IRSReceipt from '../../components/IRSReceipt.jsx';
 import { IrsPayloadPreview } from '../../components/IrsPayloadPreview.jsx';
+import { StatePayloadPreview } from '../../components/StatePayloadPreview.jsx'; // New: Import for state preview component
 import Modal from '../../components/Modal.jsx';
 import HelpIcon from '../../components/HelpIcon';
 import HelpModal from '../../components/HelpModal';
@@ -25,6 +26,8 @@ import { buildIrsPayload } from '../../shared/utils/buildIrsPayload.js';
 import { calculateRefund } from '../../shared/utils/calculateRefund.js';
 import { submitFinalReturn } from '../../lib/submitFinalReturn.js';
 import { generateEfileXml } from '../../shared/utils/generateEfileXml.js';
+import { generateStateEfileXml } from '../../shared/utils/generateStateEfileXml.js'; // New: For state XML
+import buildStatePayload from '../../shared/utils/buildStatePayload.js'; // New: For state payload builder
 import jsPDF from 'jspdf'; // Added for PDF generation
 
 export function generatePdfFromXml(xml) {
@@ -84,8 +87,10 @@ export default function SubmissionComplete({ confirmationId, submittedAt }) {
 
   const [showPdfPreview, setShowPdfPreview] = useState(false);
   const [showPayloadPreview, setShowPayloadPreview] = useState(false);
+  const [showStatePayloadPreview, setShowStatePayloadPreview] = useState(false); // New: For state modal
   const [irsPdfBlob, setIrsPdfBlob] = useState(null);
   const [irsPayload, setIrsPayload] = useState(null);
+  const [statePayload, setStatePayload] = useState(null); // New: For state data
 
  const buildPdf = async () => {
   setAnswers({ ...answers, trustConfirmed: true });
@@ -143,6 +148,18 @@ const handleViewPayload = () => {
     generatePdfFromXml(xml); // Added to generate and download PDF on click
   } catch (err) {
     console.error('Payload preview failed:', err);
+  }
+};
+
+const handleViewStatePayload = async () => {
+  try {
+    const statePayloadData = buildStatePayload({ answers, refundSummary });
+    const stateXml = generateStateEfileXml(statePayloadData);
+    setStatePayload({ json: statePayloadData, xml: stateXml });
+    setShowStatePayloadPreview(true);
+    generatePdfFromXml(stateXml); // Reuse for state
+  } catch (err) {
+    console.error('State payload preview failed:', err);
   }
 };
 
@@ -380,6 +397,7 @@ const handleViewPayload = () => {
             <button onClick={handlePrintTaxReturn} style={buttonStyle('#72caff', '#0f131f')}>Print Tax Return</button>
             <button onClick={handlePreviewTaxReturn} style={buttonStyle('#3f8cff', '#fff')}>Preview Tax Return</button>
             <button onClick={handleViewPayload} style={buttonStyle('#a166ff', '#fff')}>View IRS Payload</button>
+            <button onClick={handleViewStatePayload} style={buttonStyle('#a166ff', '#fff')}>View State Payload</button>
             <button onClick={handleSubmitToPDP} style={buttonStyle('#00c78b', '#0f131f')}>Submit</button>
             <button onClick={handleDownloadReceipt} style={buttonStyle('#ffb347', '#0f131f')}>Download Receipt</button>
             <button onClick={handleGoToDashboard} style={buttonStyle('#1c2232', '#e0e0ff', true)}>Go to Dashboard</button>
@@ -406,6 +424,16 @@ const handleViewPayload = () => {
               <div className="payload-preview-modal">
                 <div className="payload-preview-container">
                   <IrsPayloadPreview payload={irsPayload} />
+                </div>
+              </div>
+            </Modal>
+          )}
+
+          {showStatePayloadPreview && (
+            <Modal onClose={() => setShowStatePayloadPreview(false)}>
+              <div className="payload-preview-modal">
+                <div className="payload-preview-container">
+                  <StatePayloadPreview payload={statePayload} onConfirm={handleSubmitToPDP} /> {/* Use new component; adjust onConfirm if needed */}
                 </div>
               </div>
             </Modal>
