@@ -120,12 +120,13 @@ export default function CreditsClaimStep({ onNext, onBack, stepIndex }) {
         const credit = eligibleCredits.find(c => c.type === value) || { type: value, amount: 0, note: 'Not calculated' };
         return { type: value, amount: credit.amount || 0, note: credit.note || '', expense: creditExpenses[value] || 0 };
       });
-      const childCredits = dependents.filter(d => d.name && d.dob && d.relationship === 'child').length * 2200;
+      const qualifyingChildrenCount = dependents.filter(d => d.firstName && d.lastName && d.dob && ['son', 'daughter', 'child'].includes(d.relationship.toLowerCase())).length;
+      const childCredits = qualifyingChildrenCount * 2200;
       const eitcCredit = eligibleCredits.find(c => c.type === 'eitc');
       const earnedIncomeCredit = eitcCredit?.amount || 0;
 
       if (childCredits > 0 && !creditObjects.some(c => c.type === 'child_tax')) {
-        creditObjects.push({ type: 'child_tax', amount: childCredits, note: `${numDependents} qualifying children`, expense: 0 });
+        creditObjects.push({ type: 'child_tax', amount: childCredits, note: `${qualifyingChildrenCount} qualifying children`, expense: 0 });
       }
 
       if (earnedIncomeCredit > 0 && !creditObjects.some(c => c.type === 'eitc')) {
@@ -137,12 +138,12 @@ export default function CreditsClaimStep({ onNext, onBack, stepIndex }) {
       console.warn('setAnswers is not a function');
       setError('State update failed. Please try again.');
     }
-  }, [setAnswers, storeAnswers, selected, creditExpenses, totalIncome, numDependents, maritalStatus, capitalGains, retirementIncome, foreignAssets, autoLoanInterest, age]);
+  }, [setAnswers, storeAnswers, selected, creditExpenses, totalIncome, numDependents, maritalStatus, capitalGains, retirementIncome, foreignAssets, autoLoanInterest, age, dependents]);
 
  // Update store only when selected credits or expenses change
 useEffect(() => {
   updateStoreAnswers();
-}, [selected, creditExpenses]);
+}, [updateStoreAnswers]);
 
   const toggleCredit = (value) => {
     setError('');
@@ -166,7 +167,8 @@ useEffect(() => {
   };
 
   const handleBack = () => {
-    const childCredits = dependents.filter(d => d.name && d.dob && d.relationship === 'child').length * 2200;
+    const qualifyingChildrenCount = dependents.filter(d => d.firstName && d.lastName && d.dob && ['son', 'daughter', 'child'].includes(d.relationship.toLowerCase())).length;
+    const childCredits = qualifyingChildrenCount * 2200;
     const eligibleCredits = getEligibleCredits({
       income: totalIncome,
       dependents: numDependents,
