@@ -1,4 +1,4 @@
-import { calculateRefund } from './calculateRefund.js'; // Added: Import to compute refund
+import { calculateRefund } from './calculateRefund.js';
 
 export default function buildForm1040Payload(answers) {
   if (!answers?.trustConfirmed) {
@@ -11,21 +11,22 @@ export default function buildForm1040Payload(answers) {
     ssn,
     dob,
     address,
+    city,
+    zip,
     maritalStatus,
     spouseName,
     spouseSSN,
     spouseDob,
     dependents = [],
-    filingStatus,
     incomeSources = [],
     priorAGI,
-    irsPIN,
+    irsPin,
     foreignIncome,
     residentState,
     deductionType = 'standard',
     deductions = [],
     credits = [],
-    estimatedRefund,
+    estimatedPayments,
     contactEmail,
     submissionTimestamp,
   } = answers;
@@ -33,7 +34,8 @@ export default function buildForm1040Payload(answers) {
   const fullName = `${firstName || ''} ${lastName || ''}`.trim();
 
   const mappedDependents = dependents.map(dep => ({
-    name: dep.name,
+    firstName: dep.firstName || '',
+    lastName: dep.lastName || '',
     ssn: dep.ssn,
     dob: dep.dob,
     relationship: dep.relationship,
@@ -45,14 +47,13 @@ export default function buildForm1040Payload(answers) {
 
   const deductionAmount =
     deductionType === 'standard'
-      ? getStandardDeduction(filingStatus)
+      ? getStandardDeduction(maritalStatus)
       : deductions.reduce((sum, d) => sum + Number(d.amount || 0), 0);
 
   const creditAmount = Array.isArray(credits)
     ? credits.reduce((sum, c) => sum + Number(c.amount || 0), 0)
     : 0;
 
-  // Added: Calculate refund and set refundEstimate to avoid null
   const refundParams = {
     state: residentState || 'N/A',
     statesPaid: Array.from(new Set(incomeSources?.map(src => src.box15?.trim()).filter(Boolean))) || [],
@@ -68,28 +69,29 @@ export default function buildForm1040Payload(answers) {
     deductions: deductions,
     credits: credits,
     taxWithheld: incomeSources?.reduce((sum, src) => sum + Number(src.box2 || src.federalTaxWithheld || 0), 0) || 0,
-    estimatedPayments: Number(answers.estimatedPayments) || 0,
+    estimatedPayments: Number(estimatedPayments) || 0,
     stateTaxWithheld: incomeSources?.reduce((sum, src) => sum + Number(src.box17 || 0), 0) || 0,
     incomeSources: incomeSources,
   };
   const refundSummary = calculateRefund(refundParams);
-  const calculatedRefundEstimate = refundSummary.federalRefund || 0; // Set to 0 if null
+  const calculatedRefundEstimate = refundSummary.federalRefund || 0;
 
-  return {
+  const payload = {
     metadata: {
       submittedAt: submissionTimestamp || new Date().toISOString(),
       confirmed: true,
       contactEmail: contactEmail || null,
-      refundEstimate: calculatedRefundEstimate, // Updated: Use calculated value
+      refundEstimate: calculatedRefundEstimate,
     },
     taxpayer: {
       fullName,
       ssn,
       dob,
       address,
-      filingStatus,
-      maritalStatus,
-      spouse: ['married_joint', 'marriedJointly'].includes(maritalStatus) ? {
+      city: city || '',
+      zip: zip || '',
+      filingStatus: maritalStatus,
+      spouse: ['marriedJointly', 'married_joint'].includes(maritalStatus) ? {
         name: spouseName,
         ssn: spouseSSN,
         dob: spouseDob,
@@ -99,7 +101,7 @@ export default function buildForm1040Payload(answers) {
     },
     identityVerification: {
       priorAGI: priorAGI || null,
-      irsPIN: irsPIN || null,
+      irsPIN: irsPin || null,
     },
     incomeDetails: {
       totalIncome,
@@ -116,16 +118,25 @@ export default function buildForm1040Payload(answers) {
     },
     summary: {
       taxableIncome: Math.max(totalIncome - deductionAmount, 0),
-      refundEstimate: calculatedRefundEstimate, // Updated: Use calculated value
+      refundEstimate: calculatedRefundEstimate,
     },
   };
+
+  // Validation
+  if (!ssn) throw new Error('Missing SSN');
+  if (!fullName) throw new Error('Missing fullName');
+  if (calculatedRefundEstimate > 0 && !answers.bankInfo) console.warn('Missing bank info for direct deposit—refund will be mailed');
+  if (dependents.some(dep => !dep.firstName || !dep.lastName)) throw new Error('Incomplete dependent names');
+
+  return payload;
 }
 
 function getStandardDeduction(status) {
   const table = {
     single: 13850,
-    married_joint: 27700,
-    head: 20800,
+    marriedJointly: 27700,
+    headOfHousehold: 20800,
+    // Add more as needed
   };
   return table[status] || 0;
 }
