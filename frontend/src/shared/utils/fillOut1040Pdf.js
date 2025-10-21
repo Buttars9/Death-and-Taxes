@@ -57,7 +57,7 @@ export async function fillOut1040Pdf(payload) {
     const additionalPer = (fsKey === 'single' || fsKey === 'headofhousehold') ? 1950 : 1550;
     let additional = 0;
     const youBornBefore = youDOB && youDOB < bornBeforeDate;
-    const spouseBornBefore = spouseDOB && spouseBornBefore < bornBeforeDate;
+    const spouseBornBefore = spouseDOB && spouseDOB < bornBeforeDate;
     if (youBornBefore) additional += additionalPer;
     if (payload?.ageBlindness?.youBlind) additional += additionalPer;
     if (fsKey.includes('married') || fsKey === 'qualifyingsurvivingspouse') {
