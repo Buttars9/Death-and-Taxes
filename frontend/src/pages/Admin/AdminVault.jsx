@@ -1,14 +1,16 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function AdminVault() {
+  const navigate = useNavigate();
   const [filings, setFilings] = useState([]);
   const [filter, setFilter] = useState('All');
   const [wallets, setWallets] = useState({ pi: '', eth: '', btc: '' });
   const [feeLogs, setFeeLogs] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [userCount, setUserCount] = useState(0);
-  const [apdCount, setApdCount] = useState(0);
+  const [pdpCount, setPdpCount] = useState(0);
   const [paymentSummary, setPaymentSummary] = useState({
     pi: 0,
     eth: 0,
@@ -31,7 +33,7 @@ export default function AdminVault() {
           fetchFeeLogs(),
           fetchAuditLogs(),
           fetchUserCount(),
-          fetchApdCount(),
+          fetchPdpCount(),
           fetchPaymentSummary(),
         ]);
       } catch (err) {
@@ -118,12 +120,12 @@ export default function AdminVault() {
     }
   }, []);
 
-  const fetchApdCount = useCallback(async () => {
+  const fetchPdpCount = useCallback(async () => {
     try {
-      const res = await axios.get('/api/admin/apdSubmissions');
-      setApdCount(res.data.count);
+      const res = await axios.get('/api/admin/pdpSubmissions');
+      setPdpCount(res.data.count);
     } catch (err) {
-      console.error('APD submission count error:', err);
+      console.error('PDP submission count error:', err);
     }
   }, []);
 
@@ -141,6 +143,10 @@ export default function AdminVault() {
     return f.payoutStatus === filter;
   }), [filings, filter]);
 
+  const handleBackToLogin = () => {
+    navigate('/login');
+  };
+
   if (loading) return <p>Loading admin data...</p>;
   if (error) return <p>{error}</p>;
 
@@ -150,7 +156,7 @@ export default function AdminVault() {
 
       <section className="stats">
         <p>👥 Total Users: <strong>{userCount.toLocaleString()}</strong></p>
-        <p>📤 Submitted to APD: <strong>{apdCount.toLocaleString()}</strong></p>
+        <p>📤 Submitted to PDP: <strong>{pdpCount.toLocaleString()}</strong></p>
       </section>
 
       <label>
@@ -256,6 +262,8 @@ export default function AdminVault() {
           ))}
         </ul>
       </section>
+
+      <button onClick={() => navigate('/login')}>Back to Login</button>
 
       <style jsx>{`
         .admin-vault {
