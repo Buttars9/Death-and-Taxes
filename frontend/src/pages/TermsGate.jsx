@@ -29,17 +29,19 @@ export default function TermsGate() {
     console.log('Agreed state changed to:', agreed);
   }, [agreed]);
 
-const handleContinue = () => {
+const handleContinue = async () => {
   console.log('✅ Button clicked');
   setIsLoading(true);
-  acceptTerms(); // ✅ Update store
-  localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
-  console.log('✅ localStorage updated');
+  localStorage.setItem('hasAcceptedTerms', 'true'); // ✅ Store flag
 
-  // ✅ Delay navigation slightly to allow store to sync
-  setTimeout(() => {
-    navigate('/dashboard');
-  }, 100); // 100ms delay
+  try {
+    await acceptTerms(); // ✅ Wait for store update
+    console.log('✅ Store updated');
+  } catch (err) {
+    console.error('❌ Failed to accept terms:', err);
+  }
+
+  navigate('/dashboard'); // ✅ Force redirect
 };
 
   return (
