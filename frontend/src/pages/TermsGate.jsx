@@ -23,6 +23,11 @@ export default function TermsGate() {
     }
   }, [hasAcceptedTerms, navigate]);
 
+  // Added for debugging: Log when agreed changes
+  useEffect(() => {
+    console.log('Agreed state changed to:', agreed);
+  }, [agreed]);
+
 const handleContinue = () => {
   console.log('✅ Button clicked');
   setIsLoading(true);
