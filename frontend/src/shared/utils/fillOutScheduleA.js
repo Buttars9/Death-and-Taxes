@@ -12,13 +12,13 @@ export async function fillOutScheduleA(payload) {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const pageHeight = page.getHeight(); // Typically 792 for letter size
 
-  const draw = (label, value, x, yFromTop, size = 10, align = 'left') => {
-    const offset = Math.floor(size * 0.8); // Adjusted offset for better alignment
+  const draw = (label, value, x, yFromTop, size = 9, align = 'left') => {
+    const offset = Math.floor(size * 1.2); // Increased offset
     const adjustedY = pageHeight - yFromTop - offset;
     let adjustedX = x;
     if (align === 'right') {
       const width = font.widthOfTextAtSize(String(value), size);
-      adjustedX -= width;
+      adjustedX -= width + 5;
     } else if (align === 'center') {
       const width = font.widthOfTextAtSize(String(value), size);
       adjustedX -= width / 2;
@@ -34,37 +34,37 @@ export async function fillOutScheduleA(payload) {
   };
 
   // Header (Page 1)
-  draw('Name', payload?.taxpayer?.fullName || '—', 100, 740); // Name at top
-  draw('SSN', payload?.taxpayer?.ssn || '—', 400, 740, 10, 'right'); // SSN, right-aligned
+  draw('Name', payload?.taxpayer?.fullName || '—', 100, 745); // Adjusted y
+  draw('SSN', payload?.taxpayer?.ssn || '—', 400, 745, 9, 'right'); // Adjusted y
 
   // Medical and Dental Expenses (Lines 1-4)
   const medical = payload?.deductions?.items?.find(d => d.type === 'medical')?.amount || 0;
-  draw('Medical Expenses Line 1', `$${medical.toLocaleString()}`, 500, 700, 10, 'right'); // Line 1
+  draw('Medical Expenses Line 1', `$${medical.toLocaleString()}`, 500, 705, 9, 'right'); // Adjusted y
 
   // Taxes You Paid (Lines 5-7)
   const stateLocalTaxes = payload?.deductions?.items?.find(d => d.type === 'stateLocalTaxes')?.amount || 0;
-  draw('Taxes Line 5', `$${stateLocalTaxes.toLocaleString()}`, 500, 680, 10, 'right'); // Line 5a or total
+  draw('Taxes Line 5', `$${stateLocalTaxes.toLocaleString()}`, 500, 685, 9, 'right'); // Adjusted y
 
   // Interest You Paid (Lines 8-10)
   const mortgageInterest = payload?.deductions?.items?.find(d => d.type === 'mortgageInterest')?.amount || 0;
-  draw('Interest Line 8', `$${mortgageInterest.toLocaleString()}`, 500, 660, 10, 'right'); // Line 8
+  draw('Interest Line 8', `$${mortgageInterest.toLocaleString()}`, 500, 665, 9, 'right'); // Adjusted y
 
   // Gifts to Charity (Lines 11-14)
   const charitableGifts = payload?.deductions?.items?.find(d => d.type === 'charitableGifts')?.amount || 0;
-  draw('Gifts Line 11', `$${charitableGifts.toLocaleString()}`, 500, 640, 10, 'right'); // Line 11
+  draw('Gifts Line 11', `$${charitableGifts.toLocaleString()}`, 500, 645, 9, 'right'); // Adjusted y
 
   // Casualty and Theft Losses (Line 15)
   // Add if data available; placeholder
-  draw('Casualty Line 15', '$0', 500, 620, 10, 'right');
+  draw('Casualty Line 15', '$0', 500, 625, 9, 'right'); // Adjusted y
 
   // Other Itemized Deductions (Line 16)
   const otherItemized = payload?.deductions?.items?.filter(d => !['medical', 'stateLocalTaxes', 'mortgageInterest', 'charitableGifts'].includes(d.type))
     .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-  draw('Other Line 16', `$${otherItemized.toLocaleString()}`, 500, 600, 10, 'right');
+  draw('Other Line 16', `$${otherItemized.toLocaleString()}`, 500, 605, 9, 'right'); // Adjusted y
 
   // Total Itemized Deductions (Line 17)
   const totalItemized = payload?.deductions?.amount || 0;
-  draw('Total Line 17', `$${totalItemized.toLocaleString()}`, 500, 580, 10, 'right');
+  draw('Total Line 17', `$${totalItemized.toLocaleString()}`, 500, 585, 9, 'right'); // Adjusted y
 
   return pdfDoc;
 }
