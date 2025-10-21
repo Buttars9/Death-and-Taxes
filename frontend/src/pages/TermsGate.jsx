@@ -11,6 +11,7 @@ export default function TermsGate() {
   const navigate = useNavigate(); // Added for navigation
 
   useEffect(() => {
+    console.log('TermsGate component mounted');
     const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
     if (storedAcceptance && !hasAcceptedTerms) {
       acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
@@ -100,7 +101,10 @@ const handleContinue = () => {
           <input
             type="checkbox"
             checked={agreed}
-            onChange={() => setAgreed((prev) => !prev)}
+            onChange={() => {
+              console.log('Checkbox clicked');
+              setAgreed((prev) => !prev);
+            }}
           />
           I agree to the terms and conditions above.
         </label>
