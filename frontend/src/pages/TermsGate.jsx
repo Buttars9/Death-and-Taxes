@@ -10,6 +10,15 @@ export default function TermsGate() {
   const hasAcceptedTerms = useAuthStore((s) => s.termsAccepted);
   const navigate = useNavigate(); // Added for navigation
 
+  useEffect(() => {
+    const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+    if (hasAcceptedTerms || storedAcceptance) {
+      if (storedAcceptance && !hasAcceptedTerms) {
+        acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
+      }
+      navigate('/dashboard');
+    }
+  }, [hasAcceptedTerms, navigate, acceptTerms]);
 
 const handleContinue = () => {
   console.log('✅ Button clicked');
@@ -48,7 +57,7 @@ const handleContinue = () => {
           <li>Refund delivery timelines are controlled solely by the IRS, state agencies, and your financial institution. This platform does not guarantee refund speed, and is not responsible for delays caused by IRS review, identity verification, or banking issues.</li>
           <li>PDP Tax Service acts solely as a transmission provider. This platform is responsible for generating your return and ensuring its accuracy prior to submission.</li>
           <li>This platform operates under U.S. jurisdiction and complies with IRS and state reporting standards.</li>
-          <li>You accept that all communications, transactions, and audit logs may be retained for legal and regulatory review.</li>
+          <li>You agree that all communications, transactions, and audit logs may be retained for legal and regulatory review.</li>
         </ul>
 
         <h3>🧾 Retention & Compatibility</h3>
