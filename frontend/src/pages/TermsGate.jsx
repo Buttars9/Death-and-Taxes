@@ -12,20 +12,25 @@ export default function TermsGate() {
 
   useEffect(() => {
     const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
-    if (hasAcceptedTerms || storedAcceptance) {
-      if (storedAcceptance && !hasAcceptedTerms) {
-        acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
-      }
+    if (storedAcceptance && !hasAcceptedTerms) {
+      acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
+    }
+  }, [acceptTerms, hasAcceptedTerms]);
+
+  useEffect(() => {
+    if (hasAcceptedTerms) {
       navigate('/dashboard');
     }
-  }, [hasAcceptedTerms, navigate, acceptTerms]);
+  }, [hasAcceptedTerms, navigate]);
 
 const handleContinue = () => {
   console.log('✅ Button clicked');
+  setIsLoading(true);
   acceptTerms(); // ✅ Update store
   localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
   console.log('✅ localStorage updated');
-  navigate('/dashboard'); // ✅ Route
+  // Navigation is handled by useEffect after store update
+  setIsLoading(false);
 };
 
   return (
