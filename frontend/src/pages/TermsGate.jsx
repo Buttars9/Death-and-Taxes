@@ -35,7 +35,11 @@ const handleContinue = () => {
   acceptTerms(); // ✅ Update store
   localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
   console.log('✅ localStorage updated');
-  navigate('/dashboard');
+
+  // ✅ Delay navigation slightly to allow store to sync
+  setTimeout(() => {
+    navigate('/dashboard');
+  }, 100); // 100ms delay
 };
 
   return (
