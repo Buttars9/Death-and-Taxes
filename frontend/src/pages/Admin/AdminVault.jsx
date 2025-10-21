@@ -8,7 +8,7 @@ export default function AdminVault() {
   const [feeLogs, setFeeLogs] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [userCount, setUserCount] = useState(0);
-  const [drakeCount, setDrakeCount] = useState(0);
+  const [apdCount, setApdCount] = useState(0);
   const [paymentSummary, setPaymentSummary] = useState({
     pi: 0,
     eth: 0,
@@ -31,7 +31,7 @@ export default function AdminVault() {
           fetchFeeLogs(),
           fetchAuditLogs(),
           fetchUserCount(),
-          fetchDrakeCount(),
+          fetchApdCount(),
           fetchPaymentSummary(),
         ]);
       } catch (err) {
@@ -58,7 +58,6 @@ export default function AdminVault() {
       fetchVault();
     } catch (err) {
       console.error('Status update error:', err);
-      alert('Failed to update status.');
     }
   }, [fetchVault]);
 
@@ -71,7 +70,6 @@ export default function AdminVault() {
       fetchVault();
     } catch (err) {
       console.error('Pi payment confirm error:', err);
-      alert('Failed to confirm payment.');
     }
   }, [fetchVault]);
 
@@ -81,7 +79,6 @@ export default function AdminVault() {
       alert('Wallets saved.');
     } catch (err) {
       console.error('Wallet save error:', err);
-      alert('Failed to save wallets.');
     }
   }, [wallets]);
 
@@ -121,12 +118,12 @@ export default function AdminVault() {
     }
   }, []);
 
-  const fetchDrakeCount = useCallback(async () => {
+  const fetchApdCount = useCallback(async () => {
     try {
-      const res = await axios.get('/api/admin/drakeSubmissions');
-      setDrakeCount(res.data.count);
+      const res = await axios.get('/api/admin/apdSubmissions');
+      setApdCount(res.data.count);
     } catch (err) {
-      console.error('Drake submission count error:', err);
+      console.error('APD submission count error:', err);
     }
   }, []);
 
@@ -139,7 +136,10 @@ export default function AdminVault() {
     }
   }, []);
 
-  const filteredFilings = useMemo(() => filings.filter((f) => filter === 'All' || f.payoutStatus === filter), [filings, filter]);
+  const filteredFilings = useMemo(() => filings.filter((f) => {
+    if (filter === 'All') return true;
+    return f.payoutStatus === filter;
+  }), [filings, filter]);
 
   if (loading) return <p>Loading admin data...</p>;
   if (error) return <p>{error}</p>;
@@ -150,7 +150,7 @@ export default function AdminVault() {
 
       <section className="stats">
         <p>👥 Total Users: <strong>{userCount.toLocaleString()}</strong></p>
-        <p>📤 Submitted to Drake: <strong>{drakeCount.toLocaleString()}</strong></p>
+        <p>📤 Submitted to APD: <strong>{apdCount.toLocaleString()}</strong></p>
       </section>
 
       <label>
@@ -187,7 +187,7 @@ export default function AdminVault() {
                 <td>{f.payoutStatus || '—'}</td>
                 <td>{f.payoutQueuedAt ? new Date(f.payoutQueuedAt).toLocaleString() : '—'}</td>
                 <td>
-                  {f?.piSenderAddress ? (
+                  {f.piSenderAddress ? (
                     <span style={{ color: '#78c1ff' }}>
                       🔔 {f.piSenderAddress}
                     </span>
@@ -196,9 +196,9 @@ export default function AdminVault() {
                 <td>
                   <button onClick={() => updateStatus(f.id, 'Completed')}>✔️ Mark Completed</button>
                   <button onClick={() => updateStatus(f.id, 'Failed')}>❌ Mark Failed</button>
-                  {f?.piSenderAddress && !f?.paymentConfirmed && (
-  <button onClick={() => confirmPiPayment(f.id)}>✅ Confirm Pi Payment</button>
-)}
+                  {f.piSenderAddress && !f.paymentConfirmed && (
+                    <button onClick={() => confirmPiPayment(f.id)}>✅ Confirm Pi Payment</button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -256,6 +256,75 @@ export default function AdminVault() {
           ))}
         </ul>
       </section>
+
+      <style jsx>{`
+        .admin-vault {
+          padding: 2rem;
+          background: #0f131f;
+          color: #e1e8fc;
+          border-radius: 12px;
+          box-shadow: 0 0 25px rgba(118, 198, 255, 0.3);
+        }
+        table {
+          width: 100%;
+          margin-top: 1rem;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 0.5rem;
+          border-bottom: 1px solid #2c3448;
+        }
+        .wallet-manager, .payment-summary, .fee-log, .audit-log {
+          margin-top: 2rem;
+          background: #1c2232;
+          padding: 1rem;
+          border-radius: 10px;
+          box-shadow: 0 0 15px rgba(72, 178, 255, 0.2);
+        }
+        input {
+          margin-left: 0.5rem;
+          padding: 0.5rem;
+          border-radius: 6px;
+          border: none;
+          background: #2c3448;
+          color: #e1e8fc;
+        }
+        button {
+          margin-top: 0.5rem;
+          background: #1e2a3f;
+          color: #e1e8fc;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: 0 0 10px rgba(118, 198, 255, 0.2);
+        }
+        h3 {
+          color: #78c1ff;
+        }
+        @media (max-width: 768px) {
+          .admin-vault {
+            padding: 1rem;
+          }
+          table {
+            overflow-x: auto;
+            display: block;
+          }
+          th, td {
+            padding: 0.4rem;
+          }
+          .wallet-manager, .payment-summary, .fee-log, .audit-log {
+            padding: 0.75rem;
+          }
+          input {
+            margin-left: 0;
+            width: 100%;
+          }
+          button {
+            width: 100%;
+          }
+        }
+      `}</style>
     </div>
   );
 }
