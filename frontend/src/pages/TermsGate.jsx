@@ -11,12 +11,12 @@ export default function TermsGate() {
   const navigate = useNavigate(); // Added for navigation
 
   useEffect(() => {
-    console.log('TermsGate component mounted');
-    const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
-    if (storedAcceptance && !hasAcceptedTerms) {
-      acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
-    }
-  }, [acceptTerms, hasAcceptedTerms]);
+  console.log('TermsGate component mounted');
+  const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+  if (storedAcceptance) {
+    acceptTerms(); // Always sync store from localStorage
+  }
+}, [acceptTerms]);
 
   useEffect(() => {
     if (hasAcceptedTerms) {
