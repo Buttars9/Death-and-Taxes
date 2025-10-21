@@ -144,7 +144,7 @@ export default function AdminVault() {
   }), [filings, filter]);
 
   const handleBackToLogin = () => {
-    navigate('/login');
+    navigate('/');
   };
 
   if (loading) return <p>Loading admin data...</p>;
@@ -263,7 +263,7 @@ export default function AdminVault() {
         </ul>
       </section>
 
-      <button onClick={() => navigate('/login')}>Back to Login</button>
+      <button onClick={handleBackToLogin}>Back to Login</button>
 
       <style jsx>{`
         .admin-vault {

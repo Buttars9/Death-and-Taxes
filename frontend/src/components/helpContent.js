@@ -157,7 +157,7 @@ export const helpContent = {
 
   submissionCompleteStep: {
   title: 'Submission Complete Overview',
-  body: 'Your filing is queued. Download receipts, previews, or submit to Drake. Use dashboard for status updates.',
+  body: 'Your filing is queued. Download receipts, previews, or submit to PDP. Use dashboard for status updates.',
 },
 
   income: {
