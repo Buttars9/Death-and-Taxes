@@ -38,11 +38,10 @@ export const useAuthStore = create((set, get) => ({
       console.warn('Session rehydration failed:', err.message || err);
       set({ user: null, isAuthenticated: false });
     } finally {
-      const legacyTerms = localStorage.getItem('termsAccepted');
-      if (legacyTerms === 'true' && !get().termsAccepted) {
-        set({ termsAccepted: true });
-        localStorage.removeItem('termsAccepted'); // Clean up old key
-      }
+    const legacyTerms = localStorage.getItem('hasAcceptedTerms');
+if (legacyTerms === 'true' && !get().termsAccepted) {
+  set({ termsAccepted: true });
+}
     }
   },
 
