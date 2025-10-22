@@ -22,7 +22,8 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       console.warn('Logout error:', err.message || err);
     } finally {
-      set({ user: null, isAuthenticated: false });
+      set({ user: null, isAuthenticated: false, termsAccepted: false });
+      localStorage.removeItem('hasAcceptedTerms');
     }
   },
 
@@ -38,10 +39,10 @@ export const useAuthStore = create((set, get) => ({
       console.warn('Session rehydration failed:', err.message || err);
       set({ user: null, isAuthenticated: false });
     } finally {
-    const legacyTerms = localStorage.getItem('hasAcceptedTerms');
-if (legacyTerms === 'true' && !get().termsAccepted) {
-  set({ termsAccepted: true });
-}
+      const legacyTerms = localStorage.getItem('hasAcceptedTerms');
+      if (legacyTerms === 'true' && !get().termsAccepted) {
+        set({ termsAccepted: true });
+      }
     }
   },
 

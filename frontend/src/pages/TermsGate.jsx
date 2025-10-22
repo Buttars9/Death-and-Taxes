@@ -11,15 +11,21 @@ export default function TermsGate() {
   const navigate = useNavigate(); // Added for navigation
 
   useEffect(() => {
-  console.log('TermsGate component mounted');
-  const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
-  if (storedAcceptance) {
-    acceptTerms(); // Always sync store from localStorage
-  }
-}, [acceptTerms]);
+    console.log('TermsGate mounted. Initial hasAcceptedTerms:', hasAcceptedTerms);
+    console.log('LocalStorage hasAcceptedTerms:', localStorage.getItem('hasAcceptedTerms'));
+    const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+    if (storedAcceptance && !hasAcceptedTerms) {
+      console.log('Syncing store from localStorage');
+      acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
+    } else if (!storedAcceptance) {
+      console.log('No stored acceptance, user needs to agree');
+    }
+  }, [acceptTerms, hasAcceptedTerms]);
 
   useEffect(() => {
+    console.log('hasAcceptedTerms changed to:', hasAcceptedTerms);
     if (hasAcceptedTerms) {
+      console.log('Navigating to dashboard due to hasAcceptedTerms true');
       navigate('/dashboard');
     }
   }, [hasAcceptedTerms, navigate]);
@@ -29,19 +35,13 @@ export default function TermsGate() {
     console.log('Agreed state changed to:', agreed);
   }, [agreed]);
 
-const handleContinue = async () => {
-  console.log('✅ Button clicked');
+const handleContinue = () => {
+  console.log('✅ Button clicked. Current hasAcceptedTerms:', hasAcceptedTerms);
   setIsLoading(true);
-  localStorage.setItem('hasAcceptedTerms', 'true'); // ✅ Store flag
-
-  try {
-    await acceptTerms(); // ✅ Wait for store update
-    console.log('✅ Store updated');
-  } catch (err) {
-    console.error('❌ Failed to accept terms:', err);
-  }
-
-  navigate('/dashboard'); // ✅ Force redirect
+  acceptTerms(); // ✅ Update store
+  localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
+  console.log('✅ localStorage updated to true');
+  navigate('/dashboard');
 };
 
   return (
