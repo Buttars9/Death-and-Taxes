@@ -9,10 +9,10 @@ const initPiSDK = () => {
       try {
         console.log('VITE_IS_TESTNET from env:', import.meta.env.VITE_IS_TESTNET);
         const isTestnet = import.meta.env.VITE_IS_TESTNET === 'true';
-        console.log('Initializing Pi SDK with sandbox:', isTestnet);
+        console.log('Initializing Pi SDK with sandbox: false (forced for production)');
         window.Pi.init({
           version: '2.0',
-          sandbox: isTestnet
+          sandbox: false  // Forced to false for production to avoid origin mismatch
         });
         console.log('Pi SDK initialized:', window.Pi);
         console.log('Pi SDK sandbox mode:', window.Pi.sandbox);
