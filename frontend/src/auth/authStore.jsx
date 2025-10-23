@@ -9,8 +9,8 @@ const api = axios.create({
 });
 
 export const useAuthStore = create(
-  persist(
-    subscribeWithSelector( // Added middleware for selector-based subscribe
+  subscribeWithSelector( // Switched order: subscribeWithSelector outer, persist inner
+    persist(
       (set, get) => ({
         user: null,
         isAuthenticated: false,
@@ -134,15 +134,15 @@ export const useAuthStore = create(
             }
           });
         },
-      })
-    ),
-    {
-      name: 'auth-storage', // localStorage key
-      partialize: (state) => ({
-        termsAccepted: state.termsAccepted,
-        isAuthenticated: state.isAuthenticated,
-        hasRehydrated: state.hasRehydrated,
       }),
-    }
+      {
+        name: 'auth-storage', // localStorage key
+        partialize: (state) => ({
+          termsAccepted: state.termsAccepted,
+          isAuthenticated: state.isAuthenticated,
+          hasRehydrated: state.hasRehydrated,
+        }),
+      }
+    )
   )
 );
