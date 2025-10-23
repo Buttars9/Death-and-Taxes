@@ -37,44 +37,41 @@ logout: async () => {
   }
 },
 
-        rehydrate: async () => {
-          const { hasRehydrated, isAuthenticated } = get();
-          if (hasRehydrated) {
-            console.log('🔁 Skipping rehydrate — already run');
-            return;
-          }
+     rehydrate: async () => {
+  const { hasRehydrated } = get();
+  if (hasRehydrated) {
+    console.log('🔁 Skipping rehydrate — already run');
+    return;
+  }
 
-          try {
-            const { data } = await api.get('/api/me', { timeout: 30000 }); // Increased timeout to allow for spin-up
-            if (data?.user) {
-              set({ user: data.user, isAuthenticated: true });
-            } else if (!isAuthenticated) {
-              set({ user: null, isAuthenticated: false });
-            }
-          } catch (err) {
-            console.warn('Session rehydration failed:', err.message || err);
-            const legacyTerms = localStorage.getItem('hasAcceptedTerms') === 'true';
-            if (!isAuthenticated) {
-              set({
-                user: null,
-                isAuthenticated: legacyTerms, // ✅ fallback to allow TermsGate routing
-                termsAccepted: legacyTerms,
-              });
-            }
-          } finally {
-            set({ hasRehydrated: true }); // ✅ Mark rehydration complete
-          }
-        },
+  try {
+    const { data } = await api.get('/api/me', { timeout: 30000 });
+    if (data?.user) {
+      set({ user: data.user, isAuthenticated: true });
+    } else {
+      set({ user: null, isAuthenticated: false });
+    }
+  } catch (err) {
+    console.warn('Session rehydration failed:', err.message || err);
+    set({ user: null, isAuthenticated: false });
+  } finally {
+    set({ hasRehydrated: true }); // ✅ Always mark rehydration complete
+  }
+},
 
         acceptTerms: () => {
-          const { termsAccepted } = get();
-          if (termsAccepted) {
-            console.log('🛑 acceptTerms skipped — already true');
-            return;
-          }
-          console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
-          set({ termsAccepted: true, isAuthenticated: true });
-        },
+  console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
+  set((state) => {
+    if (state.termsAccepted) {
+      console.log('🛑 acceptTerms skipped — already true');
+      return {};
+    }
+    return {
+      termsAccepted: true,
+      isAuthenticated: true,
+    };
+  });
+},
 
         authenticateWithPi: async () => {
           return new Promise((resolve, reject) => {
