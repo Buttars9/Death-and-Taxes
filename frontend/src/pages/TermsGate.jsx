@@ -121,23 +121,23 @@ const handleContinue = () => {
         </label>
 
         <button
-          type="button"
-          onClick={handleContinue}
-          disabled={!agreed || isLoading}
-          style={{
-            background: '#72caff',
-            color: '#0f131f',
-            padding: '0.5rem 1rem',
-            borderRadius: '6px',
-            border: 'none',
-            fontWeight: 'bold',
-            marginTop: '2rem',
-            opacity: (agreed && !isLoading) ? 1 : 0.5,
-            cursor: (agreed && !isLoading) ? 'pointer' : 'not-allowed',
-          }}
-        >
-          {isLoading ? 'Processing...' : 'Agree & Continue'}
-        </button>
+  type="button"
+  onClick={handleContinue}
+  disabled={!agreed || isLoading || termsAccepted}
+  style={{
+    background: '#72caff',
+    color: '#0f131f',
+    padding: '0.5rem 1rem',
+    borderRadius: '6px',
+    border: 'none',
+    fontWeight: 'bold',
+    marginTop: '2rem',
+    opacity: (agreed && !isLoading && !termsAccepted) ? 1 : 0.5,
+    cursor: (agreed && !isLoading && !termsAccepted) ? 'pointer' : 'not-allowed',
+  }}
+>
+  {isLoading ? 'Processing...' : 'Agree & Continue'}
+</button>
       </div>
 
       <style jsx>{`
