@@ -18,29 +18,8 @@ import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
   const hasRehydrated = useAuthStore((s) => s.hasRehydrated);
-  const [isAuthenticated, setIsAuthenticated] = useState(useAuthStore.getState().isAuthenticated);
-  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(useAuthStore.getState().termsAccepted);
-
-  useEffect(() => {
-    const unsubAuth = useAuthStore.subscribe(
-      (state) => state.isAuthenticated,
-      (value) => {
-        console.log('📡 AppRoutes: isAuthenticated changed to', value);
-        setIsAuthenticated(value);
-      }
-    );
-    const unsubTerms = useAuthStore.subscribe(
-      (state) => state.termsAccepted,
-      (value) => {
-        console.log('📡 AppRoutes: termsAccepted changed to', value);
-        setHasAgreedToTerms(value);
-      }
-    );
-    return () => {
-      unsubAuth();
-      unsubTerms();
-    };
-  }, []);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted);
 
   useEffect(() => {
     const snapshot = useAuthStore.getState();

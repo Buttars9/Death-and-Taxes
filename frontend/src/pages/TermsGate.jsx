@@ -8,7 +8,7 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(useAuthStore.getState().termsAccepted);
+  const hasAcceptedTerms = useAuthStore((s) => s.termsAccepted);
   const navigate = useNavigate();
   const isMounted = useRef(true);
 
