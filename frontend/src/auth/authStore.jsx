@@ -19,7 +19,7 @@ export const useAuthStore = create(
 
         setUser: (user) => set({ user, isAuthenticated: !!user }),
 
-       logout: async () => {
+    logout: async () => {
   console.log('🚪 logout() called — clearing session and store');
   try {
     await api.post('/api/logout', null, {
@@ -35,10 +35,11 @@ export const useAuthStore = create(
     set({
       user: null,
       isAuthenticated: false,
+      termsAccepted: false, // ✅ Reset this explicitly
       hasRehydrated: false,
     });
     console.log('🧾 Store after logout:', get());
-    window.location.href = '/'; // ✅ Force reroute to trigger AppRoutes
+    window.location.href = '/';
   }
 },
 
