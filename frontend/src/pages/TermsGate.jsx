@@ -22,13 +22,13 @@ export default function TermsGate() {
     }
   }, [acceptTerms, hasAcceptedTerms]);
 
-  useEffect(() => {
-    console.log('hasAcceptedTerms changed to:', hasAcceptedTerms);
-    if (hasAcceptedTerms) {
-      console.log('Navigating to dashboard due to hasAcceptedTerms true');
-      navigate('/dashboard');
-    }
-  }, [hasAcceptedTerms, navigate]);
+useEffect(() => {
+  console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);
+  if (hasAcceptedTerms) {
+    console.log('🚀 Redirecting to dashboard');
+    navigate('/dashboard');
+  }
+}, [hasAcceptedTerms, navigate]);
 
   // Added for debugging: Log when agreed changes
   useEffect(() => {
