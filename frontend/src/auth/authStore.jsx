@@ -32,7 +32,7 @@ export const useAuthStore = create(
       },
 
       rehydrate: async () => {
-        const { hasRehydrated } = get();
+        const { hasRehydrated, isAuthenticated } = get();
         if (hasRehydrated) {
           console.log('🔁 Skipping rehydrate — already run');
           return;
@@ -42,17 +42,19 @@ export const useAuthStore = create(
           const { data } = await api.get('/api/me'); // ✅ Session rehydration
           if (data?.user) {
             set({ user: data.user, isAuthenticated: true });
-          } else {
+          } else if (!isAuthenticated) {
             set({ user: null, isAuthenticated: false });
           }
         } catch (err) {
           console.warn('Session rehydration failed:', err.message || err);
           const legacyTerms = localStorage.getItem('hasAcceptedTerms') === 'true';
-          set({
-            user: null,
-            isAuthenticated: legacyTerms, // ✅ fallback to allow TermsGate routing
-            termsAccepted: legacyTerms,
-          });
+          if (!isAuthenticated) {
+            set({
+              user: null,
+              isAuthenticated: legacyTerms, // ✅ fallback to allow TermsGate routing
+              termsAccepted: legacyTerms,
+            });
+          }
         } finally {
           set({ hasRehydrated: true }); // ✅ Mark rehydration complete
         }
