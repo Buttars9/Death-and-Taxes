@@ -30,7 +30,8 @@ export default function TermsGate() {
   useEffect(() => {
     console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);
     // Removed redirect useEffect here - handled in subscription now
-  }, [hasAcceptedTerms]);
+  }, [termsAccepted]);
+
 
   // Added for debugging: Log when agreed changes
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function TermsGate() {
   }, [agreed]);
 
   const handleContinue = () => {
-    console.log('✅ Button clicked. Current hasAcceptedTerms:', hasAcceptedTerms);
+    console.log('✅ Button clicked. Current termsAccepted:', termsAccepted);
     setIsLoading(true);
 
     localStorage.setItem('hasAcceptedTerms', 'true');
