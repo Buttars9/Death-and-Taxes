@@ -17,30 +17,10 @@ import ResetPassword from './pages/ResetPassword.jsx';
 import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
+  // FIX: Use Zustand selectors directly for re-renders on store changes (simplifies, removes need for useState/subscribe)
   const hasRehydrated = useAuthStore((s) => s.hasRehydrated);
-  const [isAuthenticated, setIsAuthenticated] = useState(useAuthStore.getState().isAuthenticated);
-  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(useAuthStore.getState().termsAccepted);
-
-  useEffect(() => {
-    const unsubAuth = useAuthStore.subscribe(
-      (state) => state.isAuthenticated,
-      (value) => {
-        console.log('📡 AppRoutes subscription: isAuthenticated changed to', value);
-        setIsAuthenticated(value);
-      }
-    );
-    const unsubTerms = useAuthStore.subscribe(
-      (state) => state.termsAccepted,
-      (value) => {
-        console.log('📡 AppRoutes subscription: termsAccepted changed to', value);
-        setHasAgreedToTerms(value);
-      }
-    );
-    return () => {
-      unsubAuth();
-      unsubTerms();
-    };
-  }, []);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted);
 
   const hasWizardData = !!localStorage.getItem('wizard-store');
 

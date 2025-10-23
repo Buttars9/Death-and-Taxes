@@ -1,79 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Added for navigation
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { flushSync } from 'react-dom'; // Added for synchronous state flush to resolve race
 import GlowingBox from "../components/GlowingBox";
 import { useAuthStore } from '../auth/authStore.jsx'; // Adjust path if needed
 
 export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Added to prevent double-clicks and show feedback
+  const [isLoading, setIsLoading] = useState(false);
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(useAuthStore.getState().termsAccepted);
+  const navigate = useNavigate();
+  const isMounted = useRef(true);
 
-useEffect(() => {
-  const unsub = useAuthStore.subscribe(
-    (state) => state.termsAccepted,
-    (value) => {
-      console.log('📡 Store subscription: termsAccepted changed to', value);
-      setHasAcceptedTerms(value);
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsub = useAuthStore.subscribe(
+      (state) => state.termsAccepted,
+      (value) => {
+        console.log('📡 Store subscription: termsAccepted changed to', value);
+        flushSync(() => setHasAcceptedTerms(value)); // FIX: Force synchronous re-render to resolve race condition
+        if (value) {
+          console.log('🚀 Redirecting from subscription to dashboard');
+          navigate('/dashboard');
+        }
+      }
+    );
+    return () => unsub();
+  }, [navigate]);
+
+  useEffect(() => {
+    const storeState = useAuthStore.getState();
+    const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+
+    console.log('TermsGate mounted. Initial hasAcceptedTerms:', storeState.termsAccepted);
+    console.log('LocalStorage hasAcceptedTerms:', storedAcceptance);
+
+    if (storedAcceptance && !storeState.termsAccepted) {
+      console.log('🧪 Store termsAccepted before sync:', storeState.termsAccepted);
+      console.log('Syncing store from localStorage');
+      storeState.acceptTerms(); // ✅ call directly from store to avoid stale closure
+    } else if (!storedAcceptance) {
+      console.log('No stored acceptance, user needs to agree');
     }
-  );
-  return () => unsub();
-}, []);
-  const navigate = useNavigate(); // Added for navigation
 
-useEffect(() => {
-  const storeState = useAuthStore.getState();
-  const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+    console.log('🧪 Final store state after mount:', useAuthStore.getState());
+  }, []);
 
-  console.log('TermsGate mounted. Initial hasAcceptedTerms:', storeState.termsAccepted);
-  console.log('LocalStorage hasAcceptedTerms:', storedAcceptance);
-
-  if (storedAcceptance && !storeState.termsAccepted) {
-    console.log('🧪 Store termsAccepted before sync:', storeState.termsAccepted);
-    console.log('Syncing store from localStorage');
-    storeState.acceptTerms(); // ✅ call directly from store to avoid stale closure
-  } else if (!storedAcceptance) {
-    console.log('No stored acceptance, user needs to agree');
-  }
-
-  console.log('🧪 Final store state after mount:', useAuthStore.getState());
-}, []);
-
-useEffect(() => {
-  console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);
-  if (hasAcceptedTerms) {
-    console.log('🚀 Redirecting to dashboard');
-    navigate('/dashboard');
-  }
-}, [hasAcceptedTerms, navigate]);
+  useEffect(() => {
+    console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);
+    // Removed redirect useEffect here - handled in subscription now
+  }, [hasAcceptedTerms]);
 
   // Added for debugging: Log when agreed changes
   useEffect(() => {
     console.log('Agreed state changed to:', agreed);
   }, [agreed]);
 
-const handleContinue = async () => {
-  console.log('✅ Button clicked. Current hasAcceptedTerms:', hasAcceptedTerms);
-  setIsLoading(true);
+  const handleContinue = () => {
+    console.log('✅ Button clicked. Current hasAcceptedTerms:', hasAcceptedTerms);
+    setIsLoading(true);
 
-  localStorage.setItem('hasAcceptedTerms', 'true');
-  console.log('✅ localStorage updated to true');
+    localStorage.setItem('hasAcceptedTerms', 'true');
+    console.log('✅ localStorage updated to true');
 
-  acceptTerms(); // ✅ Update store
+    acceptTerms(); // Update store - subscription will handle navigation synchronously after flush
 
-  // Force re-check after short delay
-  setTimeout(() => {
-    const updated = useAuthStore.getState().termsAccepted;
-    console.log('🧪 Post-acceptTerms check: termsAccepted =', updated);
-    if (updated) {
-      console.log('🚀 Redirecting manually to dashboard');
-      navigate('/dashboard');
-    } else {
-      console.warn('❌ termsAccepted still false — retrying');
-    }
-    setIsLoading(false);
-  }, 100);
-};
+    // Removed timeout/manual redirect - no longer needed with flushSync in subscription
+    // Set loading false after a delay to allow unmount if needed
+    setTimeout(() => {
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+    }, 300);
+  };
 
   return (
     <GlowingBox>
@@ -149,7 +153,7 @@ const handleContinue = async () => {
         <button
           type="button"
           onClick={handleContinue}
-          disabled={!agreed || isLoading} // Disable if loading
+          disabled={!agreed || isLoading}
           style={{
             background: '#72caff',
             color: '#0f131f',
@@ -162,7 +166,7 @@ const handleContinue = async () => {
             cursor: (agreed && !isLoading) ? 'pointer' : 'not-allowed',
           }}
         >
-{isLoading ? 'Processing...' : 'Agree & Continue'}
+          {isLoading ? 'Processing...' : 'Agree & Continue'}
         </button>
       </div>
 
