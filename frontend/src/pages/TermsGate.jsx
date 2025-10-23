@@ -38,7 +38,7 @@ const handleContinue = () => {
   if (!termsAccepted) {
     acceptTerms(); // triggers Zustand update
   } else {
-    console.log('🛑 termsAccepted already true — forcing redirect');
+    console.log('🛑 Already accepted — forcing redirect');
     navigate('/dashboard'); // ✅ fallback redirect
   }
 
@@ -132,8 +132,8 @@ const handleContinue = () => {
     border: 'none',
     fontWeight: 'bold',
     marginTop: '2rem',
-    opacity: (agreed && !isLoading && !termsAccepted) ? 1 : 0.5,
-    cursor: (agreed && !isLoading && !termsAccepted) ? 'pointer' : 'not-allowed',
+    opacity: (!agreed || isLoading || termsAccepted) ? 0.5 : 1,
+    cursor: (!agreed || isLoading || termsAccepted) ? 'not-allowed' : 'pointer',
   }}
 >
   {isLoading ? 'Processing...' : 'Agree & Continue'}
