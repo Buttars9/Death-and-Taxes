@@ -21,19 +21,22 @@ useEffect(() => {
 }, []);
   const navigate = useNavigate(); // Added for navigation
 
- useEffect(() => {
-  console.log('TermsGate mounted. Initial hasAcceptedTerms:', useAuthStore.getState().termsAccepted);
-  console.log('LocalStorage hasAcceptedTerms:', localStorage.getItem('hasAcceptedTerms'));
-
-  const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+useEffect(() => {
   const storeState = useAuthStore.getState();
+  const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+
+  console.log('TermsGate mounted. Initial hasAcceptedTerms:', storeState.termsAccepted);
+  console.log('LocalStorage hasAcceptedTerms:', storedAcceptance);
 
   if (storedAcceptance && !storeState.termsAccepted) {
+    console.log('🧪 Store termsAccepted before sync:', storeState.termsAccepted);
     console.log('Syncing store from localStorage');
     storeState.acceptTerms(); // ✅ call directly from store to avoid stale closure
   } else if (!storedAcceptance) {
     console.log('No stored acceptance, user needs to agree');
   }
+
+  console.log('🧪 Final store state after mount:', useAuthStore.getState());
 }, []);
 
 useEffect(() => {

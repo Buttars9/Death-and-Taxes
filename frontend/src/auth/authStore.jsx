@@ -55,10 +55,15 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  acceptTerms: () => {
-    console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
-    set({ termsAccepted: true, isAuthenticated: true });
-  },
+ acceptTerms: () => {
+  const { termsAccepted } = get();
+  if (termsAccepted) {
+    console.log('🛑 acceptTerms skipped — already true');
+    return;
+  }
+  console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
+  set({ termsAccepted: true, isAuthenticated: true });
+},
 
   authenticateWithPi: async () => {
     return new Promise((resolve, reject) => {
