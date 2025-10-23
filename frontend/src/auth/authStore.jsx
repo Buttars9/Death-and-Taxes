@@ -35,15 +35,15 @@ export const useAuthStore = create((set, get) => ({
       } else {
         set({ user: null, isAuthenticated: false });
       }
-    } catch (err) {
-      console.warn('Session rehydration failed:', err.message || err);
-      set({ user: null, isAuthenticated: false });
-    } finally {
-      const legacyTerms = localStorage.getItem('hasAcceptedTerms');
-      if (legacyTerms === 'true' && !get().termsAccepted) {
-        set({ termsAccepted: true });
-      }
-    }
+   } catch (err) {
+  console.warn('Session rehydration failed:', err.message || err);
+  const legacyTerms = localStorage.getItem('hasAcceptedTerms') === 'true';
+  set({
+    user: null,
+    isAuthenticated: legacyTerms, // ✅ fallback to allow TermsGate routing
+    termsAccepted: legacyTerms,
+  });
+}
   },
 
   acceptTerms: () => set({ termsAccepted: true }), // New: Action to accept terms
