@@ -21,17 +21,20 @@ useEffect(() => {
 }, []);
   const navigate = useNavigate(); // Added for navigation
 
-  useEffect(() => {
-    console.log('TermsGate mounted. Initial hasAcceptedTerms:', hasAcceptedTerms);
-    console.log('LocalStorage hasAcceptedTerms:', localStorage.getItem('hasAcceptedTerms'));
-    const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
-    if (storedAcceptance && !hasAcceptedTerms) {
-      console.log('Syncing store from localStorage');
-      acceptTerms(); // Sync store if localStorage has it but store doesn't (e.g., after reload)
-    } else if (!storedAcceptance) {
-      console.log('No stored acceptance, user needs to agree');
-    }
-  }, [acceptTerms, hasAcceptedTerms]);
+ useEffect(() => {
+  console.log('TermsGate mounted. Initial hasAcceptedTerms:', useAuthStore.getState().termsAccepted);
+  console.log('LocalStorage hasAcceptedTerms:', localStorage.getItem('hasAcceptedTerms'));
+
+  const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
+  const storeState = useAuthStore.getState();
+
+  if (storedAcceptance && !storeState.termsAccepted) {
+    console.log('Syncing store from localStorage');
+    storeState.acceptTerms(); // ✅ call directly from store to avoid stale closure
+  } else if (!storedAcceptance) {
+    console.log('No stored acceptance, user needs to agree');
+  }
+}, []);
 
 useEffect(() => {
   console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);
