@@ -31,23 +31,23 @@ export default function TermsGate() {
     console.log('Agreed state changed to:', agreed);
   }, [agreed]);
 
-  const handleContinue = () => {
-    console.log('✅ Button clicked. Current termsAccepted:', termsAccepted);
-    setIsLoading(true);
+const handleContinue = () => {
+  console.log('✅ Button clicked. Current termsAccepted:', termsAccepted);
+  setIsLoading(true);
 
-    localStorage.setItem('hasAcceptedTerms', 'true');
-    console.log('✅ localStorage updated to true');
+  if (!termsAccepted) {
+    acceptTerms(); // triggers Zustand update
+  } else {
+    console.log('🛑 termsAccepted already true — forcing redirect');
+    navigate('/dashboard'); // ✅ fallback redirect
+  }
 
-    acceptTerms(); // Update store - subscription will handle navigation synchronously after flush
-
-    // Removed timeout/manual redirect - no longer needed with flushSync in subscription
-    // Set loading false after a delay to allow unmount if needed
-    setTimeout(() => {
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
-    }, 300);
-  };
+  setTimeout(() => {
+    if (isMounted.current) {
+      setIsLoading(false);
+    }
+  }, 300);
+};
 
   return (
     <GlowingBox>
