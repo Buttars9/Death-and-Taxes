@@ -17,30 +17,40 @@ import ResetPassword from './pages/ResetPassword.jsx';
 import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
- const [isAuthenticated, setIsAuthenticated] = useState(useAuthStore.getState().isAuthenticated);
-const [hasAgreedToTerms, setHasAgreedToTerms] = useState(useAuthStore.getState().termsAccepted);
+  const hasRehydrated = useAuthStore((s) => s.hasRehydrated);
+  const [isAuthenticated, setIsAuthenticated] = useState(useAuthStore.getState().isAuthenticated);
+  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(useAuthStore.getState().termsAccepted);
 
-useEffect(() => {
-  const unsubAuth = useAuthStore.subscribe(
-    (state) => state.isAuthenticated,
-    (value) => {
-      console.log('📡 AppRoutes subscription: isAuthenticated changed to', value);
-      setIsAuthenticated(value);
-    }
-  );
-  const unsubTerms = useAuthStore.subscribe(
-    (state) => state.termsAccepted,
-    (value) => {
-      console.log('📡 AppRoutes subscription: termsAccepted changed to', value);
-      setHasAgreedToTerms(value);
-    }
-  );
-  return () => {
-    unsubAuth();
-    unsubTerms();
-  };
-}, []);
+  useEffect(() => {
+    const unsubAuth = useAuthStore.subscribe(
+      (state) => state.isAuthenticated,
+      (value) => {
+        console.log('📡 AppRoutes subscription: isAuthenticated changed to', value);
+        setIsAuthenticated(value);
+      }
+    );
+    const unsubTerms = useAuthStore.subscribe(
+      (state) => state.termsAccepted,
+      (value) => {
+        console.log('📡 AppRoutes subscription: termsAccepted changed to', value);
+        setHasAgreedToTerms(value);
+      }
+    );
+    return () => {
+      unsubAuth();
+      unsubTerms();
+    };
+  }, []);
+
   const hasWizardData = !!localStorage.getItem('wizard-store');
+
+  if (!hasRehydrated) {
+    return (
+      <div style={{ background: '#111', color: '#fff', padding: '2rem' }}>
+        🔄 Waiting for auth rehydration...
+      </div>
+    );
+  }
 
   return (
     <AppLayout>
