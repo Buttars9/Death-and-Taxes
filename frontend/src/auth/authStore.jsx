@@ -1,47 +1,47 @@
 import { create } from 'zustand';
-import { persist, subscribeWithSelector } from 'zustand/middleware'; // Added subscribeWithSelector
+import { persist, subscribeWithSelector } from 'zustand/middleware';
 import axios from 'axios';
 
 // ✅ Environment-aware backend base URL
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
-  withCredentials: true, // ✅ Send cookies for session auth
+  withCredentials: true,
 });
 
 export const useAuthStore = create(
-  subscribeWithSelector( // Switched order: subscribeWithSelector outer, persist inner
+  subscribeWithSelector(
     persist(
       (set, get) => ({
         user: null,
         isAuthenticated: false,
-        termsAccepted: false, // ✅ Track terms acceptance
-        hasRehydrated: false, // ✅ Prevent rehydrate from running twice
+        termsAccepted: false, // ✅ In-memory only
+        hasRehydrated: false,
 
         setUser: (user) => set({ user, isAuthenticated: !!user }),
 
-    logout: async () => {
-  console.log('🚪 logout() called — clearing session and store');
-  try {
-    await api.post('/api/logout', null, {
-      withCredentials: true,
-      timeout: 30000,
-    });
-    console.log('✅ Logout API call succeeded');
-  } catch (err) {
-    console.warn('❌ Logout API call failed:', err.message || err);
-  } finally {
-    console.log('🧹 Clearing store and localStorage');
-    localStorage.removeItem('auth-storage');
-    set({
-      user: null,
-      isAuthenticated: false,
-      termsAccepted: false, // ✅ Reset this explicitly
-      hasRehydrated: false,
-    });
-    console.log('🧾 Store after logout:', get());
-    window.location.href = '/';
-  }
-},
+        logout: async () => {
+          console.log('🚪 logout() called — clearing session and store');
+          try {
+            await api.post('/api/logout', null, {
+              withCredentials: true,
+              timeout: 30000,
+            });
+            console.log('✅ Logout API call succeeded');
+          } catch (err) {
+            console.warn('❌ Logout API call failed:', err.message || err);
+          } finally {
+            console.log('🧹 Clearing store and localStorage');
+            localStorage.removeItem('auth-storage');
+            set({
+              user: null,
+              isAuthenticated: false,
+              termsAccepted: false, // ✅ Reset explicitly
+              hasRehydrated: false,
+            });
+            console.log('🧾 Store after logout:', get());
+            window.location.href = '/';
+          }
+        },
 
         rehydrate: async () => {
           const { hasRehydrated } = get();
@@ -72,24 +72,21 @@ export const useAuthStore = create(
         },
 
         acceptTerms: () => {
-  console.log('🔒 acceptTerms called — setting termsAccepted = true');
-  set((state) => {
-    if (state.termsAccepted) {
-      console.log('🛑 acceptTerms skipped — already true');
-      return {};
-    }
-
-    return {
-      termsAccepted: true, // ✅ Only this
-    };
-  });
-},
+          console.log('🔒 acceptTerms called — setting termsAccepted = true');
+          set((state) => {
+            if (state.termsAccepted) {
+              console.log('🛑 acceptTerms skipped — already true');
+              return {};
+            }
+            return { termsAccepted: true };
+          });
+        },
 
         authenticateWithPi: async () => {
           return new Promise((resolve, reject) => {
             if (!window?.Pi) {
               console.warn("⚠️ Pi SDK not available — skipping Pi auth");
-              set({ isAuthenticated: true }); // ✅ Allow fallback flow
+              set({ isAuthenticated: true });
               return resolve(null);
             }
 
@@ -103,10 +100,8 @@ export const useAuthStore = create(
 
             const onIncompletePaymentFound = (payment) => {
               console.log("Incomplete payment found:", payment);
-              // TODO: Optionally send payment details to backend to complete or cancel
             };
 
-            // Add timeout to prevent hanging
             const timeout = setTimeout(() => {
               console.error("❌ Pi Auth timed out after 60 seconds");
               reject(new Error("Authentication timed out"));
@@ -124,35 +119,36 @@ export const useAuthStore = create(
                     const { data } = await api.post('/api/pi-auth', {
                       accessToken,
                       username: piUser?.username,
-                    }, { timeout: 30000 }); // Added timeout here too
+                    }, { timeout: 30000 });
                     console.log('Backend auth response:', data);
 
                     set({ user: data.user, isAuthenticated: true });
                     resolve(data.user);
                   } catch (err) {
                     console.error("❌ Backend Pi auth failed:", err.response?.data || err.message);
-                    set({ isAuthenticated: true }); // ✅ fallback
+                    set({ isAuthenticated: true });
                     reject(err);
                   }
                 })
                 .catch((error) => {
                   clearTimeout(timeout);
                   console.error("❌ Pi Auth failed:", error);
-                  set({ isAuthenticated: true }); // ✅ fallback
+                  set({ isAuthenticated: true });
                   reject(error);
                 });
             } catch (err) {
               console.error("❌ Pi SDK crashed:", err);
-              set({ isAuthenticated: true }); // ✅ fallback
+              set({ isAuthenticated: true });
               reject(err);
             }
           });
         },
       }),
       {
-        name: 'auth-storage', // localStorage key
+        name: 'auth-storage',
         partialize: (state) => ({
-          termsAccepted: state.termsAccepted, // ✅ Persist termsAccepted only
+          // ✅ termsAccepted is no longer persisted
+          // You can persist other fields here if needed
         }),
       }
     )
