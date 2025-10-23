@@ -18,20 +18,24 @@ export const useAuthStore = create(
         hasRehydrated: false, // ✅ Prevent rehydrate from running twice
 
         setUser: (user) => set({ user, isAuthenticated: !!user }),
-
-        logout: async () => {
-          try {
-            await api.post('/api/logout', null, {
-              withCredentials: true, // 🔒 Explicitly send cookie for logout
-              timeout: 30000, // Added longer timeout to allow for spin-up
-            });
-          } catch (err) {
-            console.warn('Logout error:', err.message || err);
-          } finally {
-            set({ user: null, isAuthenticated: false, termsAccepted: false, hasRehydrated: false });
-            localStorage.removeItem('hasAcceptedTerms');
-          }
-        },
+logout: async () => {
+  try {
+    await api.post('/api/logout', null, {
+      withCredentials: true,
+      timeout: 30000,
+    });
+  } catch (err) {
+    console.warn('Logout error:', err.message || err);
+  } finally {
+    localStorage.removeItem('hasAcceptedTerms');
+    set({
+      user: null,
+      isAuthenticated: false,
+      termsAccepted: false,
+      hasRehydrated: false,
+    });
+  }
+},
 
         rehydrate: async () => {
           const { hasRehydrated, isAuthenticated } = get();

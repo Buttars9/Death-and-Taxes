@@ -19,19 +19,19 @@ export default function TermsGate() {
   }, []);
 
   useEffect(() => {
-    const unsub = useAuthStore.subscribe(
-      (state) => state.termsAccepted,
-      (value) => {
-        console.log('📡 Store subscription: termsAccepted changed to', value);
-        flushSync(() => setHasAcceptedTerms(value)); // FIX: Force synchronous re-render to resolve race condition
-        if (value) {
-          console.log('🚀 Redirecting from subscription to dashboard');
-          navigate('/dashboard');
-        }
+  const unsub = useAuthStore.subscribe(
+    (state) => state.termsAccepted,
+    (value, prev) => {
+      console.log('📡 Store subscription: termsAccepted changed to', value);
+      setHasAcceptedTerms(value);
+      if (value && !prev) {
+        console.log('🚀 Redirecting to dashboard');
+        navigate('/dashboard');
       }
-    );
-    return () => unsub();
-  }, [navigate]);
+    }
+  );
+  return () => unsub();
+}, [navigate]);
 
   useEffect(() => {
     const storeState = useAuthStore.getState();
