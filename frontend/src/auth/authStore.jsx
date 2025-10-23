@@ -19,28 +19,28 @@ export const useAuthStore = create(
 
         setUser: (user) => set({ user, isAuthenticated: !!user }),
 
-        logout: async () => {
-          console.log('🚪 logout() called — clearing session and store');
-          try {
-            await api.post('/api/logout', null, {
-              withCredentials: true,
-              timeout: 30000,
-            });
-            console.log('✅ Logout API call succeeded');
-          } catch (err) {
-            console.warn('❌ Logout API call failed:', err.message || err);
-          } finally {
-            console.log('🧹 Clearing store and localStorage');
-            // ✅ Do NOT remove termsAccepted — preserve agreement across sessions
-            localStorage.removeItem('auth-storage'); // ✅ Clear persisted state
-            set({
-              user: null,
-              isAuthenticated: false,
-              hasRehydrated: false,
-            });
-            console.log('🧾 Store after logout:', get());
-          }
-        },
+       logout: async () => {
+  console.log('🚪 logout() called — clearing session and store');
+  try {
+    await api.post('/api/logout', null, {
+      withCredentials: true,
+      timeout: 30000,
+    });
+    console.log('✅ Logout API call succeeded');
+  } catch (err) {
+    console.warn('❌ Logout API call failed:', err.message || err);
+  } finally {
+    console.log('🧹 Clearing store and localStorage');
+    localStorage.removeItem('auth-storage');
+    set({
+      user: null,
+      isAuthenticated: false,
+      hasRehydrated: false,
+    });
+    console.log('🧾 Store after logout:', get());
+    window.location.href = '/'; // ✅ Force reroute to trigger AppRoutes
+  }
+},
 
         rehydrate: async () => {
           const { hasRehydrated } = get();
