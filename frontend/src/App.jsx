@@ -17,28 +17,40 @@ import ResetPassword from './pages/ResetPassword.jsx';
 import { useAuthStore } from './auth/authStore.jsx';
 
 function AppRoutes() {
-  // FIX: Use Zustand selectors directly for re-renders on store changes (simplifies, removes need for useState/subscribe)
   const hasRehydrated = useAuthStore((s) => s.hasRehydrated);
   const [isAuthenticated, setIsAuthenticated] = useState(useAuthStore.getState().isAuthenticated);
-const [hasAgreedToTerms, setHasAgreedToTerms] = useState(useAuthStore.getState().termsAccepted);
+  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(useAuthStore.getState().termsAccepted);
 
-useEffect(() => {
-  const unsubAuth = useAuthStore.subscribe(
-    (state) => state.isAuthenticated,
-    (value) => setIsAuthenticated(value)
-  );
-  const unsubTerms = useAuthStore.subscribe(
-    (state) => state.termsAccepted,
-    (value) => setHasAgreedToTerms(value)
-  );
-  return () => {
-    unsubAuth();
-    unsubTerms();
-  };
-}, []);
+  useEffect(() => {
+    const unsubAuth = useAuthStore.subscribe(
+      (state) => state.isAuthenticated,
+      (value) => {
+        console.log('📡 AppRoutes: isAuthenticated changed to', value);
+        setIsAuthenticated(value);
+      }
+    );
+    const unsubTerms = useAuthStore.subscribe(
+      (state) => state.termsAccepted,
+      (value) => {
+        console.log('📡 AppRoutes: termsAccepted changed to', value);
+        setHasAgreedToTerms(value);
+      }
+    );
+    return () => {
+      unsubAuth();
+      unsubTerms();
+    };
+  }, []);
+
+  useEffect(() => {
+    const snapshot = useAuthStore.getState();
+    console.log('🧭 AppRoutes mounted — store snapshot:', snapshot);
+  }, []);
+
   const hasWizardData = !!localStorage.getItem('wizard-store');
 
   if (!hasRehydrated) {
+    console.log('⏳ AppRoutes waiting for hasRehydrated...');
     return (
       <div style={{ background: '#111', color: '#fff', padding: '2rem' }}>
         🔄 Waiting for auth rehydration...
@@ -91,7 +103,11 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    rehydrate().then(() => setReady(true));
+    console.log('🚀 App mounted — calling rehydrate()');
+    rehydrate().then(() => {
+      console.log('✅ rehydrate() resolved — setting ready = true');
+      setReady(true);
+    });
 
     fetch('https://deathntaxes-backend.onrender.com/api/ping').catch(() => {});
 
@@ -121,6 +137,7 @@ export default function App() {
   }, []);
 
   if (!ready) {
+    console.log('⏳ App waiting for rehydrate to complete...');
     return (
       <div style={{ background: '#111', color: '#fff', padding: '2rem' }}>
         🔄 Rehydrating session...
