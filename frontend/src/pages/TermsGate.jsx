@@ -46,13 +46,27 @@ useEffect(() => {
     console.log('Agreed state changed to:', agreed);
   }, [agreed]);
 
-const handleContinue = () => {
+const handleContinue = async () => {
   console.log('✅ Button clicked. Current hasAcceptedTerms:', hasAcceptedTerms);
   setIsLoading(true);
-  acceptTerms(); // ✅ Update store
-  localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
+
+  localStorage.setItem('hasAcceptedTerms', 'true');
   console.log('✅ localStorage updated to true');
-  // ✅ Let useEffect handle navigation once store updates
+
+  acceptTerms(); // ✅ Update store
+
+  // Force re-check after short delay
+  setTimeout(() => {
+    const updated = useAuthStore.getState().termsAccepted;
+    console.log('🧪 Post-acceptTerms check: termsAccepted =', updated);
+    if (updated) {
+      console.log('🚀 Redirecting manually to dashboard');
+      navigate('/dashboard');
+    } else {
+      console.warn('❌ termsAccepted still false — retrying');
+    }
+    setIsLoading(false);
+  }, 100);
 };
 
   return (
