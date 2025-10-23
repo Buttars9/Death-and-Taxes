@@ -68,7 +68,14 @@ function AppRoutes() {
               : <DeathAndTaxes />
           }
         />
-        <Route path="/terms" element={<PublicTerms />} />
+        <Route
+  path="/terms"
+  element={
+    hasAgreedToTerms
+      ? <Dashboard />
+      : <PublicTerms />
+  }
+/>
         <Route path="/admin" element={<AdminGate />} />
         <Route path="/admin/vault" element={<AdminVault />} />
         <Route path="/reset-password" element={<ResetPassword />} />

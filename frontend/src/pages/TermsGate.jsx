@@ -35,12 +35,10 @@ const handleContinue = () => {
   console.log('✅ Button clicked. Current termsAccepted:', termsAccepted);
   setIsLoading(true);
 
-  if (!termsAccepted) {
-    acceptTerms(); // triggers Zustand update
-  } else {
-    console.log('🛑 Already accepted — forcing redirect');
-    navigate('/dashboard'); // ✅ fallback redirect
-  }
+ flushSync(() => {
+  acceptTerms(); // always call — let store handle deduplication
+});
+navigate('/dashboard'); // always redirect after click
 
   setTimeout(() => {
     if (isMounted.current) {
