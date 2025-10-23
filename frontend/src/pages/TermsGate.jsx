@@ -7,7 +7,18 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Added to prevent double-clicks and show feedback
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
-  const hasAcceptedTerms = useAuthStore((s) => s.termsAccepted);
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(useAuthStore.getState().termsAccepted);
+
+useEffect(() => {
+  const unsub = useAuthStore.subscribe(
+    (state) => state.termsAccepted,
+    (value) => {
+      console.log('📡 Store subscription: termsAccepted changed to', value);
+      setHasAcceptedTerms(value);
+    }
+  );
+  return () => unsub();
+}, []);
   const navigate = useNavigate(); // Added for navigation
 
   useEffect(() => {
