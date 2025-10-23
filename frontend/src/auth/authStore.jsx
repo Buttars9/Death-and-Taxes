@@ -31,6 +31,7 @@ logout: async () => {
   } finally {
     console.log('🧹 Clearing store and localStorage');
     localStorage.removeItem('hasAcceptedTerms');
+    localStorage.removeItem('auth-storage'); // ✅ THIS IS THE FIX
     set({
       user: null,
       isAuthenticated: false,

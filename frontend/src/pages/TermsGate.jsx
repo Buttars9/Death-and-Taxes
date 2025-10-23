@@ -12,26 +12,21 @@ export default function TermsGate() {
   const navigate = useNavigate();
   const isMounted = useRef(true);
 
+  // ✅ Reactive redirect when termsAccepted becomes true
+  const termsAccepted = useAuthStore((s) => s.termsAccepted);
+  useEffect(() => {
+    if (termsAccepted) {
+      console.log('🚀 Reactive redirect — termsAccepted is true, navigating to dashboard');
+      navigate('/dashboard');
+    }
+  }, [termsAccepted, navigate]);
+
   useEffect(() => {
     return () => {
       isMounted.current = false;
     };
   }, []);
 
-  useEffect(() => {
-  const unsub = useAuthStore.subscribe(
-    (state) => state.termsAccepted,
-    (value, prev) => {
-      console.log('📡 Store subscription: termsAccepted changed to', value);
-      setHasAcceptedTerms(value);
-      if (value && !prev) {
-        console.log('🚀 Redirecting to dashboard');
-        navigate('/dashboard');
-      }
-    }
-  );
-  return () => unsub();
-}, [navigate]);
 
   useEffect(() => {
     const storeState = useAuthStore.getState();
