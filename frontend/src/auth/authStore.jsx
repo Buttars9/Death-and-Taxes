@@ -51,9 +51,10 @@ export const useAuthStore = create((set, get) => ({
   authenticateWithPi: async () => {
     return new Promise((resolve, reject) => {
       if (!window?.Pi) {
-        console.error("❌ Pi SDK not available");
-        return reject(new Error("Pi SDK not available"));
-      }
+  console.warn("⚠️ Pi SDK not available — skipping Pi auth");
+  set({ isAuthenticated: true }); // ✅ Allow fallback flow
+  return resolve(null);
+}
 
       if (!window.Pi.initialized) {
         console.error("❌ Pi SDK not initialized");

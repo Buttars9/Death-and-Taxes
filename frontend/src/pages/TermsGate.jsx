@@ -41,7 +41,7 @@ const handleContinue = () => {
   acceptTerms(); // ✅ Update store
   localStorage.setItem('hasAcceptedTerms', 'true'); // Optional legacy support
   console.log('✅ localStorage updated to true');
-  navigate('/dashboard');
+  // ✅ Let useEffect handle navigation once store updates
 };
 
   return (
