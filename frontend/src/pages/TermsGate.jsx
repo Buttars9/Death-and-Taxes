@@ -8,7 +8,6 @@ export default function TermsGate() {
   const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const acceptTerms = useAuthStore((s) => s.acceptTerms);
-  const hasAcceptedTerms = useAuthStore((s) => s.termsAccepted);
   const navigate = useNavigate();
   const isMounted = useRef(true);
 
@@ -27,24 +26,6 @@ export default function TermsGate() {
     };
   }, []);
 
-
-  useEffect(() => {
-    const storeState = useAuthStore.getState();
-    const storedAcceptance = localStorage.getItem('hasAcceptedTerms') === 'true';
-
-    console.log('TermsGate mounted. Initial hasAcceptedTerms:', storeState.termsAccepted);
-    console.log('LocalStorage hasAcceptedTerms:', storedAcceptance);
-
-    if (storedAcceptance && !storeState.termsAccepted) {
-      console.log('🧪 Store termsAccepted before sync:', storeState.termsAccepted);
-      console.log('Syncing store from localStorage');
-      storeState.acceptTerms(); // ✅ call directly from store to avoid stale closure
-    } else if (!storedAcceptance) {
-      console.log('No stored acceptance, user needs to agree');
-    }
-
-    console.log('🧪 Final store state after mount:', useAuthStore.getState());
-  }, []);
 
   useEffect(() => {
     console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);

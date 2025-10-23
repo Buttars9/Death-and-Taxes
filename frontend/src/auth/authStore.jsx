@@ -18,87 +18,72 @@ export const useAuthStore = create(
         hasRehydrated: false, // ✅ Prevent rehydrate from running twice
 
         setUser: (user) => set({ user, isAuthenticated: !!user }),
-logout: async () => {
-  console.log('🚪 logout() called — clearing session and store');
-  try {
-    await api.post('/api/logout', null, {
-      withCredentials: true,
-      timeout: 30000,
-    });
-    console.log('✅ Logout API call succeeded');
-  } catch (err) {
-    console.warn('❌ Logout API call failed:', err.message || err);
-  } finally {
-    console.log('🧹 Clearing store and localStorage');
-    localStorage.removeItem('hasAcceptedTerms');
-    localStorage.removeItem('auth-storage'); // ✅ THIS IS THE FIX
-    set({
-      user: null,
-      isAuthenticated: false,
-      termsAccepted: false,
-      hasRehydrated: false,
-    });
-    console.log('🧾 Store after logout:', get());
-  }
-},
 
- rehydrate: async () => {
-  const { hasRehydrated } = get();
-  console.log('🔁 rehydrate() called — hasRehydrated:', hasRehydrated);
-  if (hasRehydrated) {
-    console.log('⏭️ Skipping rehydrate — already run');
-    return;
-  }
+        logout: async () => {
+          console.log('🚪 logout() called — clearing session and store');
+          try {
+            await api.post('/api/logout', null, {
+              withCredentials: true,
+              timeout: 30000,
+            });
+            console.log('✅ Logout API call succeeded');
+          } catch (err) {
+            console.warn('❌ Logout API call failed:', err.message || err);
+          } finally {
+            console.log('🧹 Clearing store and localStorage');
+            // ✅ Do NOT remove termsAccepted — preserve agreement across sessions
+            localStorage.removeItem('auth-storage'); // ✅ Clear persisted state
+            set({
+              user: null,
+              isAuthenticated: false,
+              hasRehydrated: false,
+            });
+            console.log('🧾 Store after logout:', get());
+          }
+        },
 
-  try {
-    console.log('🌐 Calling /api/me for session check');
-    const { data } = await api.get('/api/me', { timeout: 30000 });
-    if (data?.user) {
-      console.log('✅ /api/me returned user:', data.user);
-      set({ user: data.user, isAuthenticated: true });
-    } else {
-      console.log('⚠️ /api/me returned no user');
-      set({ user: null, isAuthenticated: false });
-    }
-  } catch (err) {
-    console.warn('❌ /api/me failed:', err.message || err);
-    set({ user: null, isAuthenticated: false });
-  } finally {
-    console.log('✅ Setting hasRehydrated = true');
-    set({ hasRehydrated: true });
-    console.log('🧾 Store after rehydrate:', get());
-  }
-},
+        rehydrate: async () => {
+          const { hasRehydrated } = get();
+          console.log('🔁 rehydrate() called — hasRehydrated:', hasRehydrated);
+          if (hasRehydrated) {
+            console.log('⏭️ Skipping rehydrate — already run');
+            return;
+          }
 
-  acceptTerms: () => {
-  console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
-  set((state) => {
-    if (state.termsAccepted) {
-      console.log('🛑 acceptTerms skipped — already true');
-      return {};
-    }
+          try {
+            console.log('🌐 Calling /api/me for session check');
+            const { data } = await api.get('/api/me', { timeout: 30000 });
+            if (data?.user) {
+              console.log('✅ /api/me returned user:', data.user);
+              set({ user: data.user, isAuthenticated: true });
+            } else {
+              console.log('⚠️ /api/me returned no user');
+              set({ user: null, isAuthenticated: false });
+            }
+          } catch (err) {
+            console.warn('❌ /api/me failed:', err.message || err);
+            set({ user: null, isAuthenticated: false });
+          } finally {
+            console.log('✅ Setting hasRehydrated = true');
+            set({ hasRehydrated: true });
+            console.log('🧾 Store after rehydrate:', get());
+          }
+        },
 
-    // ✅ Force localStorage sync to prevent persist overwrite
-    try {
-      const raw = localStorage.getItem('auth-storage');
-      const parsed = raw ? JSON.parse(raw) : {};
-      parsed.state = {
-        ...parsed.state,
-        termsAccepted: true,
-        isAuthenticated: true,
-      };
-      localStorage.setItem('auth-storage', JSON.stringify(parsed));
-      console.log('💾 Persisted store manually updated');
-    } catch (err) {
-      console.warn('⚠️ Failed to patch persisted store:', err);
-    }
+        acceptTerms: () => {
+          console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
+          set((state) => {
+            if (state.termsAccepted) {
+              console.log('🛑 acceptTerms skipped — already true');
+              return {};
+            }
 
-    return {
-      termsAccepted: true,
-      isAuthenticated: true,
-    };
-  });
-},
+            return {
+              termsAccepted: true,
+              isAuthenticated: true,
+            };
+          });
+        },
 
         authenticateWithPi: async () => {
           return new Promise((resolve, reject) => {
@@ -167,9 +152,7 @@ logout: async () => {
       {
         name: 'auth-storage', // localStorage key
         partialize: (state) => ({
-          termsAccepted: state.termsAccepted,
-          isAuthenticated: state.isAuthenticated,
-          hasRehydrated: state.hasRehydrated,
+          termsAccepted: state.termsAccepted, // ✅ Persist termsAccepted only
         }),
       }
     )

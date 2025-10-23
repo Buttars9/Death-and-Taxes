@@ -19,7 +19,7 @@ import { useAuthStore } from './auth/authStore.jsx';
 function AppRoutes() {
   const hasRehydrated = useAuthStore((s) => s.hasRehydrated);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted);
+  const hasAgreedToTerms = useAuthStore((s) => s.termsAccepted);
 
   useEffect(() => {
     const snapshot = useAuthStore.getState();
