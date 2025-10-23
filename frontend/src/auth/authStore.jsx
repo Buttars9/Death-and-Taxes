@@ -10,7 +10,8 @@ const api = axios.create({
 export const useAuthStore = create((set, get) => ({
   user: null,
   isAuthenticated: false,
-  termsAccepted: false, // New: Track terms acceptance
+  termsAccepted: false, // ✅ Track terms acceptance
+  hasRehydrated: false, // ✅ Prevent rehydrate from running twice
 
   setUser: (user) => set({ user, isAuthenticated: !!user }),
 
@@ -22,12 +23,18 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       console.warn('Logout error:', err.message || err);
     } finally {
-      set({ user: null, isAuthenticated: false, termsAccepted: false });
+      set({ user: null, isAuthenticated: false, termsAccepted: false, hasRehydrated: false });
       localStorage.removeItem('hasAcceptedTerms');
     }
   },
 
   rehydrate: async () => {
+    const { hasRehydrated } = get();
+    if (hasRehydrated) {
+      console.log('🔁 Skipping rehydrate — already run');
+      return;
+    }
+
     try {
       const { data } = await api.get('/api/me'); // ✅ Session rehydration
       if (data?.user) {
@@ -35,29 +42,31 @@ export const useAuthStore = create((set, get) => ({
       } else {
         set({ user: null, isAuthenticated: false });
       }
-   } catch (err) {
-  console.warn('Session rehydration failed:', err.message || err);
-  const legacyTerms = localStorage.getItem('hasAcceptedTerms') === 'true';
-  set({
-    user: null,
-    isAuthenticated: legacyTerms, // ✅ fallback to allow TermsGate routing
-    termsAccepted: legacyTerms,
-  });
-}
+    } catch (err) {
+      console.warn('Session rehydration failed:', err.message || err);
+      const legacyTerms = localStorage.getItem('hasAcceptedTerms') === 'true';
+      set({
+        user: null,
+        isAuthenticated: legacyTerms, // ✅ fallback to allow TermsGate routing
+        termsAccepted: legacyTerms,
+      });
+    } finally {
+      set({ hasRehydrated: true }); // ✅ Mark rehydration complete
+    }
   },
 
   acceptTerms: () => {
-  console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
-  set({ termsAccepted: true, isAuthenticated: true });
-},
+    console.log('🔒 acceptTerms called — setting termsAccepted and isAuthenticated to true');
+    set({ termsAccepted: true, isAuthenticated: true });
+  },
 
   authenticateWithPi: async () => {
     return new Promise((resolve, reject) => {
       if (!window?.Pi) {
-  console.warn("⚠️ Pi SDK not available — skipping Pi auth");
-  set({ isAuthenticated: true }); // ✅ Allow fallback flow
-  return resolve(null);
-}
+        console.warn("⚠️ Pi SDK not available — skipping Pi auth");
+        set({ isAuthenticated: true }); // ✅ Allow fallback flow
+        return resolve(null);
+      }
 
       if (!window.Pi.initialized) {
         console.error("❌ Pi SDK not initialized");
@@ -78,40 +87,40 @@ export const useAuthStore = create((set, get) => ({
         reject(new Error("Authentication timed out"));
       }, 60000);
 
-     try {
-  window.Pi.authenticate(scopes, onIncompletePaymentFound)
-    .then(async (auth) => {
-      clearTimeout(timeout);
-      console.log("✅ Pi Auth success:", auth);
-      const { accessToken, user: piUser } = auth;
-
       try {
-        console.log('Sending to backend /api/pi-auth with:', { accessToken, username: piUser?.username });
-        const { data } = await api.post('/api/pi-auth', {
-          accessToken,
-          username: piUser?.username,
-        });
-        console.log('Backend auth response:', data);
+        window.Pi.authenticate(scopes, onIncompletePaymentFound)
+          .then(async (auth) => {
+            clearTimeout(timeout);
+            console.log("✅ Pi Auth success:", auth);
+            const { accessToken, user: piUser } = auth;
 
-        set({ user: data.user, isAuthenticated: true });
-        resolve(data.user);
+            try {
+              console.log('Sending to backend /api/pi-auth with:', { accessToken, username: piUser?.username });
+              const { data } = await api.post('/api/pi-auth', {
+                accessToken,
+                username: piUser?.username,
+              });
+              console.log('Backend auth response:', data);
+
+              set({ user: data.user, isAuthenticated: true });
+              resolve(data.user);
+            } catch (err) {
+              console.error("❌ Backend Pi auth failed:", err.response?.data || err.message);
+              set({ isAuthenticated: true }); // ✅ fallback
+              reject(err);
+            }
+          })
+          .catch((error) => {
+            clearTimeout(timeout);
+            console.error("❌ Pi Auth failed:", error);
+            set({ isAuthenticated: true }); // ✅ fallback
+            reject(error);
+          });
       } catch (err) {
-        console.error("❌ Backend Pi auth failed:", err.response?.data || err.message);
+        console.error("❌ Pi SDK crashed:", err);
         set({ isAuthenticated: true }); // ✅ fallback
         reject(err);
       }
-    })
-    .catch((error) => {
-      clearTimeout(timeout);
-      console.error("❌ Pi Auth failed:", error);
-      set({ isAuthenticated: true }); // ✅ fallback
-      reject(error);
-    });
-} catch (err) {
-  console.error("❌ Pi SDK crashed:", err);
-  set({ isAuthenticated: true }); // ✅ fallback
-  reject(err);
-}
     });
   },
 }));
