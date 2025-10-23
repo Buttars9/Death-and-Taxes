@@ -26,13 +26,6 @@ export default function TermsGate() {
     };
   }, []);
 
-
-  useEffect(() => {
-    console.log('🔄 hasAcceptedTerms changed to:', hasAcceptedTerms);
-    // Removed redirect useEffect here - handled in subscription now
-  }, [termsAccepted]);
-
-
   // Added for debugging: Log when agreed changes
   useEffect(() => {
     console.log('Agreed state changed to:', agreed);
