@@ -118,81 +118,81 @@ export async function fillOut1040Pdf(payload) {
   const balanceDue = Math.max(0, totalTax - totalPayments);
 
   // Tax year
-  draw('Tax year beginning', '', 290, 80); // Adjusted yFromTop
-  draw('Tax year ending', '', 440, 80); // Adjusted yFromTop
+  draw('Tax year beginning', '', 290, 85); // Adjusted yFromTop
+  draw('Tax year ending', '', 440, 85); // Adjusted yFromTop
 
   // Taxpayer identity (Page 1)
   const taxpayerNameParts = payload?.taxpayer?.fullName?.split(' ') || [];
   const taxpayerFirstMiddle = taxpayerNameParts.slice(0, -1).join(' ') || '—';
   const taxpayerLast = taxpayerNameParts.pop() || '—';
-  draw('Your first name and middle initial', taxpayerFirstMiddle, 70, 95); // Adjusted yFromTop
-  draw('Last name', taxpayerLast, 280, 95); // Adjusted yFromTop
-  draw('Your social security number', payload?.taxpayer?.ssn || '—', 480, 95); // Adjusted yFromTop
+  draw('Your first name and middle initial', taxpayerFirstMiddle, 70, 100); // Adjusted yFromTop
+  draw('Last name', taxpayerLast, 280, 100); // Adjusted yFromTop
+  draw('Your social security number', payload?.taxpayer?.ssn || '—', 480, 100); // Adjusted yFromTop
   const spouseNameParts = payload?.taxpayer?.spouse?.name?.split(' ') || [];
   const spouseFirstMiddle = spouseNameParts.slice(0, -1).join(' ') || '—';
   const spouseLast = spouseNameParts.pop() || '—';
-  draw('Spouse’s first name and middle initial', spouseFirstMiddle, 70, 110); // Adjusted yFromTop
-  draw('Spouse last name', spouseLast, 280, 110); // Adjusted yFromTop
-  draw('Spouse’s social security number', payload?.taxpayer?.spouse?.ssn || '—', 480, 110); // Adjusted yFromTop
-  draw('Home address', payload?.taxpayer?.address || '—', 70, 125); // Adjusted yFromTop
-  draw('Apt. no.', payload?.taxpayer?.aptNo || '—', 480, 125); // Adjusted yFromTop
-  draw('City, town, or post office', payload?.taxpayer?.city || '—', 70, 140); // Adjusted yFromTop
-  draw('State', payload?.taxpayer?.residentState?.toUpperCase().slice(0, 2) || '—', 430, 140); // Adjusted yFromTop
-  draw('ZIP code', payload?.taxpayer?.zip || '—', 500, 140); // Adjusted yFromTop
-  draw('Foreign country name', payload?.taxpayer?.foreignCountry || '—', 70, 155); // Adjusted yFromTop
-  draw('Foreign province/state/county', payload?.taxpayer?.foreignProvince || '—', 280, 155); // Adjusted yFromTop
-  draw('Foreign postal code', payload?.taxpayer?.foreignPostal || '—', 480, 155); // Adjusted yFromTop
+  draw('Spouse’s first name and middle initial', spouseFirstMiddle, 70, 115); // Adjusted yFromTop
+  draw('Spouse last name', spouseLast, 280, 115); // Adjusted yFromTop
+  draw('Spouse’s social security number', payload?.taxpayer?.spouse?.ssn || '—', 480, 115); // Adjusted yFromTop
+  draw('Home address', payload?.taxpayer?.address || '—', 70, 130); // Adjusted yFromTop
+  draw('Apt. no.', payload?.taxpayer?.aptNo || '—', 480, 130); // Adjusted yFromTop
+  draw('City, town, or post office', payload?.taxpayer?.city || '—', 70, 145); // Adjusted yFromTop
+  draw('State', payload?.taxpayer?.residentState?.toUpperCase().slice(0, 2) || '—', 430, 145); // Adjusted yFromTop
+  draw('ZIP code', payload?.taxpayer?.zip || '—', 500, 145); // Adjusted yFromTop
+  draw('Foreign country name', payload?.taxpayer?.foreignCountry || '—', 70, 160); // Adjusted yFromTop
+  draw('Foreign province/state/county', payload?.taxpayer?.foreignProvince || '—', 280, 160); // Adjusted yFromTop
+  draw('Foreign postal code', payload?.taxpayer?.foreignPostal || '—', 480, 160); // Adjusted yFromTop
 
   // Presidential Election Campaign checkboxes
   if (payload?.presidentialCampaign?.you) {
-    draw('Presidential You', 'X', 570, 180, page, 12, 'center'); // Adjusted yFromTop
+    draw('Presidential You', 'X', 570, 185, page, 12, 'center'); // Adjusted yFromTop
   }
   if (payload?.presidentialCampaign?.spouse) {
-    draw('Presidential Spouse', 'X', 600, 180, page, 12, 'center'); // Adjusted yFromTop
+    draw('Presidential Spouse', 'X', 600, 185, page, 12, 'center'); // Adjusted yFromTop
   }
 
   // Filing Status checkboxes
-  const filingMap = { 'single': {x: 70, y: 195}, 'marriedjointly': {x: 70, y: 210}, 'marriedseparately': {x: 70, y: 225}, 'headofhousehold': {x: 70, y: 240}, 'qualifyingsurvivingspouse': {x: 70, y: 255} }; // Adjusted yFromTop
-  const fsPos = filingMap[fsKey] || {x: 70, y: 195};
+  const filingMap = { 'single': {x: 70, y: 200}, 'marriedjointly': {x: 70, y: 215}, 'marriedseparately': {x: 70, y: 230}, 'headofhousehold': {x: 70, y: 245}, 'qualifyingsurvivingspouse': {x: 70, y: 260} }; // Adjusted yFromTop
+  const fsPos = filingMap[fsKey] || {x: 70, y: 200};
   draw(`Filing Status - ${payload?.taxpayer?.filingStatus || ''}`, 'X', fsPos.x, fsPos.y, page, 12, 'center');
-  draw('Spouse/Child name for MFS/HOH/QSS', payload?.taxpayer?.qualifyingName || '—', 70, 255);
+  draw('Spouse/Child name for MFS/HOH/QSS', payload?.taxpayer?.qualifyingName || '—', 70, 260);
 
   // Nonresident alien spouse
   if (payload?.taxpayer?.nonresidentSpouse) {
-    draw('Nonresident spouse check', 'X', 70, 270, page, 12, 'center'); // Adjusted yFromTop
-    draw('Nonresident spouse name', payload.taxpayer.nonresidentSpouseName || '—', 130, 270);
+    draw('Nonresident spouse check', 'X', 70, 275, page, 12, 'center'); // Adjusted yFromTop
+    draw('Nonresident spouse name', payload.taxpayer.nonresidentSpouseName || '—', 130, 275);
   }
 
   // Digital Assets (assume No if not specified)
   const digitalYes = payload?.digitalAssets?.yes ?? false;
-  draw('Digital Assets - ' + (digitalYes ? 'Yes' : 'No'), 'X', digitalYes ? 530 : 570, 285, page, 12, 'center'); // Adjusted yFromTop
+  draw('Digital Assets - ' + (digitalYes ? 'Yes' : 'No'), 'X', digitalYes ? 530 : 570, 290, page, 12, 'center'); // Adjusted yFromTop
 
   // Standard Deduction checkboxes
   if (payload?.standardDeduction?.youDependent) {
-    draw('You as dependent', 'X', 70, 300, page, 12, 'center'); // Adjusted yFromTop
+    draw('You as dependent', 'X', 70, 305, page, 12, 'center'); // Adjusted yFromTop
   }
   if (payload?.standardDeduction?.spouseDependent) {
-    draw('Spouse as dependent', 'X', 230, 300, page, 12, 'center'); // Adjusted yFromTop
+    draw('Spouse as dependent', 'X', 230, 305, page, 12, 'center'); // Adjusted yFromTop
   }
   if (payload?.standardDeduction?.spouseItemizes) {
-    draw('Spouse itemizes/dual-status', 'X', 70, 315, page, 12, 'center'); // Adjusted yFromTop
+    draw('Spouse itemizes/dual-status', 'X', 70, 320, page, 12, 'center'); // Adjusted yFromTop
   }
 
   // Age/Blindness
   const youBornBefore = youDOB && youDOB < bornBeforeDate;
   const spouseBornBefore = spouseDOB && spouseDOB < bornBeforeDate;
-  if (youBornBefore) draw('You born before Jan 2, 1960', 'X', 70, 330, page, 12, 'center'); // Adjusted yFromTop
-  if (payload?.ageBlindness?.youBlind) draw('You blind', 'X', 230, 330, page, 12, 'center'); // Adjusted yFromTop
-  if (spouseBornBefore) draw('Spouse born before Jan 2, 1960', 'X', 330, 330, page, 12, 'center'); // Adjusted yFromTop
-  if (payload?.ageBlindness?.spouseBlind) draw('Spouse blind', 'X', 480, 330, page, 12, 'center'); // Adjusted yFromTop
+  if (youBornBefore) draw('You born before Jan 2, 1960', 'X', 70, 335, page, 12, 'center'); // Adjusted yFromTop
+  if (payload?.ageBlindness?.youBlind) draw('You blind', 'X', 230, 335, page, 12, 'center'); // Adjusted yFromTop
+  if (spouseBornBefore) draw('Spouse born before Jan 2, 1960', 'X', 330, 335, page, 12, 'center'); // Adjusted yFromTop
+  if (payload?.ageBlindness?.spouseBlind) draw('Spouse blind', 'X', 480, 335, page, 12, 'center'); // Adjusted yFromTop
 
   // Dependents
   if (payload?.taxpayer?.dependents?.length > 4) {
-    draw('More than four dependents', 'X', 580, 345, page, 12, 'center'); // Adjusted yFromTop
+    draw('More than four dependents', 'X', 580, 350, page, 12, 'center'); // Adjusted yFromTop
   }
   if (payload?.taxpayer?.dependents && payload.taxpayer.dependents.length > 0) {
     payload.taxpayer.dependents.forEach((dep, index) => {
-      const y = 360 + index * 15 + 5; // Adjusted slightly
+      const y = 365 + index * 15 + 5; // Adjusted slightly
       draw(`Dependent ${index+1} First/Last name`, dep.name || '—', 70, y);
       draw(`Dependent ${index+1} SSN`, dep.ssn || '—', 280, y);
       draw(`Dependent ${index+1} Relationship`, dep.relationship || '—', 380, y);
@@ -207,130 +207,130 @@ export async function fillOut1040Pdf(payload) {
 
   // Income lines
   const numericRight = 560;
-  draw('Line 1a - Wages', totalIncome, numericRight, 435 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1b - Household employee wages', '0', numericRight, 450 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1c - Tip income', '0', numericRight, 465 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1d - Medicaid waiver', '0', numericRight, 480 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1e - Dependent care benefits', '0', numericRight, 495 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1f - Adoption benefits', '0', numericRight, 510 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1g - Form 8919 wages', '0', numericRight, 525 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1h - Other earned income', '0', numericRight, 540 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1i - Nontaxable combat pay', '0', 470, 555 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 1z - Add 1a-1h', totalIncome, numericRight, 555 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 2a - Tax-exempt interest', '0', 230, 570 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 2b - Taxable interest', '0', numericRight, 570 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 3a - Qualified dividends', '0', 230, 585 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 3b - Ordinary dividends', '0', numericRight, 585 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 4a - IRA distributions', '0', 230, 600 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 4b - Taxable IRA', '0', numericRight, 600 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 5a - Pensions/annuities', '0', 230, 615 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 5b - Taxable pensions', '0', numericRight, 615 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 6a - Social security', '0', 230, 630 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 6b - Taxable social security', '0', numericRight, 630 + 10, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1a - Wages', totalIncome, numericRight, 435, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1b - Household employee wages', '0', numericRight, 450, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1c - Tip income', '0', numericRight, 465, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1d - Medicaid waiver', '0', numericRight, 480, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1e - Dependent care benefits', '0', numericRight, 495, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1f - Adoption benefits', '0', numericRight, 510, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1g - Form 8919 wages', '0', numericRight, 525, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1h - Other earned income', '0', numericRight, 540, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1i - Nontaxable combat pay', '0', 470, 555, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 1z - Add 1a-1h', totalIncome, numericRight, 555, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 2a - Tax-exempt interest', '0', 230, 570, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 2b - Taxable interest', '0', numericRight, 570, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 3a - Qualified dividends', '0', 230, 585, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 3b - Ordinary dividends', '0', numericRight, 585, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 4a - IRA distributions', '0', 230, 600, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 4b - Taxable IRA', '0', numericRight, 600, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 5a - Pensions/annuities', '0', 230, 615, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 5b - Taxable pensions', '0', numericRight, 615, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 6a - Social security', '0', 230, 630, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 6b - Taxable social security', '0', numericRight, 630, page, 10, 'right'); // Adjusted yFromTop
   if (payload?.income?.lumpSumElection) {
-    draw('Lump-sum election', 'X', 560, 645 + 10, page, 12, 'center'); // Adjusted yFromTop
+    draw('Lump-sum election', 'X', 560, 645, page, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Line 7 - Capital gain/loss', '0', numericRight, 645 + 10, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 7 - Capital gain/loss', '0', numericRight, 645, page, 10, 'right'); // Adjusted yFromTop
   if (payload?.income?.noScheduleD) {
-    draw('No Schedule D', 'X', 510, 645 + 10, page, 12, 'center'); // Adjusted yFromTop
+    draw('No Schedule D', 'X', 510, 645, page, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Line 8 - Additional income', '0', numericRight, 660 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 9 - Add lines 1z, 2b, 3b, 4b, 5b, 6b, 7, and 8. This is your total income', totalIncome.toLocaleString(), numericRight, 675 + 10, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 8 - Additional income', '0', numericRight, 660, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 9 - Add lines 1z, 2b, 3b, 4b, 5b, 6b, 7, and 8. This is your total income', totalIncome.toLocaleString(), numericRight, 675, page, 10, 'right'); // Adjusted yFromTop
 
   // Adjustments and AGI
-  draw('Line 10 - Adjustments', adjustments, numericRight, 690 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 11 - AGI', agi.toLocaleString(), numericRight, 705 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 12 - Deductions', deductionsAmount.toLocaleString(), numericRight, 720 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 13 - QBID', qbid, numericRight, 735 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 14 - Add lines 12 and 13', (deductionsAmount + qbid).toLocaleString(), numericRight, 750 + 10, page, 10, 'right'); // Adjusted yFromTop
-  draw('Line 15 - Taxable income', taxable.toLocaleString(), numericRight, 765 + 10, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 10 - Adjustments', adjustments, numericRight, 690, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 11 - AGI', agi.toLocaleString(), numericRight, 705, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 12 - Deductions', deductionsAmount.toLocaleString(), numericRight, 720, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 13 - QBID', qbid, numericRight, 735, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 14 - Add lines 12 and 13', (deductionsAmount + qbid).toLocaleString(), numericRight, 750, page, 10, 'right'); // Adjusted yFromTop
+  draw('Line 15 - Taxable income', taxable.toLocaleString(), numericRight, 765, page, 10, 'right'); // Adjusted yFromTop
 
   // Page 2 - Tax and Credits
-  draw('Line 16 - Tax', tax.toLocaleString(), numericRight, 85 + 10, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 16 - Tax', tax.toLocaleString(), numericRight, 85, page2, 10, 'right'); // Adjusted yFromTop
   if (payload?.tax?.form8814) {
-    draw('Form 8814', 'X', 470, 85 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Form 8814', 'X', 470, 85, page2, 12, 'center'); // Adjusted yFromTop
   }
   if (payload?.tax?.form4972) {
-    draw('Form 4972', 'X', 500, 85 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Form 4972', 'X', 500, 85, page2, 12, 'center'); // Adjusted yFromTop
   }
   if (payload?.tax?.otherForm) {
-    draw('Other form', 'X', 530, 85 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Other form', 'X', 530, 85, page2, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Line 17 - Sch 2 line 3', sch2Line3.toLocaleString(), numericRight, 100 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 18 - Add lines 16 and 17', beforeCredits.toLocaleString(), numericRight, 115 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 19 - Child tax credit', nonRefundable.toLocaleString(), numericRight, 130 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 20 - Sch 3 line 8', '0', numericRight, 145 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 21 - Add lines 19 and 20', nonRefundable.toLocaleString(), numericRight, 160 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 22 - Subtract line 21 from line 18. If zero or less, enter -0-', afterCredits.toLocaleString(), numericRight, 175 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 23 - Other taxes', otherTaxes.toLocaleString(), numericRight, 190 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 24 - Add lines 22 and 23. This is your total tax', totalTax.toLocaleString(), numericRight, 205 + 10, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 17 - Sch 2 line 3', sch2Line3.toLocaleString(), numericRight, 100, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 18 - Add lines 16 and 17', beforeCredits.toLocaleString(), numericRight, 115, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 19 - Child tax credit', nonRefundable.toLocaleString(), numericRight, 130, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 20 - Sch 3 line 8', '0', numericRight, 145, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 21 - Add lines 19 and 20', nonRefundable.toLocaleString(), numericRight, 160, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 22 - Subtract line 21 from line 18. If zero or less, enter -0-', afterCredits.toLocaleString(), numericRight, 175, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 23 - Other taxes', otherTaxes.toLocaleString(), numericRight, 190, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 24 - Add lines 22 and 23. This is your total tax', totalTax.toLocaleString(), numericRight, 205, page2, 10, 'right'); // Adjusted yFromTop
 
   // Payments
-  draw('Line 25a - W-2 withheld', '0', numericRight, 220 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 25b - 1099 withheld', '0', numericRight, 235 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 25c - Other withheld', '0', numericRight, 250 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 25d - Total withheld', '0', numericRight, 265 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 26 - Estimated payments', '0', numericRight, 280 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 27 - EIC', '0', numericRight, 295 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 28 - Additional child tax', refundable.toLocaleString(), numericRight, 310 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 29 - American opportunity', '0', numericRight, 325 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 30 - Reserved', '—', numericRight, 340 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 31 - Sch 3 line 15', '0', numericRight, 355 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 32 - Total other payments', refundable.toLocaleString(), numericRight, 370 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 33 - Total payments', totalPayments.toLocaleString(), numericRight, 385 + 10, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 25a - W-2 withheld', '0', numericRight, 220, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 25b - 1099 withheld', '0', numericRight, 235, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 25c - Other withheld', '0', numericRight, 250, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 25d - Total withheld', '0', numericRight, 265, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 26 - Estimated payments', '0', numericRight, 280, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 27 - EIC', '0', numericRight, 295, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 28 - Additional child tax', refundable.toLocaleString(), numericRight, 310, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 29 - American opportunity', '0', numericRight, 325, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 30 - Reserved', '—', numericRight, 340, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 31 - Sch 3 line 15', '0', numericRight, 355, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 32 - Total other payments', refundable.toLocaleString(), numericRight, 370, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 33 - Total payments', totalPayments.toLocaleString(), numericRight, 385, page2, 10, 'right'); // Adjusted yFromTop
 
   // Refund/Owe
-  draw('Line 34 - Overpaid', overpaid.toLocaleString(), numericRight, 400 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 35a - Refund', overpaid.toLocaleString(), numericRight, 415 + 10, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 34 - Overpaid', overpaid.toLocaleString(), numericRight, 400, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 35a - Refund', overpaid.toLocaleString(), numericRight, 415, page2, 10, 'right'); // Adjusted yFromTop
   if (payload?.refund?.form8888) {
-    draw('Form 8888 attached', 'X', 500, 415 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Form 8888 attached', 'X', 500, 415, page2, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Routing number', payload?.bank?.routing || '—', 130, 430 + 10, page2); // Adjusted yFromTop
+  draw('Routing number', payload?.bank?.routing || '—', 130, 430, page2); // Adjusted yFromTop
   if (payload?.bank?.type === 'Checking') {
-    draw('Checking', 'X', 330, 430 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Checking', 'X', 330, 430, page2, 12, 'center'); // Adjusted yFromTop
   } else if (payload?.bank?.type === 'Savings') {
-    draw('Savings', 'X', 430, 430 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Savings', 'X', 430, 430, page2, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Account number', payload?.bank?.account || '—', 480, 430 + 10, page2); // Adjusted yFromTop
-  draw('Line 36 - Applied to 2025', '0', numericRight, 445 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 37 - Amount owed', balanceDue.toLocaleString(), numericRight, 460 + 10, page2, 10, 'right'); // Adjusted yFromTop
-  draw('Line 38 - Estimated tax penalty', '0', numericRight, 475 + 10, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Account number', payload?.bank?.account || '—', 480, 430, page2); // Adjusted yFromTop
+  draw('Line 36 - Applied to 2025', '0', numericRight, 445, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 37 - Amount owed', balanceDue.toLocaleString(), numericRight, 460, page2, 10, 'right'); // Adjusted yFromTop
+  draw('Line 38 - Estimated tax penalty', '0', numericRight, 475, page2, 10, 'right'); // Adjusted yFromTop
 
   // Third Party Designee
   if (payload?.thirdParty?.allow) {
-    draw('Third Party Yes', 'X', 520, 490 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Third Party Yes', 'X', 520, 495, page2, 12, 'center'); // Adjusted yFromTop
   } else {
-    draw('Third Party No', 'X', 560, 490 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Third Party No', 'X', 560, 495, page2, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Designee’s name', payload?.thirdParty?.name || '—', 70, 505 + 10, page2); // Adjusted yFromTop
-  draw('Phone no.', payload?.thirdParty?.phone || '—', 280, 505 + 10, page2); // Adjusted yFromTop
-  draw('PIN', payload?.thirdParty?.pin || '—', 430, 505 + 10, page2); // Adjusted yFromTop
+  draw('Designee’s name', payload?.thirdParty?.name || '—', 70, 510, page2); // Adjusted yFromTop
+  draw('Phone no.', payload?.thirdParty?.phone || '—', 280, 510, page2); // Adjusted yFromTop
+  draw('PIN', payload?.thirdParty?.pin || '—', 430, 510, page2); // Adjusted yFromTop
 
   // Signatures
   const submitDate = new Date(payload?.metadata?.submittedAt || Date.now()).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-  draw('Your signature', payload?.taxpayer?.fullName || '—', 70, 520 + 10, page2); // Adjusted yFromTop
-  draw('Date', submitDate, 280, 520 + 10, page2); // Adjusted yFromTop
-  draw('Your occupation', payload?.taxpayer?.occupation || '—', 330, 520 + 10, page2); // Adjusted yFromTop
-  draw('Identity PIN (you)', payload?.identityVerification?.irsPIN || '—', 480, 520 + 10, page2); // Adjusted yFromTop
-  draw('Spouse’s signature', payload?.taxpayer?.spouse?.name || '—', 70, 535 + 10, page2); // Adjusted yFromTop
-  draw('Spouse date', submitDate, 280, 535 + 10, page2); // Adjusted yFromTop
-  draw('Spouse occupation', payload?.taxpayer?.spouse?.occupation || '—', 330, 535 + 10, page2); // Adjusted yFromTop
-  draw('Identity PIN (spouse)', payload?.identityVerification?.spousePIN || '—', 480, 535 + 10, page2); // Adjusted yFromTop
-  draw('Phone no.', payload?.contact?.phone || '—', 70, 550 + 10, page2); // Adjusted yFromTop
-  draw('Email address', payload?.metadata?.contactEmail || '—', 180, 550 + 10, page2); // Adjusted yFromTop
+  draw('Your signature', payload?.taxpayer?.fullName || '—', 70, 525); // Adjusted yFromTop
+  draw('Date', submitDate, 280, 525); // Adjusted yFromTop
+  draw('Your occupation', payload?.taxpayer?.occupation || '—', 330, 525); // Adjusted yFromTop
+  draw('Identity PIN (you)', payload?.identityVerification?.irsPIN || '—', 480, 525); // Adjusted yFromTop
+  draw('Spouse’s signature', payload?.taxpayer?.spouse?.name || '—', 70, 540); // Adjusted yFromTop
+  draw('Spouse date', submitDate, 280, 540); // Adjusted yFromTop
+  draw('Spouse occupation', payload?.taxpayer?.spouse?.occupation || '—', 330, 540); // Adjusted yFromTop
+  draw('Identity PIN (spouse)', payload?.identityVerification?.spousePIN || '—', 480, 540); // Adjusted yFromTop
+  draw('Phone no.', payload?.contact?.phone || '—', 70, 555); // Adjusted yFromTop
+  draw('Email address', payload?.metadata?.contactEmail || '—', 180, 555); // Adjusted yFromTop
 
   // Preparer
-  draw('Preparer’s name', payload?.preparer?.name || '—', 70, 565 + 10, page2); // Adjusted yFromTop
-  draw('Preparer’s signature', payload?.preparer?.signature || '—', 180, 565 + 10, page2); // Adjusted yFromTop
-  draw('Date', submitDate, 380, 565 + 10, page2); // Adjusted yFromTop
-  draw('PTIN', payload?.preparer?.ptin || '—', 430, 565 + 10, page2); // Adjusted yFromTop
+  draw('Preparer’s name', payload?.preparer?.name || '—', 70, 570); // Adjusted yFromTop
+  draw('Preparer’s signature', payload?.preparer?.signature || '—', 180, 570); // Adjusted yFromTop
+  draw('Date', submitDate, 380, 570); // Adjusted yFromTop
+  draw('PTIN', payload?.preparer?.ptin || '—', 430, 570); // Adjusted yFromTop
   if (payload?.preparer?.selfEmployed) {
-    draw('Self-employed', 'X', 530, 565 + 10, page2, 12, 'center'); // Adjusted yFromTop
+    draw('Self-employed', 'X', 530, 570, page2, 12, 'center'); // Adjusted yFromTop
   }
-  draw('Firm’s name', payload?.preparer?.firmName || '—', 70, 580 + 10, page2); // Adjusted yFromTop
-  draw('Firm phone', payload?.preparer?.phone || '—', 430, 580 + 10, page2); // Adjusted yFromTop
-  draw('Firm’s address', payload?.preparer?.address || '—', 70, 595 + 10, page2); // Adjusted yFromTop
-  draw('Firm’s EIN', payload?.preparer?.ein || '—', 430, 595 + 10, page2); // Adjusted yFromTop
+  draw('Firm’s name', payload?.preparer?.firmName || '—', 70, 585); // Adjusted yFromTop
+  draw('Firm phone', payload?.preparer?.phone || '—', 430, 585); // Adjusted yFromTop
+  draw('Firm’s address', payload?.preparer?.address || '—', 70, 600); // Adjusted yFromTop
+  draw('Firm’s EIN', payload?.preparer?.ein || '—', 430, 600); // Adjusted yFromTop
 
   return pdfDoc;
 }
